@@ -1185,7 +1185,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #c1c933;
+  background: #492240;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1550,6 +1550,14 @@ pre .javascript .function {
 .post-body p a:hover {
   color: #f5871f;
   text-decoration: underline;
+}
+.posts-expand .post-title-link {
+  border-bottom: none;
+  font-size: 1.2em;
+  color: #1eafae;
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
 }
 .posts-expand .post-body img {
   margin-left: auto !important;
