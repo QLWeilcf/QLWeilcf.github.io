@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="0，需求说明在编写和调试程序时，一般我们会在集成编辑环境里写代码和运行，但如果程序比较完善需要快速运行，或者让同事在其他电脑上快速运行时，再打开IDE（Integrated Development Environment ,集成开发环境）运行就有些麻烦了，对方也不一定很熟练使用命令行进行运行，因此在Windows下要解决这个问题一般有两种思路：1，把程序编译为exe文件，就是一个小软件，和QQ等软">
+  <meta name="description" content="需求说明在编写和调试程序时，一般我们会在集成编辑环境里写代码和运行，但如果程序比较完善需要快速运行，或者让同事在其他电脑上快速运行时，再打开IDE（Integrated Development Environment ,集成开发环境）运行就有些麻烦了，对方也不一定很熟练使用命令行进行运行，因此在Windows下要解决这个问题一般有两种思路：  1，把程序编译为exe文件，就是一个小软件，和QQ等软">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在Windows下配置点击就能运行Python程序的bat批处理脚本">
 <meta property="og:url" content="http://lynsdata.cn/2020/09/26/auto-run-with-shell.html">
 <meta property="og:site_name" content="Lynsdata">
-<meta property="og:description" content="0，需求说明在编写和调试程序时，一般我们会在集成编辑环境里写代码和运行，但如果程序比较完善需要快速运行，或者让同事在其他电脑上快速运行时，再打开IDE（Integrated Development Environment ,集成开发环境）运行就有些麻烦了，对方也不一定很熟练使用命令行进行运行，因此在Windows下要解决这个问题一般有两种思路：1，把程序编译为exe文件，就是一个小软件，和QQ等软">
+<meta property="og:description" content="需求说明在编写和调试程序时，一般我们会在集成编辑环境里写代码和运行，但如果程序比较完善需要快速运行，或者让同事在其他电脑上快速运行时，再打开IDE（Integrated Development Environment ,集成开发环境）运行就有些麻烦了，对方也不一定很熟练使用命令行进行运行，因此在Windows下要解决这个问题一般有两种思路：  1，把程序编译为exe文件，就是一个小软件，和QQ等软">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-bdd66bc629c49007.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-e49cd893313fb2c4.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -36,8 +36,9 @@
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-e24afa8a931d9a63.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-c2f2b1b7805b254b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="article:published_time" content="2020-09-25T18:48:38.000Z">
-<meta property="article:modified_time" content="2020-12-17T14:42:43.542Z">
+<meta property="article:modified_time" content="2020-12-18T15:17:58.376Z">
 <meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2473543-bdd66bc629c49007.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
@@ -230,8 +231,17 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-17 22:42:43" itemprop="dateModified" datetime="2020-12-17T22:42:43+08:00">2020-12-17</time>
+                <time title="修改时间：2020-12-18 23:17:58" itemprop="dateModified" datetime="2020-12-18T23:17:58+08:00">2020-12-18</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -241,6 +251,11 @@
               <span class="post-meta-item-text">阅读次数：</span>
               <span id="busuanzi_value_page_pv"></span>
             </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 1.2k 字 | ≈</span>
+           <span title="post.min2read">
+				4 分钟
+			</span>
 
         </div>
       </header>
@@ -251,7 +266,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="0，需求说明"><a href="#0，需求说明" class="headerlink" title="0，需求说明"></a>0，需求说明</h3><p>在编写和调试程序时，一般我们会在集成编辑环境里写代码和运行，但如果程序比较完善需要快速运行，或者让同事在其他电脑上快速运行时，再打开IDE（Integrated Development Environment ,集成开发环境）运行就有些麻烦了，对方也不一定很熟练使用命令行进行运行，因此在Windows下要解决这个问题一般有两种思路：1，把程序编译为exe文件，就是一个小软件，和QQ等软件的运行方式基本无差别，通过鼠标点击运行；2，另外的做法是编写批处理文件，点击批处理文件就会按顺序执行命令行(在其他电脑运行是需要保证对方正确安装了编程/编译环境，例如是运行Python程序需要安装好Python、Java程序需要安装好JDK并配置好环境变量)。</p>
+        <h3 id="需求说明"><a href="#需求说明" class="headerlink" title="需求说明"></a>需求说明</h3><p>在编写和调试程序时，一般我们会在集成编辑环境里写代码和运行，但如果程序比较完善需要快速运行，或者让同事在其他电脑上快速运行时，再打开IDE（Integrated Development Environment ,集成开发环境）运行就有些麻烦了，对方也不一定很熟练使用命令行进行运行，因此在Windows下要解决这个问题一般有两种思路：</p>
+<ul>
+<li>1，把程序编译为exe文件，就是一个小软件，和QQ等软件的运行方式基本无差别，通过鼠标点击运行；</li>
+<li>2，另外的做法是编写批处理文件，点击批处理文件就会按顺序执行命令行(在其他电脑运行是需要保证对方正确安装了编程/编译环境，例如是运行Python程序需要安装好Python、Java程序需要安装好JDK并配置好环境变量)。</li>
+</ul>
 <p>Windows下的批处理文件后缀是.bat；点击该文件就可以执行。</p>
 <a id="more"></a>
 
@@ -259,15 +278,15 @@
 <p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/.bat">.bat</a>文件是可执行文件，由一系列命令构成，其中可以包含对其他程序的调用。</p>
 </blockquote>
 <p>下面具体说明通过bat批处理文件实现点击执行Python代码。</p>
-<h3 id="1，编写Python程序"><a href="#1，编写Python程序" class="headerlink" title="1，编写Python程序"></a>1，编写Python程序</h3><p>如果本身程序比较完备了，这步跳过，下面新建一个超经典的hello world作为例子，选定一个文件夹然后新建一个文本文件，写入<code>print(&quot;hello world&quot;)</code>。保存文件名为hellopy，把文件后缀从.txt改为.py</p>
-<h3 id="2，编写批处理脚本"><a href="#2，编写批处理脚本" class="headerlink" title="2，编写批处理脚本"></a>2，编写批处理脚本</h3><p>同样新建文本文件，输入<code>python hellopy.py</code>。保存为helloshell，后缀是.bat。<br>然后点击helloshell.bat就可以看到黑色的命令行窗口一闪而过，这是因为运行后cmd会自动关闭，因此为了看效果可以考虑用time.sleep(10)或选择运行程序后新建一个文件以显示程序正确运行了，以采用sleep的方案为例，把hellopy.py中的代码改为：</p>
+<h3 id="编写Python程序"><a href="#编写Python程序" class="headerlink" title="编写Python程序"></a>编写Python程序</h3><p>如果本身程序比较完备了，这步跳过，下面新建一个超经典的hello world作为例子，选定一个文件夹然后新建一个文本文件，写入<code>print(&quot;hello world&quot;)</code>。保存文件名为hellopy，把文件后缀从.txt改为.py</p>
+<h3 id="编写批处理脚本"><a href="#编写批处理脚本" class="headerlink" title="编写批处理脚本"></a>编写批处理脚本</h3><p>同样新建文本文件，输入<code>python hellopy.py</code>。保存为helloshell，后缀是.bat。<br>然后点击helloshell.bat就可以看到黑色的命令行窗口一闪而过，这是因为运行后cmd会自动关闭，因此为了看效果可以考虑用time.sleep(10)或选择运行程序后新建一个文件以显示程序正确运行了，以采用sleep的方案为例，把hellopy.py中的代码改为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">print(<span class="string">&quot;hello world&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">5</span>) </span><br></pre></td></tr></table></figure>
 <p>time.sleep(5) 表示程序运行到这一行会休眠5秒。</p>
 <p>完成上述步骤后有两个文件如图：<br><img src="https://upload-images.jianshu.io/upload_images/2473543-bdd66bc629c49007.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="需要运行的Python程序和批处理文件"><br>点击运行：<br><img src="https://upload-images.jianshu.io/upload_images/2473543-e49cd893313fb2c4.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="bat文件运行后的效果"></p>
-<h3 id="4，点击运行jupyter-notebook导出的程序"><a href="#4，点击运行jupyter-notebook导出的程序" class="headerlink" title="4，点击运行jupyter notebook导出的程序"></a>4，点击运行jupyter notebook导出的程序</h3><p>以上步骤已经实现了基础需求，继续让例子更有针对性，在数据科学实践中，大家喜欢用Jupyter notebook进行运行和调试，但是有些常规需求我们不想再打开notebook一个个cell点击运行，想之间点击一下就自动化处理excel，这个需求就改一下bat文件就好，首先把jupyter notebook中能够正常运行的程序导出为py文件，在工具栏的<em>File-&gt;Download As-&gt;Python(.py)</em> 下，例如以下代码，读取一个Excel，对Excel进行处理后把数据框(DataFrame)的数据保存到一个Excel里。<img src="https://upload-images.jianshu.io/upload_images/2473543-478a86805610595e.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="jupyter notebook 程序例子"></p>
+<h3 id="点击运行导出的程序"><a href="#点击运行导出的程序" class="headerlink" title="点击运行导出的程序"></a>点击运行导出的程序</h3><p>以上步骤已经实现了基础需求，继续让例子更有针对性，在数据科学实践中，大家喜欢用Jupyter notebook进行运行和调试，但是有些常规需求我们不想再打开notebook一个个cell点击运行，想之间点击一下就自动化处理excel，这个需求就改一下bat文件就好，首先把jupyter notebook中能够正常运行的程序导出为py文件，在工具栏的<em>File-&gt;Download As-&gt;Python(.py)</em> 下，例如以下代码，读取一个Excel，对Excel进行处理后把数据框(DataFrame)的数据保存到一个Excel里。<img src="https://upload-images.jianshu.io/upload_images/2473543-478a86805610595e.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="jupyter notebook 程序例子"></p>
 <p>在*File-&gt;Download As-&gt;Python(.py)*中导出Python文件using2019fords.py，然后把bat文件中的内容更新为<code>python using2019fords.py</code>。点击运行就可以。</p>
-<h3 id="5，把bat文件放桌面"><a href="#5，把bat文件放桌面" class="headerlink" title="5，把bat文件放桌面"></a>5，把bat文件放桌面</h3><p>把bat移到桌面，运行更方便，程序和数据仍然在特定文件夹下，这时候可以直接写<code>python d:/文件夹路径/python文件名.py</code>，保存后运行就可以。<br><img src="https://upload-images.jianshu.io/upload_images/2473543-1ad0d55d389afc1c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="在桌面运行bat文件1"><br>另外就是按照cmd的步骤写，先定位到目标文件夹下，然后是<code>python 文件名.py</code>。<br><img src="https://upload-images.jianshu.io/upload_images/2473543-6d63f835b57ec6c1.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="在桌面运行bat文件6"></p>
-<h3 id="6，运行bat中传参数"><a href="#6，运行bat中传参数" class="headerlink" title="6，运行bat中传参数"></a>6，运行bat中传参数</h3><p>一般比较推荐把参数写入Python程序里，但也可以在批处理文件中传参数。bat中的语法是<code>python 文件名.py 参数1 参数2 </code>。</p>
+<h3 id="把bat文件放桌面"><a href="#把bat文件放桌面" class="headerlink" title="把bat文件放桌面"></a>把bat文件放桌面</h3><p>把bat移到桌面，运行更方便，程序和数据仍然在特定文件夹下，这时候可以直接写<code>python d:/文件夹路径/python文件名.py</code>，保存后运行就可以。<br><img src="https://upload-images.jianshu.io/upload_images/2473543-1ad0d55d389afc1c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="在桌面运行bat文件1"><br>另外就是按照cmd的步骤写，先定位到目标文件夹下，然后是<code>python 文件名.py</code>。<br><img src="https://upload-images.jianshu.io/upload_images/2473543-6d63f835b57ec6c1.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="在桌面运行bat文件6"></p>
+<h3 id="运行bat中传参数"><a href="#运行bat中传参数" class="headerlink" title="运行bat中传参数"></a>运行bat中传参数</h3><p>一般比较推荐把参数写入Python程序里，但也可以在批处理文件中传参数。bat中的语法是<code>python 文件名.py 参数1 参数2 </code>。</p>
 <p>对应的Python文件中接受参数的代码为（using2019fords.py仍为jupyter notebook中导出的文件）：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding: utf-8</span></span><br><span class="line"><span class="comment"># In[1]:</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="comment"># In[2]:</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">print(<span class="string">&quot;当前运行脚本：&quot;</span>, sys.argv[<span class="number">0</span>])</span><br><span class="line">print(<span class="string">&quot;运行时间：&quot;</span>,time.localtime(time.time())) <span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="built_in">len</span>(sys.argv)): <span class="comment">#有哪些参数</span></span><br><span class="line">    print(<span class="string">&quot;参数&#123;0&#125;为：&#123;1&#125;&quot;</span>.<span class="built_in">format</span>(i, sys.argv[i])) <span class="comment">#对参数进行处理</span></span><br><span class="line"></span><br><span class="line">wp=<span class="string">r&quot;J:\LinuxLearn\cixinliu\clickToRunBat&quot;</span></span><br><span class="line">adf=pd.read_excel(wp+<span class="string">&quot;/hellodata.xlsx&quot;</span>)</span><br><span class="line"><span class="comment"># In[7]:</span></span><br><span class="line">adf.head(<span class="number">2</span>)</span><br><span class="line"><span class="comment"># In[ ]:</span></span><br><span class="line"><span class="comment">#对读入的表进行逻辑处理</span></span><br><span class="line"><span class="comment"># In[4]:</span></span><br><span class="line">adf[<span class="string">&#x27;D&#x27;</span>]=adf[<span class="string">&quot;C&quot;</span>].apply(<span class="keyword">lambda</span> x:x*<span class="number">2</span>)</span><br><span class="line"><span class="comment"># In[6]:</span></span><br><span class="line">adf.to_excel(wp+<span class="string">&quot;/out_hellodata.xlsx&quot;</span>)<span class="comment">#输出</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;finish&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">5</span>) </span><br></pre></td></tr></table></figure>
 <p>运行效果如下：<br><img src="https://upload-images.jianshu.io/upload_images/2473543-e24afa8a931d9a63.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="bat中传参例子"></p>
@@ -281,6 +300,10 @@
     
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+          </div>
 
         
 
@@ -353,7 +376,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0%EF%BC%8C%E9%9C%80%E6%B1%82%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">0，需求说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8C%E7%BC%96%E5%86%99Python%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">1，编写Python程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8C%E7%BC%96%E5%86%99%E6%89%B9%E5%A4%84%E7%90%86%E8%84%9A%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">2，编写批处理脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%BC%8C%E7%82%B9%E5%87%BB%E8%BF%90%E8%A1%8Cjupyter-notebook%E5%AF%BC%E5%87%BA%E7%9A%84%E7%A8%8B%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">4，点击运行jupyter notebook导出的程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%EF%BC%8C%E6%8A%8Abat%E6%96%87%E4%BB%B6%E6%94%BE%E6%A1%8C%E9%9D%A2"><span class="nav-number">5.</span> <span class="nav-text">5，把bat文件放桌面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%EF%BC%8C%E8%BF%90%E8%A1%8Cbat%E4%B8%AD%E4%BC%A0%E5%8F%82%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">6，运行bat中传参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">7.</span> <span class="nav-text">Linux</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">需求说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99Python%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">编写Python程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E6%89%B9%E5%A4%84%E7%90%86%E8%84%9A%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">编写批处理脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%B9%E5%87%BB%E8%BF%90%E8%A1%8C%E5%AF%BC%E5%87%BA%E7%9A%84%E7%A8%8B%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">点击运行导出的程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8Abat%E6%96%87%E4%BB%B6%E6%94%BE%E6%A1%8C%E9%9D%A2"><span class="nav-number">5.</span> <span class="nav-text">把bat文件放桌面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8Cbat%E4%B8%AD%E4%BC%A0%E5%8F%82%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">运行bat中传参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">7.</span> <span class="nav-text">Linux</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -371,7 +394,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -380,7 +403,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

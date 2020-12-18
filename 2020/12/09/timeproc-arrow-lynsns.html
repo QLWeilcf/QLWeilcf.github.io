@@ -21,17 +21,17 @@
     var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Arrow简介Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，GitHub1 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。">
+  <meta name="description" content="Arrow简介Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，其GitHub页面 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python处理时间数据的另一种选择，在标准库之外|Arrow使用笔记">
 <meta property="og:url" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns.html">
 <meta property="og:site_name" content="Lynsdata">
-<meta property="og:description" content="Arrow简介Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，GitHub1 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。">
+<meta property="og:description" content="Arrow简介Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，其GitHub页面 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns/time-1210-arrow-1-1-xmind.PNG">
-<meta property="og:image" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns/Arrow-111.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns/Arrow-111.png">
 <meta property="article:published_time" content="2020-12-09T15:59:36.000Z">
-<meta property="article:modified_time" content="2020-12-17T16:51:52.278Z">
+<meta property="article:modified_time" content="2020-12-18T14:41:04.063Z">
 <meta property="article:author" content="Lyndon">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="time">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-18 00:51:52" itemprop="dateModified" datetime="2020-12-18T00:51:52+08:00">2020-12-18</time>
+                <time title="修改时间：2020-12-18 22:41:04" itemprop="dateModified" datetime="2020-12-18T22:41:04+08:00">2020-12-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -247,6 +247,11 @@
               <span class="post-meta-item-text">阅读次数：</span>
               <span id="busuanzi_value_page_pv"></span>
             </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 1.4k 字 | ≈</span>
+           <span title="post.min2read">
+				5 分钟
+			</span>
 
         </div>
       </header>
@@ -257,7 +262,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Arrow简介"><a href="#Arrow简介" class="headerlink" title="Arrow简介"></a>Arrow简介</h2><p>Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，GitHub<a target="_blank" rel="noopener" href="https://github.com/arrow-py/arrow">1</a> 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。</p>
+        <h2 id="Arrow简介"><a href="#Arrow简介" class="headerlink" title="Arrow简介"></a>Arrow简介</h2><p>Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，其<a target="_blank" rel="noopener" href="https://github.com/arrow-py/arrow">GitHub页面</a> 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。</p>
 <p><img src="/2020/12/09/timeproc-arrow-lynsns/time-1210-arrow-1-1-xmind.PNG" alt="Arrow概览导图"></p>
 <a id="more"></a>
 
@@ -271,15 +276,19 @@
 <p>arrow使用format进行格式化，从时间对象转为特定格式的字符串，arrow没有使用strptime的 %Y类型的占位符，而是省略了%号。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dt.<span class="built_in">format</span>(<span class="string">&#x27;YYYY-MM-DD&#x27;</span>)</span><br><span class="line"><span class="comment">#&#x27;2020-12-07&#x27;</span></span><br><span class="line">dt.<span class="built_in">format</span>() <span class="comment">#不输入参数其实对应 YYYY-MM-DD HH:mm:ss ZZ</span></span><br><span class="line"><span class="comment">#&#x27;2020-12-07 20:42:18+08:00&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="时间序列"><a href="#时间序列" class="headerlink" title="时间序列"></a>时间序列</h2><p>arrow可以方便地生成一组时间，和其他数值组合成时间序列，这是datetime等内置库的弱点。通过Arrow.range(frame,start,end)可以生成从start开始，到end结束，按frame为周期重复的一个时间序列，range还支持的参数有tz及limit。<a target="_blank" rel="noopener" href="https://arrow.readthedocs.io/en/stable/">2</a></p>
+<h2 id="时间序列"><a href="#时间序列" class="headerlink" title="时间序列"></a>时间序列</h2><p>arrow可以方便地生成一组时间，和其他数值组合成时间序列，这是datetime等内置库的弱点。通过Arrow.range(frame,start,end)可以生成从start开始，到end结束，按frame为周期重复的一个时间序列，range还支持的参数有<a target="_blank" rel="noopener" href="https://arrow.readthedocs.io/en/stable/">tz及limit</a>。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">list</span>(arrow.Arrow.<span class="built_in">range</span>(<span class="string">&#x27;hour&#x27;</span>,arrow.now(),arrow.now().shift(hours=<span class="number">5</span>)))</span><br><span class="line"><span class="comment">#输出:</span></span><br><span class="line"><span class="comment">#[&lt;Arrow [2020-12-10T20:54:19.878759+08:00]&gt;,&lt;Arrow [2020-12-10T21:54:19.878759+08:00]&gt;,  ...]</span></span><br></pre></td></tr></table></figure>
 
 <p>arrow另一大特色是可以把时间对象转为人类容易理解的自然语言形式进行输出，对应的方法为<code>dt.humanize()</code>，humanize还可以根据locale参数输出特定语言的自然语言，有趣的封装。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dt&#x3D;arrow.now().shift(hours&#x3D;-1)</span><br><span class="line">dt.humanize() #当前时间的自然语言表示</span><br><span class="line">#&#39;an hour ago&#39;</span><br><span class="line">future &#x3D;dt.shift(minutes&#x3D;75)</span><br><span class="line">dt.humanize(future, granularity&#x3D;&quot;minute&quot;)</span><br><span class="line">#&#39;in 75 minutes&#39; #两个时间的对比自然语言表示</span><br><span class="line">dt.humanize(locale&#x3D;&#39;ko_kr&#39;) #在韩语里的自然语言</span><br><span class="line">&#39;2시간 전&#39;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dt&#x3D;arrow.now().shift(hours&#x3D;-1)</span><br><span class="line">dt.humanize() #当前时间的自然语言表示</span><br><span class="line">#&#39;an hour ago&#39;</span><br><span class="line">future &#x3D;dt.shift(minutes&#x3D;75)</span><br><span class="line">dt.humanize(future, granularity&#x3D;&quot;minute&quot;)</span><br><span class="line">#&#39;in 75 minutes&#39; #两个时间的对比自然语言表示</span><br><span class="line">dt.humanize(locale&#x3D;&#39;ko_kr&#39;) #在韩语里的自然语言</span><br><span class="line">#&#39;2시간 전&#39;</span><br></pre></td></tr></table></figure>
 
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从上文可看出，Arrow有着简洁友好的接口，get统筹各种输入的解析，replace负责各种时间要素的修改，format解决各类格式化输出的需求，range处理时间序列生成问题。<br>通过dt.year等很自然地获取时间对象的要素，也提供了dt.time等从Arrow自定义对象转为内置的time、datetime对象。Arrow通过收束接口增强了易用性，满足了大部分时间格式处理的需求，而类似的Pendulum、Maya等时间库在解析字符串及输出自然语言方面更进一步，在一些细节上比Arrow更强一些。</p>
-<p><img src="/2020/12/09/timeproc-arrow-lynsns/Arrow-111.PNG" alt="Arrow整体导图"></p>
+<p><img src="/2020/12/09/timeproc-arrow-lynsns/Arrow-111.png" alt="Arrow整体导图"></p>
 <p><strong>参考资料</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/arrow-py/arrow">Arrow GitHub页面</a></li>
+<li><a target="_blank" rel="noopener" href="https://arrow.readthedocs.io/en/stable/">Arrow 文档</a></li>
+</ul>
 
     </div>
 
@@ -300,8 +309,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/02/viz-d3-zero-to-one-01.html" rel="prev" title="D3库实践笔记之幻化万千的返璞归真 |可视化系列32">
-      <i class="fa fa-chevron-left"></i> D3库实践笔记之幻化万千的返璞归真 |可视化系列32
+    <a href="/2020/10/03/viz-d3-07-layout.html" rel="prev" title="D3库实践笔记之几类特定图表与布局 |可视化系列37">
+      <i class="fa fa-chevron-left"></i> D3库实践笔记之几类特定图表与布局 |可视化系列37
     </a></div>
       <div class="post-nav-item">
     <a href="/2020/12/10/timeproc-pendulum-lynsns.html" rel="next" title="挑战Arrow，需要怎样的实力？Pendulum使用笔记">
@@ -383,7 +392,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -392,7 +401,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
