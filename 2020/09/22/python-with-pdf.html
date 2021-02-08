@@ -28,17 +28,17 @@
 <meta property="og:site_name" content="Lynsdata">
 <meta property="og:description" content="PDF作为可移植文档格式(Portable Document Format)，在日常生活中经常接触到，最近处理一些数据更是频繁接触一些需要批量处理pdf文件的需求，因此便想整理一下自己实践的用Python处理PDF格式数据的笔记。本文会保持更新。PDF处理的高频需求有：读取、写入、格式转换（pdf提取文本写入txt、根据url写入pdf等）、批处理（多个pdf合并为1个、切分pdf）等等。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-1cba26c8d410aa37.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-572df5717e5638f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-086fb2e6b96fd5a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-6a184c7c219a1314.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/python-with-pdf/python-with-pdf-01.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/python-with-pdf/python-with-pdf-02.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/python-with-pdf/python-with-pdf-03.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/python-with-pdf/python-with-pdf-04.png">
 <meta property="article:published_time" content="2020-09-21T18:05:16.000Z">
-<meta property="article:modified_time" content="2020-12-17T14:51:19.114Z">
+<meta property="article:modified_time" content="2021-02-08T16:44:34.961Z">
 <meta property="article:author" content="Lyndon">
 <meta property="article:tag" content="python">
 <meta property="article:tag" content="pdf">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2473543-1cba26c8d410aa37.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/09/22/python-with-pdf/python-with-pdf-01.png">
 
 <link rel="canonical" href="http://lynsdata.cn/2020/09/22/python-with-pdf.html">
 
@@ -229,7 +229,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-17 22:51:19" itemprop="dateModified" datetime="2020-12-17T22:51:19+08:00">2020-12-17</time>
+                <time title="修改时间：2021-02-09 00:44:34" itemprop="dateModified" datetime="2021-02-09T00:44:34+08:00">2021-02-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -267,16 +267,17 @@
         <p>PDF作为可移植文档格式(Portable Document Format)，在日常生活中经常接触到，最近处理一些数据更是频繁接触一些需要批量处理pdf文件的需求，因此便想整理一下自己实践的用Python处理PDF格式数据的笔记。本文会保持更新。<br>PDF处理的高频需求有：读取、写入、格式转换（pdf提取文本写入txt、根据url写入pdf等）<br>、批处理（多个pdf合并为1个、切分pdf）等等。</p>
 <a id="more"></a>
 
-<p>查了下相关资料，Python操作PDF的库有（只是应用的话肯定不至于造轮子从二进制数据开始读）：pdfminer、pdfminer3k、PyPDF、PyPDF2、pdf2htmlex、pdf2image、pdf2xlsx等。<br><img src="https://upload-images.jianshu.io/upload_images/2473543-1cba26c8d410aa37.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="pdf库"></p>
+<p>查了下相关资料，Python操作PDF的库有（只是应用的话肯定不至于造轮子从二进制数据开始读）：pdfminer、pdfminer3k、PyPDF、PyPDF2、pdf2htmlex、pdf2image、pdf2xlsx等。<br><img src="/2020/09/22/python-with-pdf/python-with-pdf-01.png" alt="pdf库"></p>
 <h3 id="用pdf2合并和切分PDF"><a href="#用pdf2合并和切分PDF" class="headerlink" title="用pdf2合并和切分PDF"></a>用pdf2合并和切分PDF</h3><p>比较几个库之后打算先从PyPDF2快速实现一些功能。其官方文档为<a target="_blank" rel="noopener" href="https://pythonhosted.org/PyPDF2/">PyPDF2 Documentation</a>，根据文档，PDF2库包含了 PdfFileReader PdfFileMerger PageObject PdfFileWriter 四个常用的主要的调用类，意思也很明确。<br>先用<code>pip install PyPDF2</code>安装库。</p>
 <h4 id="批量合并pdf"><a href="#批量合并pdf" class="headerlink" title="批量合并pdf"></a>批量合并pdf</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> PyPDF2 <span class="keyword">import</span> PdfFileReader, PdfFileWriter <span class="comment">#导入需要的类（库）</span></span><br><span class="line">wp=<span class="string">&#x27;D:/doc_of_pdf/&#x27;</span> <span class="comment">#work_path</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#合并同一个文件夹下的pdf文件</span></span><br><span class="line">flst=[] <span class="comment">#获得pdf文件路径</span></span><br><span class="line"><span class="keyword">for</span> root, dirs, files <span class="keyword">in</span> os.walk(wp):</span><br><span class="line">    flst=files</span><br><span class="line">flst=[wp+f <span class="keyword">for</span> f <span class="keyword">in</span> flst]</span><br><span class="line">out_pdf=PdfFileWriter()</span><br><span class="line"><span class="keyword">for</span> pf <span class="keyword">in</span> flst:</span><br><span class="line">    in_pdf=PdfFileReader(<span class="built_in">open</span>(pf, <span class="string">&#x27;rb&#x27;</span>)) <span class="comment">#二进制打开</span></span><br><span class="line">    page_count=in_pdf.getNumPages() <span class="comment">#输入pdf的页数</span></span><br><span class="line">    <span class="keyword">for</span> pc <span class="keyword">in</span> <span class="built_in">range</span>(page_count): </span><br><span class="line">        out_pdf.addPage(in_pdf.getPage(pc)) <span class="comment">#逐页循环</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(wp+<span class="string">&#x27;合并笔记_1-3章.pdf&#x27;</span>,<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> wf:</span><br><span class="line">    out_pdf.write(wf)</span><br><span class="line"><span class="comment">#out_pdf.getNumPages()</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://upload-images.jianshu.io/upload_images/2473543-572df5717e5638f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="执行前后对比"></p>
+<p><img src="/2020/09/22/python-with-pdf/python-with-pdf-02.png" alt="执行前后对比"></p>
 <h4 id="切分pdf为多个pdf"><a href="#切分pdf为多个pdf" class="headerlink" title="切分pdf为多个pdf"></a>切分pdf为多个pdf</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将一个pdf文件根据一定规则切分为多个</span></span><br><span class="line"></span><br><span class="line">sc_pdf=PdfFileReader(<span class="built_in">open</span>(flst[<span class="number">0</span>], <span class="string">&#x27;rb&#x27;</span>)) <span class="comment">#对第一章笔记进行处理</span></span><br><span class="line">count_sc=sc_pdf.getNumPages()</span><br><span class="line"><span class="comment">#每7页切分为1个PDF文件</span></span><br><span class="line">out_pdf=PdfFileWriter() <span class="comment">#用以输出pdf</span></span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(count_sc):</span><br><span class="line">    <span class="keyword">if</span> c%<span class="number">7</span>==<span class="number">0</span> <span class="keyword">and</span> c&gt;<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(wp+<span class="string">&#x27;切分_&#123;0&#125;.pdf&#x27;</span>.<span class="built_in">format</span>(c),<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> wf:</span><br><span class="line">            out_pdf.write(wf)</span><br><span class="line">        out_pdf=PdfFileWriter() <span class="comment">#重建一个空对象</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        out_pdf.addPage(sc_pdf.getPage(c))</span><br></pre></td></tr></table></figure>
-<p><img src="https://upload-images.jianshu.io/upload_images/2473543-086fb2e6b96fd5a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="切分测试结果截图"><br>通过上面的实践，可以看到实现这几个需求高频使用到的方法就是新建一个Reader或Writer对象，通过<code>.getNumPages()</code>获取一共的页码，通过<code>.getPage(page)</code>获取特定页，<code>.addPage()</code>写入页码。</p>
+<p><img src="/2020/09/22/python-with-pdf/python-with-pdf-03.png" alt="切分测试结果截图"></p>
+<p>通过上面的实践，可以看到实现这几个需求高频使用到的方法就是新建一个Reader或Writer对象，通过<code>.getNumPages()</code>获取一共的页码，通过<code>.getPage(page)</code>获取特定页，<code>.addPage()</code>写入页码。</p>
 <h2 id="图片转pdf"><a href="#图片转pdf" class="headerlink" title="图片转pdf"></a>图片转pdf</h2><p>需要用到额外的PIL库；处理图片的神器。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#单张图片转pdf</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">from</span> PyPDF2 <span class="keyword">import</span> PdfFileReader, PdfFileWriter</span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&#x27;D:/docOfStu/pypdf2-mindmap-01.JPG&#x27;</span>)</span><br><span class="line">img.save(<span class="string">&#x27;D:/docOfStu/pypdf2-mindmap-01.pdf&#x27;</span>, <span class="string">&#x27;PDF&#x27;</span>) <span class="comment">#通过PIL库保存为pdf格式</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#多张图片转pdf</span></span><br><span class="line">ilst=[<span class="string">&#x27;D:/docOfStu/pypdf2-mindmap-01.jpg&#x27;</span>,<span class="string">&#x27;D:/docOfStu/pypdf2-mindmap-02.jpg&#x27;</span>] <span class="comment">#图片列表 </span></span><br><span class="line"><span class="comment"># for root, dirs, files in os.walk(wpt): ilst=files  #也可以通过os.walk(wpt) 读取文件夹wpt下所有图片</span></span><br><span class="line">out_pdf=PdfFileWriter()</span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> ilst:</span><br><span class="line">    img = Image.<span class="built_in">open</span>(f)</span><br><span class="line">    fw=f.replace(<span class="string">&#x27;.jpg&#x27;</span>,<span class="string">&#x27;.pdf&#x27;</span>)</span><br><span class="line">    img.save(fw)</span><br><span class="line">    out_pdf.appendPagesFromReader(PdfFileReader(<span class="built_in">open</span>(fw,<span class="string">&#x27;rb&#x27;</span>))) <span class="comment">#也可拆这句为 sc_pdf=PdfFileReader(open(fw,&#x27;rb&#x27;)); out_pdf.addPage(sc_pdf.getPage(0))</span></span><br><span class="line">out_pdf.write(<span class="built_in">open</span>(<span class="string">&#x27;D:/docOfStu/pypdf2-mindmap-04.pdf&#x27;</span>,<span class="string">&#x27;wb&#x27;</span>))</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://upload-images.jianshu.io/upload_images/2473543-6a184c7c219a1314.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图片转pdf对比效果"></p>
+<p><img src="/2020/09/22/python-with-pdf/python-with-pdf-04.png" alt="图片转pdf对比效果"></p>
 <p>代码同步更新于：<a target="_blank" rel="noopener" href="https://github.com/QLWeilcf/Stack_lcf/blob/master/pdfProccWithpy.ipynb">QLWeilcf_pdfProccWithpy.ipynb</a>。</p>
 <hr>
 <p>to be continue…</p>
@@ -387,17 +388,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">7</span>
-        <span class="site-state-item-name">分类</span>
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">19</span>
-        <span class="site-state-item-name">标签</span>
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -438,7 +442,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class=""></i>
   </span>

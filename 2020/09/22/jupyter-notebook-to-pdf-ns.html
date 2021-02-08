@@ -28,21 +28,20 @@
 <meta property="og:site_name" content="Lynsdata">
 <meta property="og:description" content="Jupyter Notebook 是很好的数据科学创作环境，反正我做数据分析的项目或小练习的时候，基本都是在用jupyter notebook（原先是叫ipython notebook，所以现在文件后缀还是.ipynb），以前不怎么用到导出pdf功能，然后要用的时候就遇到很多坑了。jupyter提供导出的格式有.py、.html、.md、.pdf等。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-b37f85b5584364b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-3066970796a6043b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-898fdf8271689505.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-6624da52f9d4d9d1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-192ac8f3fe434b96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-c7f89da3bad6866f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-036c476dcddbbca0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2473543-a07a806b9ea5f9f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0001.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0002.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0003.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0004.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0005.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0006.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0007.png">
 <meta property="article:published_time" content="2020-09-21T18:00:50.000Z">
-<meta property="article:modified_time" content="2020-12-17T14:49:52.101Z">
+<meta property="article:modified_time" content="2021-02-08T16:26:41.655Z">
 <meta property="article:author" content="Lyndon">
 <meta property="article:tag" content="jupyter">
 <meta property="article:tag" content="pdf">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2473543-b37f85b5584364b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0001.png">
 
 <link rel="canonical" href="http://lynsdata.cn/2020/09/22/jupyter-notebook-to-pdf-ns.html">
 
@@ -233,7 +232,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-17 22:49:52" itemprop="dateModified" datetime="2020-12-17T22:49:52+08:00">2020-12-17</time>
+                <time title="修改时间：2021-02-09 00:26:41" itemprop="dateModified" datetime="2021-02-09T00:26:41+08:00">2021-02-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -254,7 +253,7 @@
               <span id="busuanzi_value_page_pv"></span>
             </span>
 			<span class="post-meta-divider">|</span>
-				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 660 字 | ≈</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 638 字 | ≈</span>
            <span title="post.min2read">
 				2 分钟
 			</span>
@@ -271,16 +270,16 @@
         <p><strong>Jupyter Notebook</strong> 是很好的数据科学创作环境，反正我做数据分析的项目或小练习的时候，基本都是在用jupyter notebook（原先是叫ipython notebook，所以现在文件后缀还是.ipynb），以前不怎么用到导出pdf功能，然后要用的时候就遇到很多坑了。jupyter提供导出的格式有.py、.html、.md、.pdf等。</p>
 <a id="more"></a>
 
-<p><img src="https://upload-images.jianshu.io/upload_images/2473543-b37f85b5584364b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="jupyter notebook支持的导出格式"></p>
+<p><img src="/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0001.png" alt="jupyter notebook支持的导出格式"></p>
 <p>从效果来看，网页中notebook的渲染是最好看的，导出的html对代码和超链接失真严重。在网页上点<em>Download as -&gt; PDF via LaTex</em>的时候先是说缺少Pandoc库，于是pip install pandoc，之后不再说缺少这个库了，而是<br> nbconvert failed: pdflatex not found on PATH 或者 nbconvert failed: PDF creating failed, captured latex output。查了一些资料后改用命令行，要避免*’xelatex’ 不是内部或外部命令，也不是可运行的程序或批处理文件*，需要先安装MiKTeX，在其<a target="_blank" rel="noopener" href="https://miktex.org/download">官网下载</a>后，Windows版一路next安装就行，安装包有190MB，安装过程还是耗费些时间的，下载安装完成之后的步骤是：</p>
-<h3 id="1-ipynb文件编译为tex"><a href="#1-ipynb文件编译为tex" class="headerlink" title="1, ipynb文件编译为tex"></a>1, ipynb文件编译为tex</h3><p>在命令行中定位到要转换的jupyter文件的路径下，输入<br> <strong>jupyter nbconvert –to latex yourNotebookName.ipynb</strong></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2473543-3066970796a6043b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="编译ipynb文件为LaTeX文件"><br>在文件目录下就可以看到一个叫<strong>yourNotebookName.tex</strong>的LaTeX文件了。</p>
-<h3 id="2-手动编辑latex文件"><a href="#2-手动编辑latex文件" class="headerlink" title="2, 手动编辑latex文件"></a>2, 手动编辑latex文件</h3><p>为了能支持输出中文，需要改一下tex文件，在编辑器（我用的是Notepad++）打开刚才生成的LaTeX文件，<br>在**\documentclass{article}**（没有这一句就在\documentclass[11pt]{ctexart} 的后面插入下面的语句）后面插入</p>
+<h3 id="ipynb文件编译为tex"><a href="#ipynb文件编译为tex" class="headerlink" title="ipynb文件编译为tex"></a>ipynb文件编译为tex</h3><p>在命令行中定位到要转换的jupyter文件的路径下，输入<br> <strong>jupyter nbconvert –to latex yourNotebookName.ipynb</strong></p>
+<p><img src="/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0002.png" alt="编译ipynb文件为LaTeX文件"><br>在文件目录下就可以看到一个叫<strong>yourNotebookName.tex</strong>的LaTeX文件了。</p>
+<h3 id="手动编辑latex文件"><a href="#手动编辑latex文件" class="headerlink" title="手动编辑latex文件"></a>手动编辑latex文件</h3><p>为了能支持输出中文，需要改一下tex文件，在编辑器（我用的是Notepad++）打开刚才生成的LaTeX文件，<br>在**\documentclass{article}**（没有这一句就在\documentclass[11pt]{ctexart} 的后面插入下面的语句）后面插入</p>
 <figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">\usepackage</span>&#123;fontspec, xunicode, xltxtra&#125;</span><br><span class="line"><span class="keyword">\setmainfont</span>&#123;Microsoft YaHei&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://upload-images.jianshu.io/upload_images/2473543-898fdf8271689505.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="修改latex文件"></p>
-<h3 id="3-转latex为pdf"><a href="#3-转latex为pdf" class="headerlink" title="3, 转latex为pdf"></a>3, 转latex为pdf</h3><p>随后在命令行下输入：（我演示文件用的是GeoCluster.tex）</p>
+<p><img src="/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0003.png" alt="修改latex文件"></p>
+<h3 id="转latex为pdf"><a href="#转latex为pdf" class="headerlink" title="转latex为pdf"></a>转latex为pdf</h3><p>随后在命令行下输入：（我演示文件用的是GeoCluster.tex）</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xelatex yourNotebookName.tex</span><br></pre></td></tr></table></figure>
-<p><img src="https://upload-images.jianshu.io/upload_images/2473543-6624da52f9d4d9d1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="命令行转latex为pdf"><br>之前没有运行过xelatex，首次运行会安装一些依赖文件，会慢一些，最后运行完毕：<br><img src="https://upload-images.jianshu.io/upload_images/2473543-192ac8f3fe434b96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="运行完xelatex命令"><br>可以在文件夹下看到输出的文件：<br><img src="https://upload-images.jianshu.io/upload_images/2473543-c7f89da3bad6866f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="最后文件夹下的结果"></p>
+<p><img src="/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0004.png" alt="命令行转latex为pdf"><br>之前没有运行过xelatex，首次运行会安装一些依赖文件，会慢一些，最后运行完毕：<br><img src="/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0005.png" alt="运行完xelatex命令"><br>可以在文件夹下看到输出的文件：<br><img src="/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0006.png" alt="最后文件夹下的结果"></p>
 <ul>
 <li>.ipynb 是我们的jupyter文件</li>
 <li>.tex 是由jupyter notebook文件生成的</li>
@@ -288,8 +287,7 @@
 <li>.log、.out、.aux是LaTex生成pdf的一些输出和日志</li>
 </ul>
 <p>总结一下，从jupyter notebook生成pdf文件需要的依赖项还是比较多的，Windows下安装MiKTeX才能用xelatex命令。生成步骤是先把ipynb文件编译为LaTex，然后为了支持中文修改一下lex文件，最后转换为pdf文件。 </p>
-<p>最后效果如下，虽然还是比不上网页端.ipynb的直接渲染效果，但比起导出的html等格式，更好地作为展示格式。<br><img src="https://upload-images.jianshu.io/upload_images/2473543-036c476dcddbbca0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="生成pdf的效果"></p>
-<p>欢迎关注本人公众号，有更多有趣内容和资料：<br><img src="https://upload-images.jianshu.io/upload_images/2473543-a07a806b9ea5f9f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="lyns-sailing.png"></p>
+<p>最后效果如下，虽然还是比不上网页端.ipynb的直接渲染效果，但比起导出的html等格式，更好地作为展示格式。<br><img src="/2020/09/22/jupyter-notebook-to-pdf-ns/ipynb2pdf-0007.png" alt="生成pdf的效果"></p>
 
     </div>
 
@@ -375,7 +373,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-ipynb%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BAtex"><span class="nav-number">1.</span> <span class="nav-text">1, ipynb文件编译为tex</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%89%8B%E5%8A%A8%E7%BC%96%E8%BE%91latex%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">2, 手动编辑latex文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BD%AClatex%E4%B8%BApdf"><span class="nav-number">3.</span> <span class="nav-text">3, 转latex为pdf</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ipynb%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BAtex"><span class="nav-number">1.</span> <span class="nav-text">ipynb文件编译为tex</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E7%BC%96%E8%BE%91latex%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">手动编辑latex文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AClatex%E4%B8%BApdf"><span class="nav-number">3.</span> <span class="nav-text">转latex为pdf</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -393,17 +391,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">7</span>
-        <span class="site-state-item-name">分类</span>
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">19</span>
-        <span class="site-state-item-name">标签</span>
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -444,7 +445,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class=""></i>
   </span>
