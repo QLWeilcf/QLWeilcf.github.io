@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="cutecharts简介Matplotlib默认主题下绘制的可视化图形如一位高贵冷艳、不沾烟火的冰山女神，而cutecharts的图就像不拘常规、潇洒无羁的活力少年。 cutecharts是基于chart.xkcd的Python可视化库，chart.xkcd则是基于SVG来绘制可视化图表的JavaScript库，cutecharts充分利用了JavaScript灵活易用的特点，通过简单的语句让可视">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手绘效果为图表添色，cutecharts带你画Q版可视图|可视化系列04">
+<meta property="og:url" content="http://lynsdata.cn/2020/05/01/viz-cutecharts.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="cutecharts简介Matplotlib默认主题下绘制的可视化图形如一位高贵冷艳、不沾烟火的冰山女神，而cutecharts的图就像不拘常规、潇洒无羁的活力少年。 cutecharts是基于chart.xkcd的Python可视化库，chart.xkcd则是基于SVG来绘制可视化图表的JavaScript库，cutecharts充分利用了JavaScript灵活易用的特点，通过简单的语句让可视">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-00-mat-vscute-0.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-02-cutecharts-tick.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-03-Scatter-cutechart-501.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-04-bar-501.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-05-bar-fms-cute-xmind.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-06-pie-sun-cute-501.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-07-pie-cute-xmind.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-08-radar-cutechart.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-09-rader-fms-cute-xmind.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-10-cutecharts-and-xkcd.PNG">
+<meta property="article:published_time" content="2020-05-01T04:47:41.000Z">
+<meta property="article:modified_time" content="2020-12-17T14:36:21.539Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="viz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/05/01/viz-cutecharts/04-00-mat-vscute-0.PNG">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/05/01/viz-cutecharts.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>手绘效果为图表添色，cutecharts带你画Q版可视图|可视化系列04 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/05/01/viz-cutecharts.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          手绘效果为图表添色，cutecharts带你画Q版可视图|可视化系列04
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-01 12:47:41" itemprop="dateCreated datePublished" datetime="2020-05-01T12:47:41+08:00">2020-05-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-17 22:36:21" itemprop="dateModified" datetime="2020-12-17T22:36:21+08:00">2020-12-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">可视化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 1.6k 字 | ≈</span>
+           <span title="post.min2read">
+				6 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="cutecharts简介"><a href="#cutecharts简介" class="headerlink" title="cutecharts简介"></a>cutecharts简介</h3><p>Matplotlib默认主题下绘制的可视化图形如一位高贵冷艳、不沾烟火的冰山女神，而cutecharts的图就像不拘常规、潇洒无羁的活力少年。</p>
+<p><img src="/2020/05/01/viz-cutecharts/04-00-mat-vscute-0.PNG" alt="纤尘不染vs洒脱无畏"><br>cutecharts是基于chart.xkcd的Python可视化库，chart.xkcd则是基于SVG来绘制可视化图表的JavaScript库，cutecharts充分利用了JavaScript灵活易用的特点，通过简单的语句让可视化图形有强大的表现力和优秀的交互效果，对操作系统和设备的依赖很低。</p>
+<p>cutecharts进行可视化的基本代码框架如下：</p>
+<a id="more"></a>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cutecharts.charts <span class="keyword">as</span> ctc</span><br><span class="line">df=pd.DataFrame(&#123;<span class="string">&#x27;x&#x27;</span>:[<span class="string">&#x27;Mon.&#x27;</span>,<span class="string">&#x27;Tue.&#x27;</span>,<span class="string">&#x27;Wed.&#x27;</span>,<span class="string">&#x27;Thu.&#x27;</span>,<span class="string">&#x27;Fri.&#x27;</span>],</span><br><span class="line">                 <span class="string">&#x27;y&#x27;</span>:[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>],</span><br><span class="line">				 <span class="string">&#x27;z&#x27;</span>:[<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>]&#125;)</span><br><span class="line">chart = ctc.Line(<span class="string">&quot;title&quot;</span>,width=<span class="string">&#x27;500px&#x27;</span>,height=<span class="string">&#x27;400px&#x27;</span>) <span class="comment">#新建折线图</span></span><br><span class="line">chart.set_options(</span><br><span class="line">    labels=<span class="built_in">list</span>(df[<span class="string">&#x27;x&#x27;</span>]),  <span class="comment">#注意输入的是可迭代对象，但直接df[&#x27;x&#x27;]不行</span></span><br><span class="line">    x_label=<span class="string">&quot;Weekday&quot;</span>, </span><br><span class="line">    y_label=<span class="string">&quot;US&quot;</span> )</span><br><span class="line">chart.add_series(<span class="string">&quot;This Week&quot;</span>, <span class="built_in">list</span>(df[<span class="string">&#x27;y&#x27;</span>])) <span class="comment">#同样不能直接df[&#x27;y&#x27;]</span></span><br><span class="line">chart.add_series(<span class="string">&quot;Last Week&quot;</span>, <span class="built_in">list</span>(df[<span class="string">&#x27;z&#x27;</span>]))</span><br><span class="line">chart.render_notebook()</span><br></pre></td></tr></table></figure>
+
+<p>cutecharts通过charts建立绘图对象，应用层的类有Line/Bar/Scatter等5个，<br>在语法上，通过charts.Line(“title”,width,height)建立折线图对象，设置标题、图表大小，然后统一通过.add_series()传入各坐标轴的数据，通过.set_options()设置各种图表参数，如坐标轴标签、轴标题和图元颜色等。<br>set_options和add_series的语句顺序可以调换。<code>chart.render_notebook()</code>将图在jupyter notebook中渲染出来。</p>
+<h3 id="Line"><a href="#Line" class="headerlink" title="Line"></a>Line</h3><p>绘制一个折线图的代码和绘图效果上面已经提到，add_series()对应一条线，多个add_series()就是在图中绘制多条折线。<code>.set_options()</code>可以设置的参数如下：</p>
+<ul>
+<li>labels：X坐标轴的数据，输入的是可迭代对象，但直接df[‘x’]不行，不支持Series；</li>
+<li>x_label/y_label：分别对应X坐标轴名称和Y坐标轴名称；</li>
+<li>y_tick_count：Y轴刻度分割段数；</li>
+<li>colors 颜色数组，支持满足CSS样式的各种颜色输入方式；</li>
+<li>legend_pos：图例位置，可选四个位置{“upLeft”, “upRight”, “downLeft”, “downRight”}，默认upLeft；</li>
+<li>font_family：设置文本的字体；</li>
+</ul>
+<p><img src="/2020/05/01/viz-cutecharts/04-02-cutecharts-tick.PNG" alt="cutecharts 常用参数对应图元"></p>
+<h4 id="图像输出"><a href="#图像输出" class="headerlink" title="图像输出"></a>图像输出</h4><p>我们通过.Line()创建图并且通过<code>.add_series()</code>及<code>.set_options()</code>设置数据及图元之后，通过<code>chart.render(&quot;fname.html&quot;)</code>输出为本地的HTML文档，打开HTML就是一个可视化图像。render的参数有dest表示输出文件的路径，template_name表示渲染所用的模板。<br><code>chart.render_notebook()</code>是在jupyter notebook中直接出图。<code>chart.load_javascript()</code>加载 JS 依赖，在 JupyterLab 渲染时用。</p>
+<h3 id="Scatter"><a href="#Scatter" class="headerlink" title="Scatter"></a>Scatter</h3><p>Scatter用于绘制散点图，例子代码及绘图效果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">chart = ctc.Scatter(<span class="string">&#x27;title&#x27;</span>,width=<span class="string">&#x27;500px&#x27;</span>,height=<span class="string">&#x27;400px&#x27;</span>)</span><br><span class="line">chart.set_options(</span><br><span class="line">    x_label=<span class="string">&quot;xlabel&quot;</span>, </span><br><span class="line">    y_label=<span class="string">&quot;ylabel&quot;</span> ,</span><br><span class="line">    colors=[<span class="string">&#x27;#1EAFAE&#x27;</span>,<span class="string">&#x27;#BA5C25&#x27;</span>],</span><br><span class="line">    dot_size=<span class="number">1</span>)</span><br><span class="line">chart.add_series(<span class="string">&quot;y&quot;</span>,[(c[<span class="string">&#x27;y&#x27;</span>],c[<span class="string">&#x27;z&#x27;</span>]) <span class="keyword">for</span> i,c <span class="keyword">in</span> df.iterrows()])</span><br><span class="line">chart.add_series(<span class="string">&quot;dy&quot;</span>,[(c[<span class="string">&#x27;z&#x27;</span>],c[<span class="string">&#x27;y&#x27;</span>]) <span class="keyword">for</span> i,c <span class="keyword">in</span> df.iterrows()])</span><br><span class="line">chart.render_notebook()</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2020/05/01/viz-cutecharts/04-03-Scatter-cutechart-501.PNG" alt="Scatter效果图"></p>
+<p><code>.set_options()</code>支持设置的参数如下：</p>
+<ul>
+<li>x_label/y_label：分别对应X坐标轴名称和Y坐标轴名称；</li>
+<li>x_tick_count/y_tick_count：X轴和Y轴刻度分割段数；</li>
+<li>is_show_line：是否绘制散点连线的效果；</li>
+<li>dot_size  目前没有点的形状？</li>
+<li>colors 颜色数组，如果是一个颜色也要写成<code>[&#39;#1EAFAE&#39;]</code>形式；</li>
+<li>time_format：日期数据类型的展示格式；</li>
+<li>legend_pos：图例位置，可选四个位置{“upLeft”, “upRight”, “downLeft”, “downRight”}，默认upLeft；</li>
+<li>font_family：设置文本的字体；</li>
+</ul>
+<p>根据上面的参数解释，需要说明的是，绘制带端点的折线用的是Scatter并设置is_show_line=True，而不是用Line。</p>
+<h3 id="Bar"><a href="#Bar" class="headerlink" title="Bar"></a>Bar</h3><p>ctc.Bar()用于绘制柱状图。例子代码及绘图效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">chart &#x3D; ctc.Bar(&#39;title&#39;,width&#x3D;&#39;500px&#39;,height&#x3D;&#39;400px&#39;)</span><br><span class="line">chart.set_options(</span><br><span class="line">    labels&#x3D;list(df[&#39;x&#39;]),</span><br><span class="line">    x_label&#x3D;&quot;Weekday&quot;, </span><br><span class="line">    y_label&#x3D;&quot;US&quot; ,</span><br><span class="line">    colors&#x3D;[&#39;#1EAFAE&#39; for i in range(len(df))]</span><br><span class="line">    )</span><br><span class="line">chart.add_series(&quot;y&quot;,list(df[&#39;y&#39;]))</span><br><span class="line">chart.add_series(&quot;z&quot;,list(df[&#39;z&#39;]))</span><br><span class="line">chart.render_notebook()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/2020/05/01/viz-cutecharts/04-04-bar-501.PNG" alt="bar效果图"></p>
+<p><code>.set_options()</code>支持设置的参数如下：</p>
+<p><img src="/2020/05/01/viz-cutecharts/04-05-bar-fms-cute-xmind.PNG" alt="bar参数"></p>
+<h3 id="Pie"><a href="#Pie" class="headerlink" title="Pie"></a>Pie</h3><p>ctc.Pie()用于绘制饼图。例子代码及绘图效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">chart &#x3D; ctc.Pie(&#39;title&#39;,width&#x3D;&#39;500px&#39;,height&#x3D;&#39;400px&#39;)</span><br><span class="line">chart.set_options(</span><br><span class="line">    labels&#x3D;list(df[&#39;x&#39;]),</span><br><span class="line">    inner_radius&#x3D;0</span><br><span class="line">    )</span><br><span class="line">chart.add_series(list(df[&#39;y&#39;])) #只接受一个参数，也就是数据列</span><br><span class="line">chart.render_notebook()</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2020/05/01/viz-cutecharts/04-06-pie-sun-cute-501.PNG" alt="饼图和环状图"></p>
+<p>和之前的图不同的是，Pie的<code>.add_series()</code>只接受一个参数，也就是数据列。<code>.set_options()</code>支持设置的参数如下：</p>
+<p><img src="/2020/05/01/viz-cutecharts/04-07-pie-cute-xmind.PNG" alt="pie参数"></p>
+<h3 id="Radar"><a href="#Radar" class="headerlink" title="Radar"></a>Radar</h3><p>ctc.Radar()用于绘制雷达图。例子代码及绘图效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">chart &#x3D; ctc.Radar(&#39;Radar&#39;,width&#x3D;&#39;700px&#39;,height&#x3D;&#39;600px&#39;)</span><br><span class="line">chart.set_options(</span><br><span class="line">    labels&#x3D;list(df[&#39;x&#39;]),</span><br><span class="line">    legend_pos&#x3D;&#39;upRight&#39;</span><br><span class="line">    )</span><br><span class="line">chart.add_series(&#39;y&#39;,list(df[&#39;y&#39;]))</span><br><span class="line">chart.add_series(&quot;z&quot;,list(df[&#39;z&#39;]))</span><br><span class="line">chart.render_notebook()</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2020/05/01/viz-cutecharts/04-08-radar-cutechart.PNG" alt="radar效果图"></p>
+<p><code>.set_options()</code>支持设置的参数如下：</p>
+<p><img src="/2020/05/01/viz-cutecharts/04-09-rader-fms-cute-xmind.PNG" alt="radar 参数"></p>
+<h3 id="chart-xkcd"><a href="#chart-xkcd" class="headerlink" title="chart.xkcd"></a>chart.xkcd</h3><p>cutecharts基于chart.xkcd进行封装，通过看两个库的源码可以看到的是chart.xkcd枚举了Line、Bar、Radar等图来绘制具有手绘效果的图像。cutecharts几个绘图接口和chart.xkcd的对应关系如下：</p>
+<p><img src="/2020/05/01/viz-cutecharts/04-10-cutecharts-and-xkcd.PNG" alt="cutecharts和xkcd的对应"></p>
+<p>chart.xkcd还有一个StackedBar()用于绘制堆叠柱状图，目前cutecharts还没有。从源码中能看到，chart.xkcd用到了d3-selection、d3-scale等d3.js的脚手架来做交互和DOM操纵(关于D3可视化后续公众号会更新6篇系列文章进行实践，目前有一篇<a href>概览性文章</a>)，同时为了实现手绘效果，在具体绘制柱状图等图表时，通过<code>addFilter.js</code>添加偏移量形成手绘线条的效果、通过xkcd字体来实现文本的手写效果。通过 <code>addAxis.js</code>、<code>addLegend.js</code>等绘制坐标轴和文本，要深入chart.xkcd具体的绘图细节，可以去深入研究一下源码。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>基于JavaScript库实现可视化，可以很好地实现交互、高亮等实用的功能，给可视化添色，Python作为一种胶水语言并且具有活跃的社区，将JavaScript可视化库变成Python可视化库也并不复杂，广泛应用的pyecharts就是基于echarts开发的，语法上cutecharts的写法和pyecharts一脉相承，理解了cutecharts的写法，对学习pyecharts也有帮助。<br>和pyecharts支持丰富的图表类型不同，受限于chart.xkcd本身只支持6种图（且连常用的条形图都不包含），cutecharts支持的图表也很少，只能满足常用的图表，组合图绘制也心有余而力不足，另外使用默认字体时中文文本没有漫画/手绘的效果，需要配置对应字体。</p>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/chenjiandongx/cutecharts">https://github.com/chenjiandongx/cutecharts</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/timqian/chart.xkcd">https://github.com/timqian/chart.xkcd</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/viz/" rel="tag"><i class="fa fa-tag"></i> viz</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/28/viz-pygal.html" rel="prev" title="一个小巧而有特色的Python矢量可视化库：pygal">
+      <i class="fa fa-chevron-left"></i> 一个小巧而有特色的Python矢量可视化库：pygal
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/03/viz-altair-stat-datasets-elegant-trans.html" rel="next" title="统计图表的优雅变换:Altair|可视化系列06">
+      统计图表的优雅变换:Altair|可视化系列06 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#cutecharts%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">cutecharts简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Line"><span class="nav-number">2.</span> <span class="nav-text">Line</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E8%BE%93%E5%87%BA"><span class="nav-number">2.1.</span> <span class="nav-text">图像输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Scatter"><span class="nav-number">3.</span> <span class="nav-text">Scatter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bar"><span class="nav-number">4.</span> <span class="nav-text">Bar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pie"><span class="nav-number">5.</span> <span class="nav-text">Pie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Radar"><span class="nav-number">6.</span> <span class="nav-text">Radar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chart-xkcd"><span class="nav-number">7.</span> <span class="nav-text">chart.xkcd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

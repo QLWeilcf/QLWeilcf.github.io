@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LynPyVisLandscape</title>
+            <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+	<script type="text/javascript"  src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<div class="main">
+	<!--
+	<div id="container" style="height:850px"></div>
+	-->
+	<div id="84d9d00870d948cfb6d3c4cd287e6bf6" class="chart-container" style="width:1200px; height:820px;"></div>
+    <script>
+        var chart_84d9d00870d948cfb6d3c4cd287e6bf6 = echarts.init(
+            document.getElementById('84d9d00870d948cfb6d3c4cd287e6bf6'), 'white', {renderer: 'canvas'});
+        var option_84d9d00870d948cfb6d3c4cd287e6bf6 = {
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "color": [
+        "#1eafae",
+        "#ba5c25",
+        "#F4127B",
+        "#ffa069",
+        "#CDAF95",
+        "#9BCD9B"
+    ],
+    "series": [
+        {
+            "type": "graph",
+            "name": "py-viz-lyn",
+            "layout": "force", //改为circular，就是环形布局
+            "symbol": "roundRect",
+            "symbolSize": [
+                95,
+                32
+            ],
+            "circular": {
+                "rotateLabel": false
+            },
+            "force": {
+                "repulsion": 4000,
+                "edgeLength": 42,
+                "gravity": 0.2
+            },
+            "label": {
+                "show": true,
+                "position": "inside",
+                "color": "#fff",
+                "margin": 0
+            },
+            "lineStyle": {
+                "width": 1,
+                "opacity": 1,
+                "curveness": 0,
+                "type": "solid",
+                "color": "source"
+            },
+            "roam": true,
+            "draggable": true,
+            "focusNodeAdjacency": true,
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Matplotlib",
+                    "value": "Python经典可视化库",
+                    "symbolSize": [
+                        125,
+                        54
+                    ],
+					"label":{
+						"fontSize": 13
+					},
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 2,
+                    "name": "seaborn",
+                    "value": "\u5bf9Matplotlib\u7684\u9ad8\u7ea7\u5c01\u88c5\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        93,
+                        35
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 30,
+                    "name": "d3js",
+                    "value": "Data-Driven Documents，著名绘图工具，接口强大",
+                    "symbolSize": [
+                        103,
+                        52
+                    ],
+					"label":{
+						"fontSize": 13
+					},
+                    "category": "D3"
+                },
+                {
+                    "id": 50,
+                    "name": "javascript",
+                    "value": "\u524d\u7aef",
+                    "symbolSize": [
+                        115,
+                        52
+                    ],
+					"label":{
+						"fontSize": 13
+					},
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 70,
+                    "name": "OpenGL",
+                    "value": "\u53ef\u89c6\u5316\u6846\u67b6",
+                    "symbolSize": [
+                        113,
+                        53
+                    ],
+					"label":{
+						"fontSize": 13
+					},
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 3,
+                    "name": "ggpy",
+                    "value": "图形语法集大成库ggplot2在Python的实践\n 项目叫ggpy，库名叫ggplot。",
+                    "symbolSize": [
+                        95,
+                        34
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 4,
+                    "name": "plotnine",
+                    "value": "ggplot2\u5e93\u7684\u53e6\u4e00Python\u5b9e\u73b0\uff0c\u6709\u66f4\u591a\u4f18\u5316",
+                    "symbolSize": [
+                        105,
+                        43
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 5,
+                    "name": "pandas-plot",
+                    "value": "pandas\u5185\u7f6e\u7b80\u5355\u7ed8\u56fe\u6a21\u5757\uff0c\u57fa\u4e8eMatplotlib API",
+                    "symbolSize": [
+                        115,
+                        35
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 6,
+                    "name": "cartopy",
+                    "value": "Python\u5730\u7406\u6570\u636e\u5904\u7406\u548c\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        100,
+                        37
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 7,
+                    "name": "basemap",
+                    "value": "matplotlib\u4e0b\u7684\u5730\u56fe\u53ef\u89c6\u5316\u6a21\u5757",
+                    "symbolSize": [
+                        102,
+                        33
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 8,
+                    "name": "YT",
+                    "value": "\u7269\u7406\u6750\u6599\u3001\u4f53\u5bc6\u5ea6\u5206\u5e03\u7684\u53ef\u89c6\u5316",
+                    "symbolSize": [
+                        60,
+                        30
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 9,
+                    "name": "networkx",
+                    "value": "\u4f18\u79c0\u7684\u5173\u7cfb\u6570\u636e\u5904\u7406\u548c\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        113,
+                        35
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 10,
+                    "name": "graphviz",
+                    "value": "\u4e00\u4e2a\u7528\u4e8e\u5173\u7cfb\u6570\u636e\u53ef\u89c6\u5316\u7684\u5305",
+                    "symbolSize": [
+                        102,
+                        30
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 11,
+                    "name": "graph-tool",
+                    "value": "\u4e00\u4e2a\u7528\u6765\u5bf9\u56fe\u7ed3\u6784\u8fdb\u884c\u64cd\u7eb5\u548c\u7edf\u8ba1\u5206\u6790\u7684Python\u5305\uff0c\u6709\u5f88\u5f3a\u7684\u53ef\u89c6\u5316\u63a5\u53e3\u3002",
+                    "symbolSize": [
+                        114,
+                        35
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 12,
+                    "name": "glueviz",
+                    "value": "\u9ad8\u7ef4\u5ea6\u6570\u636e\u53ef\u89c6\u5316\u5305\uff0c\u53ef\u4ee5\u8fdb\u884c3D\u4eba\u4f53\u7ec4\u7ec7\u3001\u5929\u6587\u5b66\u7684\u53ef\u89c6\u5316",
+                    "symbolSize": [
+                        99,
+                        35
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 13,
+                    "name": "scikit-plot",
+                    "value": "Scikit-learn\u5305\u63d0\u4f9b\u7684\u53ef\u89c6\u5316\u63a5\u53e3,\u7528\u5230\u4e86Matplotlib",
+                    "symbolSize": [
+                        113,
+                        35
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 14,
+                    "name": "yellowbrick",
+                    "value": "结合了Scikit-Learn接口和Matplotlib的机器学习可视化库；<br /> 能集成地把一些机器学习模型的结果画成统计图。",
+                    "symbolSize": [
+                        120,
+                        40
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 15,
+                    "name": "Vaex",
+                    "value": "\u5f00\u6e90\u7684DataFrame<br />\u5e93\uff0c\u5b83\u53ef\u4ee5\u5bf9\u8868\u683c\u6570\u636e\u96c6\u8fdb\u884c\u53ef\u89c6\u5316\u3001\u63a2\u7d22\u3001\u5206\u6790\uff0c\u81f4\u529b\u4e8e\u5904\u7406GB\u7ea7\u7684\u8868\u683c\u6570\u636e\u3002",
+                    "symbolSize": [
+                        60,
+                        30
+                    ],
+                    "category": "Matplotlib"
+                },
+                {
+                    "id": 31,
+                    "name": "altair",
+                    "value": "\u4e00\u4e2a\u4e0d\u9519\u7684\u7edf\u8ba1\u6570\u636e\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        90,
+                        35
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 32,
+                    "name": "vega-lite",
+                    "value": "\u4e00\u4e2a\u9ad8\u5c01\u88c5\u7684\u4ea4\u4e92\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        110,
+                        35
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 33,
+                    "name": "vega",
+                    "value": "\u4e00\u79cd\u53ef\u89c6\u5316\u8bed\u6cd5\uff0c\u901a\u8fc7json\u8fdb\u884c\u63cf\u8ff0\u548c\u5206\u4eab",
+                    "symbolSize": [
+                        70,
+                        30
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 34,
+                    "name": "PdVega",
+                    "value": "\u65b9\u4fbf\u5904\u7406pandas\u6570\u636e\u7684vega-lite\u5c01\u88c5\u5e93",
+                    "symbolSize": [
+                        104,
+                        35
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 35,
+                    "name": "vincent",
+                    "value": "\u4e00\u4e2aVega\u7684Python\u7ffb\u8bd1\u7248\uff0c2016\u5e74\u4e4b\u540e\u5c31\u4e0d\u518d\u66f4\u65b0\uff0cgithub\u4e0a\u5efa\u8bae\u53bb\u4e86\u89e3altair\u3002",
+                    "symbolSize": [
+                        108,
+                        35
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 36,
+                    "name": "mpld3",
+                    "value": "\u901a\u8fc7d3\u628amatplotlib\u63a5\u53e3\u79fb\u690d\u5230web\u7aef",
+                    "symbolSize": [
+                        75,
+                        33
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 37,
+                    "name": "d3py",
+                    "value": "\u4e00\u4e2a\u5bf9d3\u5c01\u88c5\u7684Python\u53ef\u89c6\u5316\u5e93\uff0c\u6d3b\u8dc3\u4e8e2012\u5e74\uff0c4\u5e74\u524dgithub\u5c31\u4e0d\u518d\u66f4\u65b0",
+                    "symbolSize": [
+                        80,
+                        30
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 38,
+                    "name": "d3po",
+                    "value": "\u4e00\u4e2a\u5bf9d3\u5c01\u88c5\u7684Python\u53ef\u89c6\u5316\u5e93\uff0c\u76ee\u524d\u7f51\u7ad9\u56fd\u5185\u8bbf\u95ee\u4e0d\u4e86\u4e86",
+                    "symbolSize": [
+                        80,
+                        30
+                    ],
+                    "category": "D3"
+                },
+                {
+                    "id": 51,
+                    "name": "bokeh",
+                    "value": "\u4e3a\u73b0\u4ee3\u6d4f\u89c8\u5668\u800c\u751f\u7684\u4ea4\u4e92\u53ef\u89c6\u5316\u5e93\uff0cpydata\u529b\u63a8",
+                    "symbolSize": [
+                        80,
+                        32
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 52,
+                    "name": "datashader",
+                    "value": "\u5bf9\u5927\u89c4\u6a21\u6570\u636e\u8fdb\u884c\u8f6c\u6362\u805a\u5408\u7684\u5e93",
+                    "symbolSize": [
+                        115,
+                        32
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 53,
+                    "name": "holoviews",
+                    "value": "\u5728bokeh\u57fa\u7840\u4e0a\u53d1\u5c55\u8d77\u6765\u7684\uff0c\u91c7\u7528\u53e6\u4e00\u79cd\u53ef\u89c6\u5316\u54f2\u5b66\uff0c\u81f4\u529b\u4e8e\u8ba9\u6570\u636e\u5206\u6790\u548c\u53ef\u89c6\u5316\u66f4\u65e0\u7f1d\u8854\u63a5\u66f4\u7b80\u5355",
+                    "symbolSize": [
+                        112,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 54,
+                    "name": "hvplot",
+                    "value": "\u5bf9holoviews\u7684\u8fdb\u4e00\u6b65\u5c01\u88c5",
+                    "symbolSize": [
+                        76,
+                        32
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 55,
+                    "name": "geoviews",
+                    "value": "\u548cheloviews\u7c7b\u4f3c\uff0c\u76ee\u6807\u5728\u5904\u7406\u5730\u7406\u6570\u636e\u4e0a",
+                    "symbolSize": [
+                        100,
+                        32
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 56,
+                    "name": "chartify",
+                    "value": "\u57fa\u4e8ebokeh\u5c01\u88c5\uff0c\u81f4\u529b\u4e8e\u8ba9\u6570\u636e\u79d1\u5b66\u5bb6\u66f4\u5bb9\u6613\u4f7f\u7528",
+                    "symbolSize": [
+                        99,
+                        35
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 57,
+                    "name": "bqplot",
+                    "value": "\u57fa\u4e8e\u56fe\u5f62\u8bed\u6cd5\u8303\u5f0f\u7684Python\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        80,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 58,
+                    "name": "plotly",
+                    "value": "\u4f18\u79c0\u7684\u53ef\u89c6\u5316\u5e93\uff0cplotly_exprress\u8fdb\u4e00\u6b65\u63d0\u5347\u4e86plotly\u7684\u6613\u7528\u7a0b\u5ea6",
+                    "symbolSize": [
+                        92,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 59,
+                    "name": "cufflinks",
+                    "value": "\u5bf9plotly\u7684\u8fdb\u4e00\u6b65\u5c01\u88c5\uff0c\u65b9\u4fbfpandas\u5904\u7406\u6570\u636e\u540e\u7684\u53ef\u89c6\u5316",
+                    "symbolSize": [
+                        110,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 60,
+                    "name": "lightning",
+                    "value": "\u6709\u591a\u5957\u8bed\u8a00\u63a5\u53e3\u7684web\u53ef\u89c6\u5316\u5de5\u5177",
+                    "symbolSize": [
+                        110,
+                        40
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 61,
+                    "name": "ipyvolume",
+                    "value": "\u7528\u5230WebGL\u5bf9jupyter\u652f\u6301\u826f\u597d\u7684\u4e09\u7ef4\u53ef\u89c6\u5316\u5305",
+                    "symbolSize": [
+                        110,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 62,
+                    "name": "ipyleaflet",
+                    "value": "\u53e6\u4e00\u4e2a\u5bf9leaflet\u8fdb\u884c\u5c01\u88c5\u7684\u5730\u56fe\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        112,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 63,
+                    "name": "folium",
+                    "value": "\u5bf9leaflet\u8fdb\u884c\u5c01\u88c5\u7684\u5730\u56fe\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        90,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 64,
+                    "name": "pythreejs",
+                    "value": "\u5bf9threejs\u5c01\u88c5\u7684Python\u4e09\u7ef4\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        112,
+                        31
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 65,
+                    "name": "toyplot",
+                    "value": "\u4e00\u4e2a\u57fa\u4e8ecanvas\u7684\u7b80\u6d01\u7684Python\u53ef\u89c6\u5316\u5e93\uff0c\u56fe\u5f62\u7b80\u6d01\uff0c\u53ef\u914d\u7f6e\u6027\u5f3a",
+                    "symbolSize": [
+                        100,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 66,
+                    "name": "pyecharts",
+                    "value": "\u5bf9echarts\u8fdb\u884c\u5c01\u88c5\u7684\u4f18\u79c0Python\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        112,
+                        30
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 67,
+                    "name": "cutecharts",
+                    "value": "\u6f2b\u753b\u624b\u7ed8\u6548\u679c\u7edf\u8ba1\u56fe\u53ef\u89c6\u5316\u5e93",
+                    "symbolSize": [
+                        109,
+                        32
+                    ],
+                    "category": "JavaScript"
+                },
+                {
+                    "id": 71,
+                    "name": "vispy",
+                    "value": "\u4e00\u4e2a\u79d1\u5b66\u9886\u57df\u53ef\u89c6\u5316\u5e93\uff0c\u5168\u9762\uff0c\u5f3a\u5927\u3002",
+                    "symbolSize": [
+                        80,
+                        30
+                    ],
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 72,
+                    "name": "visvis",
+                    "value": "\u7528\u9762\u5411\u5bf9\u8c61\u65b9\u6cd5\u5bf9\u4e00\u7ef4\u5230\u56db\u7ef4\u6570\u636e\u53ef\u89c6\u5316\u7684Python\u5e93",
+                    "symbolSize": [
+                        80,
+                        30
+                    ],
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 73,
+                    "name": "galry",
+                    "value": "\u4e00\u4e2a\u57fa\u4e8eOpenGl\u7684\u9ad8\u7ea7\u5c01\u88c5\u53ef\u89c6\u5316\u5305,5\u5e74\u524d\u5c31\u4e0d\u518d\u66f4\u65b0\u4e86\uff1b",
+                    "symbolSize": [
+                        85,
+                        30
+                    ],
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 74,
+                    "name": "glumpy",
+                    "value": "\u4e00\u4e2a\u901f\u5ea6\u5feb\u4f18\u96c5\u7684\u79d1\u5b66\u53ef\u89c6\u5316\u5305",
+                    "symbolSize": [
+                        102,
+                        30
+                    ],
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 75,
+                    "name": "mayavi",
+                    "value": "3\u7ef4\u79d1\u5b66\u53ef\u89c6\u5316\u5305",
+                    "symbolSize": [
+                        102,
+                        30
+                    ],
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 76,
+                    "name": "pyglet",
+                    "value": "\u4e00\u4e2a\u8de8\u5e73\u53f0\u7684\u591a\u5a92\u4f53\u5904\u7406\u548c\u6e38\u620f\u5e93\uff1b\u80fd\u901a\u8fc7\u63a5\u53e3\u7ed8\u5236\u4e00\u4e9b\u56fe\u5f62\u8fdb\u884c\u53ef\u89c6\u5316\uff1b",
+                    "symbolSize": [
+                        100,
+                        30
+                    ],
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 77,
+                    "name": "GR Frame",
+                    "value": "\u8de8\u5e73\u53f0\u901a\u7528\u53ef\u89c6\u5316\u6846\u67b6\uff0c\u4e5f\u6709Julia\u548cC\u8bed\u8a00\u7684\u63a5\u53e3;\u633a\u5168\u9762\u7684\uff0c\u9664\u4e86\u7ed8\u5236\u7edf\u8ba1\u56fe\u5916\uff0c\u5bf9\u52a8\u753b\u3001\u97f3\u9891\u30013\u7ef4\u6548\u679c\u7684\u5904\u7406\u4e5f\u633a\u5389\u5bb3\u3002",
+                    "symbolSize": [
+                        110,
+                        30
+                    ],
+                    "category": "OpenGL"
+                },
+                {
+                    "id": 80,
+                    "name": "pygal",
+                    "value": "\u57fa\u4e8eSVG\uff0c\u679a\u4e3e\u4e86\u5404\u79cd\u5e38\u7528\u4e0d\u5e38\u7528\u7684\u56fe\u8868\u7c7b\u578b\uff0c\u53ef\u4ee5\u753b\u7b80\u5355\u7684\u5730\u56fe\uff0c\u53ef\u4ee5\u751f\u4ea7\u8ff7\u4f60\u56fe",
+                    "symbolSize": [
+                        75,
+                        30
+                    ],
+                    "category": "Ots"
+                },
+                {
+                    "id": 81,
+                    "name": "chaco",
+                    "value": "Python\u4e0b\u7684\u901a\u7528\u53ef\u4ea4\u4e922\u7ef4\u53ef\u89c6\u5316\u5305\uff1b",
+                    "symbolSize": [
+                        80,
+                        30
+                    ],
+                    "category": "Ots"
+                },
+                {
+                    "id": 82,
+                    "name": "PyQtGraph",
+                    "value": "\u4e00\u4e2a\u57fa\u4e8ePyQt\u7684\u56fe\u5f62\u548cGUI\u5e93\uff0c\u5bf92D\u548c3D\u53ef\u89c6\u5316\u90fd\u652f\u6301\u826f\u597d\u3002",
+                    "symbolSize": [
+                        118,
+                        30
+                    ],
+                    "category": "Ots"
+                },
+                {
+                    "id": 83,
+                    "name": "chart",
+                    "value": "\u5728jupyter\u4e2d\u7528\u5b57\u7b26\u7ed8\u5236\u57fa\u7840\u56fe\u5f62\u7684\u5e93\uff0c\u65e0\u5176\u4ed6\u5e93\u4f9d\u8d56\uff0c\u53ef\u4ee5\u7ed8\u5236\u6761\u5f62\u56fe\u3001\u6563\u70b9\u56fe\u548c\u76f4\u65b9\u56fe",
+                    "symbolSize": [
+                        70,
+                        30
+                    ],
+                    "category": "Ots"
+                },
+                {
+                    "id": 84,
+                    "name": "sweetviz",
+                    "value": "\u4e00\u884c\u4ee3\u7801\u63a2\u7d22\u6570\u636e\u96c6\u7684\u5305",
+                    "symbolSize": [
+                        109,
+                        30
+                    ],
+                    "category": "Ots"
+                }
+            ],
+            "categories": [
+                {
+                    "name": "Matplotlib"
+                },
+                {
+                    "name": "D3"
+                },
+                {
+                    "name": "JavaScript"
+                },
+                {
+                    "name": "OpenGL"
+                },
+                {
+                    "name": "Ots"
+                }
+            ],
+            "edgeLabel": {
+                "show": false,
+                "position": "top",
+                "margin": 8
+            },
+            "edgeSymbol": [
+                null,
+                null
+            ],
+            "edgeSymbolSize": 10,
+            "links": [
+                {
+                    "source": "1",
+                    "target": "2",
+                    "value": "Matplotlib -> seaborn",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.8,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "3",
+                    "value": "Matplotlib -> ggpy(ggplot)",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "3",
+                    "target": "4",
+                    "value": "ggpy(ggplot) -> plotnine",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "9",
+                    "value": "Matplotlib -> networkx",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "9",
+                    "target": "10",
+                    "value": "networkx -> graphviz",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "10",
+                    "target": "11",
+                    "value": "graphviz -> graph-tool",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "5",
+                    "value": "Matplotlib -> pandas-plot",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "6",
+                    "value": "Matplotlib -> cartopy",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "7",
+                    "value": "Matplotlib -> basemap",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "8",
+                    "value": "Matplotlib -> YT",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "12",
+                    "value": "Matplotlib -> glueviz",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "13",
+                    "value": "Matplotlib -> scikit-plot",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "14",
+                    "value": "Matplotlib -> yellowbrick",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "15",
+                    "value": "Matplotlib -> Vaex",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "52",
+                    "value": "Matplotlib -> datashader",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "53",
+                    "value": "Matplotlib -> holoviews",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "55",
+                    "value": "Matplotlib -> geoviews",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "31",
+                    "value": "Matplotlib -> altair",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "dashed"
+                        }
+                    }
+                },
+                {
+                    "source": "30",
+                    "target": "31",
+                    "value": "d3js -> altair",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "30",
+                    "target": "32",
+                    "value": "d3js -> vega-lite",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "30",
+                    "target": "33",
+                    "value": "d3js -> vega",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "30",
+                    "target": "34",
+                    "value": "d3js -> PdVega",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "33",
+                    "target": "35",
+                    "value": "vega -> vincent",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "30",
+                    "target": "36",
+                    "value": "d3js -> mpld3",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "36",
+                    "value": "Matplotlib -> mpld3",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "30",
+                    "target": "37",
+                    "value": "d3js -> d3py",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "30",
+                    "target": "38",
+                    "value": "d3js -> d3po",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "30",
+                    "value": "javascript <-> d3js",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.7,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "51",
+                    "value": "javascript -> bokeh",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "51",
+                    "target": "52",
+                    "value": "bokeh -> datashader",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+				{
+                    "source": "51",
+                    "target": "56",
+                    "value": "bokeh -> chartify",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "51",
+                    "target": "53",
+                    "value": "bokeh -> holoviews",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "53",
+                    "target": "55",
+                    "value": "holoviews -> geoviews",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "53",
+                    "target": "54",
+                    "value": "holoviews -> hvplot",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "53",
+                    "target": "52",
+                    "value": "holoviews -> datashader",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "dashed"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "52",
+                    "value": "Matplotlib -> datashader",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "1",
+                    "target": "53",
+                    "value": "Matplotlib -> holoviews",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "57",
+                    "value": "javascript -> bqplot",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "58",
+                    "value": "javascript -> plotly",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "59",
+                    "value": "javascript -> cufflinks",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "60",
+                    "value": "javascript -> lightning",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "61",
+                    "value": "javascript -> ipyvolume",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "62",
+                    "value": "javascript -> ipyleaflet",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "63",
+                    "value": "javascript -> folium",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "64",
+                    "value": "javascript -> pythreejs",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "65",
+                    "value": "javascript -> toyplot",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "66",
+                    "value": "javascript -> pyecharts",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "50",
+                    "target": "67",
+                    "value": "javascript -> cutecharts",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "71",
+                    "target": "50",
+                    "value": "vispy -> javascript",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "dashed"
+                        }
+                    }
+                },
+                {
+                    "source": "70",
+                    "target": "71",
+                    "value": "OpenGL -> vispy",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "70",
+                    "target": "72",
+                    "value": "OpenGL -> visvis",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "70",
+                    "target": "73",
+                    "value": "OpenGL -> galry",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "70",
+                    "target": "74",
+                    "value": "OpenGL -> glumpy",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "70",
+                    "target": "75",
+                    "value": "OpenGL -> mayavi",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "70",
+                    "target": "76",
+                    "value": "OpenGL -> pyglet",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "70",
+                    "target": "77",
+                    "value": "OpenGL -> GR Framework",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "80",
+                    "target": "81",
+                    "value": "pygal -> chaco",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "81",
+                    "target": "82",
+                    "value": "chaco -> PyQtGraph",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "82",
+                    "target": "83",
+                    "value": "PyQtGraph -> chart",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                },
+                {
+                    "source": "83",
+                    "target": "84",
+                    "value": "chart -> sweetviz",
+                    "lineStyle": {
+                        "normal": {
+                            "show": "true",
+                            "width": 2,
+                            "opacity": 0.6,
+                            "type": "solid"
+                        }
+                    }
+                }
+            ],
+            "tooltip": {
+                "show": true,
+                "trigger": "item",
+                "triggerOn": "mousemove|click",
+                "axisPointer": {
+                    "type": "line"
+                },
+                "formatter": "<b>{b}</b><br/>{c}",
+                "textStyle": {
+                    "fontSize": 14
+                },
+                "borderWidth": 0
+            }
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "Matplotlib",
+                "D3",
+                "JavaScript",
+                "OpenGL",
+                "Ots"
+            ],
+            "selected": {
+                "Matplotlib": true,
+                "D3": true,
+                "JavaScript": true,
+                "OpenGL": true,
+                "Ots": true
+            },
+            "show": true,
+            "bottom": 20,
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0
+    },
+    "title": [
+        {
+            "text": "VizToolsLinks",
+            "subtext": "python-visualization-landscape",
+            "left": "center",
+            "padding": 5,
+            "itemGap": 10
+        }
+    ]
+};
+        chart_84d9d00870d948cfb6d3c4cd287e6bf6.setOption(option_84d9d00870d948cfb6d3c4cd287e6bf6);
+    </script>
+</div>
+<a class="sidenav">=</a>
+
+<div class="sidebar">
+<div class="toggle">
+<!-- 下面就是侧边栏html的内容了 -->
+<p id="0" style="text-align:center;margin:7px;">可视化图表介绍与绘法</p>
+<dl>
+	<dt id="1" style="text-align:left">Matplotlib</dt>
+	<dd id="201">
+		<p>Python经典可视化库。</p>
+		<p>Python数据分析库的“三驾马车”之一，和numpy、pandas协同良好。</p>
+		<p>从关系图就可以看到matplotlib的影响力，生态繁荣，</p>
+		
+		
+		<p>其强大性和野心在于：Matplotlib tries to make easy things easy and hard things possible.</p>
+		<p>Matplotlib可视化代码框架：</p>
+		<pre>
+<span>
+fig, ax = plt.subplots()
+ax.plot(df['x'],df['y'])
+</span>		</pre>
+		<p>通过图元层面的接口，支持多种主题效果，统计图、科学函数、动态效果、用户交互，都不在话下，但要实现一个定制的统计图、要流畅的动效和交互、要浏览器端交互与分享，需要自己处理很多细节，因此在面对这方面需求时，其他库就想取而代之。</p>
+		<p>详细绘图的写法例子：</p>
+			<pre>
+<span>
+fig,ax= plt.subplots()
+rects=ax.bar(df['x'],df['y'])
+ax.set_ylim(0,100)
+ax.set_ylabel('Month IC')
+</span>		</pre>
+		<p>  </p>
+		<p style="font-size:80%"><a href="http://matplotlib.org" target="_blank">官方文档</a>：http://matplotlib.org</p>
+		<h3 id="2">seaborn</h3>
+			<p>对Matplotlib的高级封装可视化库。</p>
+			<p>隐去一些数据转换、处理的细节，更容易出统计图，擅长统计数据的可视化。</p>
+			<p>包含四类统计图的接口，具体为：</p>
+			<li>relplot() 关联</li>
+			<li>regplot() 回归</li>
+			<li>catplot() 分类</li>
+			<li>distplot() 分布</li>
+			<p>  </p>
+			
+			<pre>
+<span>
+import seaborn as sns  #导入seabron库
+tips = pd.read_excel('tips.xlsx')  #dataframe数据
+sns.relplot(x="total_bill", y="tip", col="time",
+            hue="smoker", style="smoker", size="size",
+            data=tips)
+</span>			</pre>
+<p style="font-size:80%"><a href="http://seaborn.pydata.org/index.html" target="_blank">seaborn官方文档</a>：http://seaborn.pydata.org/index.html</p>
+		<h3 id="3">ggpy(ggplot)</h3>
+			<p>图形语法集大成库ggplot2在Python的实践，项目叫ggpy，库名叫ggplot。
+</p>
+			<p>数据+图形映射+坐标系=>出图</p>
+			<p>  </p>
+			<p>  </p>
+			
+			<pre>
+<span>
+
+</span>			</pre>
+		<p style="font-size:80%"><a href="http://yhat.github.io/ggpy/" target="_blank">ggpy(ggplot)官方文档</a>：http://yhat.github.io/ggpy/</p>
+		<h3 id="4">plotnine</h3>
+			<p>ggplot2库的另一Python实现，有更多优化</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			
+			<pre>
+<span>
+
+</span>			</pre>
+			<p style="font-size:80%"><a href="https://github.com/has2k1/plotnine" target="_blank">plotnine官方文档</a>：https://github.com/has2k1/plotnine</p>
+		<h3 id="5">pandas-plot</h3>
+			<p>pandas内置简单绘图模块，基于Matplotlib API</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			
+			<pre>
+<span>
+
+</span>			</pre>
+			<p style="font-size:80%"><a href="https://pandas.pydata.org/docs/reference/plotting.html" target="_blank">pandas-plot官方文档</a>：https://pandas.pydata.org/docs/reference/plotting.html</p>
+		<h3 id="6">cartopy</h3>
+			<p>Python地理数据处理和可视化库</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			
+			<pre>
+<span>
+
+</span>			</pre>
+			<p style="font-size:80%"><a href="http://scitools.org.uk/cartopy/" target="_blank">cartopy官方文档</a>：http://scitools.org.uk/cartopy/</p>
+		<h3 id="7">basemap</h3>
+			<p>matplotlib下的地图可视化模块</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			
+			<pre>
+<span>
+
+</span>			</pre>
+		<p style="font-size:80%"><a href="http://matplotlib.org/basemap/" target="_blank">basemap官方文档</a>：http://matplotlib.org/basemap/</p>
+		<h3 id="8">YT</h3>
+			<p>物理材料、体密度分布的可视化</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://yt-project.org" target="_blank">YT官方文档</a>：http://yt-project.org</p>
+
+		<h3 id="9">networkx</h3>
+			<p>优秀的关系数据处理和可视化库</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://networkx.github.io" target="_blank">networkx官方文档</a>：https://networkx.github.io</p>
+
+		<h3 id="10">graphviz</h3>
+			<p>一个用于关系数据可视化的包</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<pre>
+<span>
+
+</span>			</pre>
+			<p style="font-size:80%"><a href="https://graphviz.readthedocs.io/en/stable/" target="_blank">graphviz官方文档</a>：https://graphviz.readthedocs.io/en/stable/</p>
+
+		<h3 id="11">graph-tool</h3>
+			<p>一个用来对图结构进行操纵和统计分析的Python包，有很强的可视化接口。</p>
+			<p>  </p>
+			<p>  </p>
+			<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://graph-tool.skewed.de" target="_blank">graph-tool官方文档</a>：https://graph-tool.skewed.de</p>
+
+		<h3 id="12">glueviz</h3>
+			<p>高维度数据可视化包，可以进行3D人体组织、天文学的可视化</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://www.glueviz.org/en/stable/" target="_blank">glueviz官方文档</a>：http://www.glueviz.org/en/stable/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="13">scikit-plot</h3>
+			<p>Scikit-learn包提供的可视化接口,用到了Matplotlib</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/reiinakano/scikit-plot" target="_blank">scikit-plot官方文档</a>：https://github.com/reiinakano/scikit-plot</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="14">yellowbrick</h3>
+			<p>结合了Scikit-Learn接口和Matplotlib的机器学习可视化库；能集成地把一些机器学习模型的结果画成统计图。</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://www.scikit-yb.org/en/latest/" target="_blank">yellowbrick官方文档</a>：http://www.scikit-yb.org/en/latest/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="15">Vaex</h3>
+			<p>开源的DataFrame库，它可以对表格数据集进行可视化、探索、分析，致力于处理GB级的表格数据。</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://vaex.astro.rug.nl" target="_blank">Vaex官方文档</a>：http://vaex.astro.rug.nl</p>
+			<pre>
+<span>
+
+</span>			</pre>
+
+	</dd>
+
+		<dt id="30" style="text-align:left">D3</dt>
+        <dd id="2030">
+			<p>Data-Driven Documents</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://d3js.org" target="_blank">d3js官方文档</a>：https://d3js.org</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="31">altair</h3>
+			<p>一个不错的统计数据可视化库</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://altair-viz.github.io" target="_blank">altair官方文档</a>：https://altair-viz.github.io</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="32">vega-lite</h3>
+			<p>一个高封装的交互可视化库</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://vega.github.io/vega-lite/" target="_blank">vega-lite官方文档</a>：https://vega.github.io/vega-lite/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="33">vega</h3>
+			<p>一种可视化语法，通过json进行描述和分享</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://vega.github.io/vega/" target="_blank">vega官方文档</a>：https://vega.github.io/vega/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="34">PdVega</h3>
+			<p>方便处理pandas数据的vega-lite封装库</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://altair-viz.github.io/pdvega/" target="_blank">PdVega官方文档</a>：https://altair-viz.github.io/pdvega/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="35">vincent</h3>
+			<p>一个Vega的Python翻译版，2016年之后就不再更新，github上建议去了解altair。</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/wrobstory/vincent" target="_blank">vincent官方文档</a>：https://github.com/wrobstory/vincent</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="36">mpld3</h3>
+			<p>通过d3把matplotlib接口移植到web端</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://mpld3.github.io" target="_blank">mpld3官方文档</a>：https://mpld3.github.io</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="37">d3py</h3>
+			<p>一个对d3封装的Python可视化库，活跃于2012年，4年前github就不再更新</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/mikedewar/d3py" target="_blank">d3py官方文档</a>：https://github.com/mikedewar/d3py</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="38">d3po</h3>
+			<p>一个对d3封装的Python可视化库，目前网站国内访问不了了</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://www.d3po.org" target="_blank">d3po官方文档</a>：http://www.d3po.org</p>
+			<pre>
+<span>
+
+</span>			</pre>
+
+	</dd>
+
+		<dt id="50" style="text-align:left">JavaScript</dt>
+        <dd id="2050">
+			<p>前端</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://www.javascript.com/" target="_blank">javascript官方文档</a>：https://www.javascript.com/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="51">bokeh</h3>
+			<p>为现代浏览器而生的交互可视化库，pydata力推</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://bokeh.pydata.org/en/latest/" target="_blank">bokeh官方文档</a>：http://bokeh.pydata.org/en/latest/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="52">datashader</h3>
+			<p>对大规模数据进行转换聚合的库</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/bokeh/datashader" target="_blank">官方文档</a>：https://github.com/bokeh/datashader</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="53">holoviews</h3>
+			<p>在bokeh基础上发展起来的，采用另一种可视化哲学，致力于让数据分析和可视化更无缝衔接更简单</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://holoviews.org" target="_blank">holoviews官方文档</a>：http://holoviews.org</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="54">hvplot</h3>
+			<p>对holoviews的进一步封装</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/holoviz/hvplot" target="_blank">hvplot官方文档</a>：https://github.com/holoviz/hvplot</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="55">geoviews</h3>
+			<p>和heloviews类似，目标在处理地理数据上</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://geoviews.org/" target="_blank">geoviews官方文档</a>：http://geoviews.org/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="56">chartify</h3>
+			<p>基于bokeh封装，致力于让数据科学家更容易使用</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://chartify.readthedocs.io/" target="_blank">chartify官方文档</a>：https://chartify.readthedocs.io/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="57">bqplot</h3>
+			<p>基于图形语法范式的Python可视化库</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/bqplot/bqplot" target="_blank">官方文档</a>：https://github.com/bqplot/bqplot</p>
+			<pre>
+<span>
+x=['Mon.','Tue.','Wed.','Thu.','Fri.']
+y=[76,37,90,60,50]
+from bqplot import pyplot as plt
+plt.figure(title='bqplot 折线')
+plt.plot(x,y)
+plt.show()
+</span>			</pre>
+		<h3 id="58">plotly</h3>
+			<p>优秀的可视化库，plotly_exprress进一步提升了plotly的易用程度</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://plot.ly" target="_blank">plotly官方文档</a>：https://plot.ly</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="59">cufflinks</h3>
+			<p>对plotly的进一步封装，方便pandas处理数据后的可视化</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/santosjorge/cufflinks" target="_blank">cufflinks官方文档</a>：https://github.com/santosjorge/cufflinks</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="60">lightning</h3>
+			<p>有多套语言接口的web可视化工具</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="http://lightning-viz.org" target="_blank">lightning官方文档</a>：http://lightning-viz.org</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="61">ipyvolume</h3>
+			<p>用到WebGL对jupyter支持良好的三维可视化包</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/maartenbreddels/ipyvolume" target="_blank">ipyvolume官方文档</a>：https://github.com/maartenbreddels/ipyvolume</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="62">ipyleaflet</h3>
+			<p>另一个对leaflet进行封装的地图可视化库</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://github.com/ellisonbg/ipyleaflet" target="_blank">ipyleaflet官方文档</a>：https://github.com/ellisonbg/ipyleaflet</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="63">folium</h3>
+			<p>对leaflet进行封装的地图可视化库</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p style="font-size:80%"><a href="https://python-visualization.github.io/folium/" target="_blank">folium官方文档</a>：https://python-visualization.github.io/folium/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="64">pythreejs</h3>
+			<p>对threejs封装的Python三维可视化库</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p class="pnk"><a href="https://github.com/jovyan/pythreejs" target="_blank">pythreejs官方文档</a>：https://github.com/jovyan/pythreejs</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="65">toyplot</h3>
+			<p>一个基于canvas的简洁的Python可视化库，图形简洁，可配置性强</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://toyplot.readthedocs.io/en/stable/" target="_blank">toyplot官方文档</a>：http://toyplot.readthedocs.io/en/stable/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="66">pyecharts</h3>
+			<p>对echarts进行封装的优秀Python可视化库</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="https://pyecharts.org" target="_blank">pyecharts官方文档</a>：https://pyecharts.org</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="67">cutecharts</h3>
+			<p>漫画手绘效果统计图可视化库</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p class="pnk"><a href="https://github.com/chenjiandongx/cutecharts" target="_blank">官方文档</a>：https://github.com/chenjiandongx/cutecharts</p>
+			<pre>
+<span>
+
+</span>			</pre>
+
+	</dd>
+
+	<dt id="70" style="text-align:left">OpenGL</dt>
+	<dd id="2070">
+		<p>可视化框架</p>
+		<p>  </p>
+					<pre>
+<span>
+
+</span>			</pre>
+		<p>  </p>
+		<p>  </p>
+		<p class="pnk"><a href="http://pyopengl.sourceforge.net" target="_blank">官方文档</a>：http://pyopengl.sourceforge.net</p>
+		<pre>
+<span>
+
+</span>		</pre>
+		<h3 id="71">vispy</h3>
+			<p>一个科学领域可视化库，全面，强大。</p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://vispy.org/" target="_blank">vispy官方文档</a>：http://vispy.org/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="72">visvis</h3>
+			<p>用面向对象方法对一维到四维数据可视化的Python库</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p  class="pnk"><a href="https://github.com/almarklein/visvis" target="_blank">visvis官方文档</a>：https://github.com/almarklein/visvis</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="73">galry</h3>
+			<p>一个基于OpenGl的高级封装可视化包,5年前就不再更新了；</p>
+			<p>  </p>
+			<p>  </p>
+						<pre>
+<span>
+
+</span>			</pre>
+			<p>  </p>
+			<p class="pnk"><a href="https://github.com/rossant/galry" target="_blank">galry官方文档</a>：https://github.com/rossant/galry</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="74">glumpy</h3>
+			<p>一个速度快优雅的科学可视化包</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://glumpy.github.io" target="_blank">glumpy官方文档</a>：http://glumpy.github.io</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="75">mayavi</h3>
+			<p>3维科学可视化包</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://code.enthought.com/projects/mayavi/" target="_blank">mayavi官方文档</a>：http://code.enthought.com/projects/mayavi/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="76">pyglet</h3>
+			<p>一个跨平台的多媒体处理和游戏库；能通过接口绘制一些图形进行可视化；</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://pyglet.readthedocs.io" target="_blank">pyglet官方文档</a>：http://pyglet.readthedocs.io</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="77">GR Framework</h3>
+			<p>跨平台通用可视化框架，也有Julia和C语言的接口;挺全面的，除了绘制统计图外，对动画、音频、3维效果的处理也挺厉害。</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://gr-framework.org" target="_blank">官方文档</a>：http://gr-framework.org</p>
+			<pre>
+<span>
+
+</span>			</pre>
+
+	</dd>
+<dt id="99" style="text-align:left">Ots</dt>
+    <dd id="2099">
+		<p>其他和以上框架联系不大的可视化库</p>
+		<h3 id="80">pygal</h3>
+			<p>基于SVG，枚举了各种常用不常用的图表类型，可以画简单的地图，可以生产迷你图</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://pygal.org/en/stable/" target="_blank">pygal官方文档</a>：http://pygal.org/en/stable/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="81">chaco</h3>
+			<p>Python下的通用可交互2维可视化包；</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://docs.enthought.com/chaco/" target="_blank">chaco官方文档</a>：http://docs.enthought.com/chaco/</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="82">PyQtGraph</h3>
+			<p>一个基于PyQt的图形和GUI库，对2D和3D可视化都支持良好。</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="http://pyqtgraph.org" target="_blank">PyQtGraph文档</a>：http://pyqtgraph.org</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="83">chart</h3>
+			<p>在jupyter中用字符绘制基础图形的库，无其他库依赖，可以绘制条形图、散点图和直方图</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="https://github.com/maxhumber/chart" target="_blank">chart官方文档</a>：https://github.com/maxhumber/chart</p>
+			<pre>
+<span>
+
+</span>			</pre>
+		<h3 id="84">sweetviz</h3>
+			<p>一行代码探索数据集的包</p>
+			<p>  </p>
+			<p>  </p>
+			<p>  </p>
+			<p class="pnk"><a href="https://github.com/fbdesignpro/sweetviz" target="_blank">sweetviz官方文档</a>：https://github.com/fbdesignpro/sweetviz</p>
+			<pre>
+<span>
+
+</span>			</pre>
+
+	</dd>
+
+	<p style="text-align:center;font-size:80%;">lyndon-2020</p>
+</dl>
+</div>
+</div>
+
+
+<script type="text/javascript">
+
+	// 点击交互事件
+</script>
+<script type="text/javascript">
+	// 点击交互事件
+	var nodes=option_84d9d00870d948cfb6d3c4cd287e6bf6['series'][0]['data'];
+    console.log(nodes.length);
+    chart_84d9d00870d948cfb6d3c4cd287e6bf6.on('click',function(params){
+		var name = params.name;
+		var seriesType = params.seriesType;
+		var nid=0; //根据name获取id
+		nodes.forEach(function(i){
+			if (i['name']==name){nid=i['id'];}
+		})
+		console.log(name+"\t"+seriesType+"\t"+nid);
+    if (nid==0){
+		window.location.hash ='#0';
+    }else {
+		var nnum='20'+nid;
+		if (nid==10){nnum='2'+nid;}
+		var nsharp='#'+nid;
+        console.log(name,nid,nnum,nsharp);
+		
+		window.location.hash =nsharp;
+        var nmw='1';
+        if (nid<30){
+            nmw='201';
+        }else if (nid<50){
+            nmw='2030';
+        }else if (nid<70){
+            nmw='2050';
+        }else if (nid<80){
+            nmw='2070';
+        }else{
+            nmw='2099';
+        }
+        console.log(nmw);
+        var dnm=document.getElementById(nmw)
+        if (dnm!=null){
+            document.getElementById(nmw).style.display="";//显示
+        }
+        window.location.hash =nsharp;
+    }  });
+</script>
+<script type="text/javascript">
+    // 切换侧边栏
+	$('.sidenav').on('click',function(){$("body").toggleClass("big-page");});
+</script>
+<script type="text/javascript">
+   $(function(){
+    //$(".toggle dl dd").hide();
+    $(".toggle dl dt").click(function(){
+     $(".toggle dl dd").not($(this).next()).hide();
+     $(".toggle dl dt").not($(this).next()).removeClass("current");
+     $(this).next().slideToggle(500);
+     $(this).toggleClass("current");
+     });
+    });
+</script>
+<style type="text/css">
+.sidebar{background: #ffffff repeat;width: 420px; position: absolute; right: 0; top: 0; height: 100%; overflow: auto; transition: all 0.2s ease 0s;}
+
+.big-page .sidebar{right: -420px;}
+.big-page .sidenav{right: 5px;}
+
+.sidenav {
+    
+	top: 5px;
+	float: right;
+	position: absolute;
+    right: 425px;
+	box-sizing:border-box;
+	border:1px;
+    font-size: 25px;
+	text-align: center;
+    text-decoration: none;
+    color: #2c3e50;
+    font-family: Ionicons;
+    cursor: pointer;
+
+}
+
+
+.sidebar .side {
+    right: 0;
+}
+
+.pnk {font-size:80%;}
+p, h1, h2, h3,h4,ul,pre, div{margin:0px;}
+h3{margin:2px;padding-left:8px;border-left:6px solid rgb(2,156,149)}
+h4{margin:2px;padding-left:11px;border-left:3px solid rgb(2,156,149)}
+
+ul{padding-inline-start: 20px;}
+.content {  margin:0 auto; border:2px solid #AAAA00; border-top:none; background-color:#FFFFFF; overflow:hidden; }
+.toggle dl {margin:0px;}
+.toggle dl dt { background:#B3E6D9 no-repeat scroll 8px 14px; height:40px; width:450px; line-height:40px; font-size:16px; font-weight:bold; color:#0A383B; cursor:pointer; margin:8px 0; padding-left:15px; display:block; }
+.toggle dl dt.current { background:#95F9ED no-repeat scroll 8px 14px; }
+.toggle dl dd {  line-height:24px;text-align:left;margin-left:5px; } /*为什么初始margin会是40px？神奇*/
+.toggle dl dd h2 { font-size:15px; }
+.toggle dl dd ul { padding-bottom:12px; }
+.toggle dl dd ul li { list-style:decimal inside none; }
+
+code{text-align:left;color:#f4a460;font-family:Consolas,Menlo, Operator Mono, Monaco, monospace;font-size:80%;background:rgba(27,31,35,.05);padding:3px 5px;border-radius:4px;white-space:normal}
+pre,span{text-align:left;font-family:Source Code Pro, Consolas, monospace;background-color:#f8f8f8;border-radius:4px; margin:0px;padding:0px;font-size: 12px;line-height:16px;}
+pre{padding:3px;}
+
+</style>
+</body>
+</html>
+

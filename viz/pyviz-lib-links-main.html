@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LynPyVisLandscape</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+	<script type="text/javascript"  src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<div class="main">
+	<div id="container" style="height:850px"></div>
+</div>
+<a class="sidenav">=</a>
+
+<div class="sidebar">
+<div class="toggle">
+<!-- 下面就是侧边栏html的内容了 -->
+<p id="0" style="text-align:center;margin:7px;">Python可视化库</p>
+<dl>
+	<dt id="1" style="text-align:left">散点图</dt>
+	<dd id="201">
+	<p>散点图简介</p>
+	
+	<p>1</p>
+	</dd>
+	<dt id="2" style="text-align:left">散点图</dt>
+	<dd id="202">
+	<p>散点图简介</p>
+	
+	<p>1</p>
+	</dd>
+
+	<dt id="3" style="text-align:left">散点图</dt>
+	<dd id="203">
+	<p>散点图简介</p>
+	
+	<p>1</p>
+	</dd>
+	<dt id="4" style="text-align:left">散点图</dt>
+	<dd id="204">
+	<p>散点图简介</p>
+	
+	<p>1</p>
+	</dd>
+	<dt id="5" style="text-align:left">散点图</dt>
+	<dd id="205">
+	<p>散点图简介</p>
+	
+	<p>1</p>
+	</dd>
+	<p></p>
+	<p style="text-align:center;font-size:80%;">lyndon-2020</p>
+</dl>
+</div>
+</div>
+
+<script type="text/javascript">
+    // 切换侧边栏
+	$('.sidenav').on('click',function(){$("body").toggleClass("big-page");});
+</script>
+<script type="text/javascript">
+var nodes=[{'id': 1,
+  'name': 'Matplotlib',
+  'value':'Matplotlib是一个**的可视化库',
+  'symbolSize': [80,35],
+  'category': 'Matplotlib'},
+ {'id': 2, 'name': 'seaborn', 'value': '可视化库', 'symbolSize': 50, 'category': 'Matplotlib'},
+ {'id': 3, 'name': 'd3js', 'value': '可视化库', 'symbolSize': [52,30], 'category': 'd3js'},
+ {'id': 4, 'name': 'javascript', 'value': '可视化库', 'symbolSize': [50,32], 'category': 'javascript'},
+ {'id': 5, 'name': 'OpenGL', 'value': '可视化库', 'symbolSize': [60,30], 'category': 'OpenGL'}
+	];
+	
+var edges=[{'source': '1',
+  'target': '2',
+  'value': '0-1',
+  'lineStyle': {'normal': {'show': 'true',
+    'width': 2,
+    'opacity': 0.6,
+    'type': 'solid'}}},
+ {'source': '3',
+  'target': '2',
+  'value': '0-2',
+  'lineStyle': {'normal': {'show': 'true',
+    'width': 2,
+    'opacity': 0.6,
+    'type': 'solid'}}},
+	{'source': '3',
+  'target': '4',
+  'value': '0-2',
+  'lineStyle': {'normal': {'show': 'true',
+    'width': 2,
+    'opacity': 0.6,
+    'type': 'solid'}}},
+	{'source': '2',
+  'target': '4',
+  'value': '0-2',
+  'lineStyle': {'normal': {'show': 'true',
+    'width': 2,
+    'opacity': 0.6,
+    'type': 'dash'}}},
+	{'source': '1',
+  'target': '4',
+  'value': '0-2',
+  'lineStyle': {'normal': {'show': 'true',
+    'width': 2,
+    'opacity': 0.6,
+    'type': 'solid'}}},
+	{'source': '1',
+  'target': '5',
+  'value': '0-2',
+  'lineStyle': {'normal': {'show': 'true',
+    'width': 2,
+    'opacity': 0.6,
+    'type': 'solid'}}}
+ 
+
+	];
+
+var categ=[{
+            'name': 'Matplotlib'
+        }, {
+            'name': 'd3js'
+        }, {
+            'name': 'OpenGL'
+        }, {
+            'name': 'javascript'
+        }];
+
+
+var dom = document.getElementById("container");
+		var myChart = echarts.init(dom);
+		var app = {};
+		//option = null;
+		myChart.showLoading();
+		option = {
+    // 全局调色盘
+	/*
+    color: ['#1eafae','#69ffff', '#ba5c25', '#ffa069', '#a3ffff','#d7ce88'],
+    backgroundColor: new echarts.graphic.RadialGradient(0.46, 0.2, 0.2, [{
+        offset: 0,
+        color: '#f7f8fa'
+    }, {
+        offset: 1,
+        color: '#B3E6D9'
+    }]),
+	*/
+    title: {
+        text: "VizToolsLinks",
+        subtext: "python-visualization-landscape",
+        top: "top",
+        left: "center"
+    },
+    tooltip: {
+		formatter:'<b>{b}</b><br/>{c}'
+		},
+    legend: [{
+		show: 'true',
+        formatter: function(name) {
+            return echarts.format.truncateText(name, 40, '10px Microsoft Yahei', '…');
+        },
+        tooltip: {
+            show: true
+        },
+        selectedMode: 'true',
+        bottom: 20,
+    }],
+    toolbox: {
+        show: true,
+		left:'left',
+        feature: {
+			saveAsImage: {
+                show: true
+            },
+            restore: {
+                show: true
+            }
+            
+        }
+    },
+    animationDuration: 1000,
+    animationEasingUpdate: 'quinticInOut',
+    series: [{
+        name: 'py-viz-lyn',
+        type: 'graph',
+        layout: 'force',
+		symbol:'roundRect',
+		symbolSize: [70,30],
+		draggable: true,
+		roam: true, //鼠标缩放及平移
+        focusNodeAdjacency: true, //是否在鼠标移到节点上的时候突出显示节点以及节点的边和邻接节点
+        label: {show: true},
+        force: {
+            repulsion: 500, //?
+            edgeLength: 140 //力导向图的边链接长度
+        },
+		data:nodes, //在数据区
+		links:edges,
+		categories:categ,
+    roam: true, 
+    lineStyle: {
+        normal: {
+            color: 'source',
+            curveness: 0,
+            type: "solid"
+            }
+    },
+		edgeLabel: {
+            normal: {
+                show: false,//true会显示边的标签，但好像并是想要的标签
+            },
+            emphasis: {
+                textStyle: {
+                    fontSize:13 //边节点显示的字体大小
+                }
+            }
+        }
+    }]
+};
+
+		if (option && typeof option === "object") {
+			myChart.hideLoading();
+			myChart.setOption(option, true);
+			
+		}
+	// 点击交互事件
+</script>
+<script type="text/javascript">
+	// 点击交互事件
+    myChart.on('click',function(params){
+		var name = params.name;
+		var seriesType = params.seriesType;
+		var nid=0; //根据name获取id
+		nodes.forEach(function(i){
+			if (i['name']==name){nid=i['id'];}
+		})
+		console.log(name+"\t"+seriesType+"\t"+nid);
+    if (nid==0){
+		window.location.hash ='#0';
+    }else if (nid<11){
+		var nnum='20'+nid;
+		if (nid==10){nnum='2'+nid;}
+		var nsharp='#'+nid;
+		document.getElementById(nnum).style.display="";//显示
+		window.location.hash =nsharp;
+    }else{
+		var nsharp='#'+nid;
+		var nnum='20'+nsharp[1];
+		document.getElementById(nnum).style.display="";//显示
+		window.location.hash =nsharp[0]+nsharp[1]; //为了防止id==nsharp不存在，先定位到上一级
+		window.location.hash =nsharp;
+    }  });
+</script>
+<script type="text/javascript">
+   $(function(){
+    //$(".toggle dl dd").hide();
+    $(".toggle dl dt").click(function(){
+     $(".toggle dl dd").not($(this).next()).hide();
+     $(".toggle dl dt").not($(this).next()).removeClass("current");
+     $(this).next().slideToggle(500);
+     $(this).toggleClass("current");
+     });
+    });
+</script>
+<style type="text/css">
+.sidebar{background: #ffffff repeat;width: 350px; position: absolute; right: 0; top: 0; height: 100%; overflow: auto; transition: all 0.2s ease 0s;}
+
+.big-page .sidebar{right: -350px;}
+.big-page .sidenav{right: 5px;}
+
+.sidenav {
+    
+	top: 5px;
+	float: right;
+	position: absolute;
+    right: 355px; /*和sidebar的width同进退   */
+	box-sizing:border-box;
+	border:1px;
+    font-size: 25px;
+	text-align: center;
+    text-decoration: none;
+    color: #2c3e50;
+    font-family: Ionicons;
+    cursor: pointer;
+
+}
+
+
+.sidebar .side {
+    right: 0;
+}
+
+
+p, h1, h2, h3,h4,ul,pre, div{margin:0px;}
+h3{margin:2px;padding-left:8px;border-left:6px solid rgb(2,156,149)}
+h4{margin:2px;padding-left:11px;border-left:3px solid rgb(2,156,149)}
+
+ul{padding-inline-start: 20px;}
+.content {  margin:0 auto; border:2px solid #AAAA00; border-top:none; background-color:#FFFFFF; overflow:hidden; }
+.toggle dl {margin:0px;}
+.toggle dl dt { background:#B3E6D9 no-repeat scroll 8px 14px; height:40px; width:450px; line-height:40px; font-size:16px; font-weight:bold; color:#0A383B; cursor:pointer; margin:8px 0; padding-left:15px; display:block; }
+.toggle dl dt.current { background:#95F9ED no-repeat scroll 8px 14px; }
+.toggle dl dd {  line-height:24px;text-align:left;margin-left:5px; } /*为什么初始margin会是40px？神奇*/
+.toggle dl dd h2 { font-size:15px; }
+.toggle dl dd ul { padding-bottom:12px; }
+.toggle dl dd ul li { list-style:decimal inside none; }
+
+code{text-align:left;color:#f4a460;font-family:Consolas,Menlo, Operator Mono, Monaco, monospace;font-size:80%;background:rgba(27,31,35,.05);padding:3px 5px;border-radius:4px;white-space:normal}
+pre,span{text-align:left;font-family:Source Code Pro, Consolas, monospace;background-color:#f8f8f8;border-radius:4px; margin:0px;padding:0px;font-size: 12px;line-height:16px;}
+pre{padding:3px;}
+
+</style>
+</body>
+</html>
+

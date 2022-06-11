@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Matplotlib可以说是Python最声名远扬的可视化库了，也是Python数据分析库的“三驾马车”之一。Matplotlib是基础而非常强大的可视化库，Seaborn等好用的可视化库是在前者的基础上进行的封装。Matplotlib擅长快速出简单的图、有丰富的接口进行精细化绘图、和Numpy结合做科学可视化及三维图配合默契、三维图。但也有些缺点，如不容易基于实用目的绘制有一定难度的图表（如小提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="可视化技能之Matplotlib(上)|可视化系列01">
+<meta property="og:url" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="Matplotlib可以说是Python最声名远扬的可视化库了，也是Python数据分析库的“三驾马车”之一。Matplotlib是基础而非常强大的可视化库，Seaborn等好用的可视化库是在前者的基础上进行的封装。Matplotlib擅长快速出简单的图、有丰富的接口进行精细化绘图、和Numpy结合做科学可视化及三维图配合默契、三维图。但也有些缺点，如不容易基于实用目的绘制有一定难度的图表（如小提">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-01-%E5%8F%AF%E8%A7%86%E5%8C%96%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6-%E6%8A%98%E7%BA%BF%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-02-%E4%B8%A4%E5%A5%97%E6%8E%A5%E5%8F%A3.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-03-%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%88%B0%E5%90%84%E7%A7%8D%E5%8F%AF%E8%A7%86%E5%9B%BE.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-04-%E6%95%A3%E7%82%B9%E5%9B%BE%E5%8F%82%E6%95%B0%E7%A4%BA%E4%BE%8B-1.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-05-%E5%B8%B8%E7%94%A8fmt%E5%AD%97%E7%AC%A6%E6%84%8F%E4%B9%89%E6%95%B4%E7%90%86.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-06-3%E7%A7%8D%E5%86%99%E6%B3%95%E5%8F%8A%E7%BB%93%E6%9E%9C%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-07-%E6%9F%B1%E7%8A%B6%E5%9B%BE%E7%BB%98%E5%88%B6%E5%8F%8A%E5%8F%82%E6%95%B0.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-08-%E7%B0%87%E7%8A%B6%E6%9F%B1%E5%BD%A2%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-09-%E5%A0%86%E5%8F%A0%E6%9F%B1%E7%8A%B6%E5%9B%BE%E7%BB%98%E5%88%B6%E6%95%88%E6%9E%9C.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-10-%E7%94%A8df%E7%BB%98%E5%88%B6%E7%9B%B4%E6%96%B9%E5%9B%BE%E5%92%8C%E7%AE%B1%E7%BA%BF%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-11-%E9%A5%BC%E5%9B%BE%E5%92%8C%E7%8E%AF%E7%8A%B6%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-12-figure%E4%B8%8A%E7%9A%84%E5%9B%BE%E5%85%83.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-12-%E5%B8%B8%E7%94%A8%E5%9B%BE%E8%A1%A8%E6%A0%87%E7%AD%BE%E6%B7%BB%E5%8A%A0%E7%9A%84%E6%8E%A5%E5%8F%A3.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-13-%E7%9F%A9%E9%98%B5%E5%9B%BE%E7%BB%98%E5%88%B6%E7%A4%BA%E4%BE%8B.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-14-%E7%80%91%E5%B8%83%E5%9B%BE%E7%BB%98%E5%88%B6%E7%A4%BA%E4%BE%8B.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-15-%E5%85%B1%E7%94%A8%E5%9D%90%E6%A0%87%E8%BD%B4%E7%BB%84%E5%90%88%E5%9B%BE%E4%B8%A4%E4%BE%8B%E5%AD%90.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-16-%E6%A3%92%E6%A3%92%E7%B3%96%E5%9B%BE%E5%92%8C%E5%93%91%E9%93%83%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-17-%E5%B8%95%E7%B4%AF%E6%89%98%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-18-%E7%94%9F%E6%88%90%E5%A4%9A%E4%B8%AA%E7%BB%98%E5%9B%BE%E5%8C%BA%E5%9F%9F.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-19-inline-vs-show.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-20-%E4%B8%89%E7%BB%B4%E4%B8%8B%E7%9A%843%E5%A5%97%E6%9F%B1%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-21-%E7%A7%91%E5%AD%A6%E5%8F%AF%E8%A7%86%E5%8C%96%E4%B9%8B%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-22-%E6%9C%AC%E6%96%87%E5%86%85%E5%AE%B9%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-22-%E6%9E%81%E5%9D%90%E6%A0%87%E7%BB%98%E5%BF%83%E5%BD%A2%E7%BA%BF.png">
+<meta property="article:published_time" content="2020-03-27T15:58:29.000Z">
+<meta property="article:modified_time" content="2020-09-25T19:26:26.000Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="viz">
+<meta property="article:tag" content="matplotlib">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action/02-mat-01-%E5%8F%AF%E8%A7%86%E5%8C%96%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6-%E6%8A%98%E7%BA%BF%E5%9B%BE.png">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>可视化技能之Matplotlib(上)|可视化系列01 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/03/27/viz-matplotlib-in-action.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          可视化技能之Matplotlib(上)|可视化系列01
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-27 23:58:29" itemprop="dateCreated datePublished" datetime="2020-03-27T23:58:29+08:00">2020-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-26 03:26:26" itemprop="dateModified" datetime="2020-09-26T03:26:26+08:00">2020-09-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">可视化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 5.5k 字 | ≈</span>
+           <span title="post.min2read">
+				23 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Matplotlib可以说是Python最声名远扬的可视化库了，也是Python数据分析库的“三驾马车”之一。Matplotlib是基础而非常强大的可视化库，Seaborn等好用的可视化库是在前者的基础上进行的封装。Matplotlib擅长快速出简单的图、有丰富的接口进行精细化绘图、和Numpy结合做科学可视化及三维图配合默契、三维图。但也有些缺点，如不容易基于实用目的绘制有一定难度的图表（如小提琴图等）、标签等元素需指定坐标而不能自适应优化显示、难以实现交互。</p>
+<p><a target="_blank" rel="noopener" href="https://matplotlib.org/">官网</a>说：</p>
+<blockquote>
+<p>Matplotlib tries to make easy things easy and hard things possible.</p>
+</blockquote>
+<a id="more"></a>
+
+<p>越用越认可这句话，Matplotlib非常强大，Hard things是possible但并非easy and fast。</p>
+<p>（发知乎或简书这里有viz那张图）</p>
+<h3 id="可视化基础框架"><a href="#可视化基础框架" class="headerlink" title="可视化基础框架"></a>可视化基础框架</h3><p>对于一个数据表df(通过pandas读入为DataFrame)来说，用Matplotlib对其进行可视化的基础框架为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fig, ax = plt.subplots()</span><br><span class="line">ax.plot(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;y&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>通过上面几行代码就可以画出df表周一到周五y指标的变化折线。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-01-%E5%8F%AF%E8%A7%86%E5%8C%96%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6-%E6%8A%98%E7%BA%BF%E5%9B%BE.png" alt="折线图绘制示例"></p>
+<p>Matplotlib其实为作图提供了两套可视化接口：</p>
+<ul>
+<li><p><code>plt.plot()</code>系列</p>
+</li>
+<li><p><code>fig, ax = plt.subplots()  ax.plot()</code> 系列</p>
+</li>
+</ul>
+<p>根据官网教程，分别对应MATLAB的陈述式语法和面向对象写法，具体可参考<a target="_blank" rel="noopener" href="https://matplotlib.org/tutorials/introductory/lifecycle.html#sphx-glr-tutorials-introductory-lifecycle-py">tutorials:lifecycle.html</a> ，</p>
+<p>个人理解，plt.plot()适合用于快速出图，读入一个数据表后想快速知道数据分布、指标关系等，通过plt.plot()系列语句直接出图，而ax.plot()更方便用来精细绘图，接口对各种图表元素的编辑很友好。</p>
+<p>在Matplotlib官网搜索，通常能看到两套接口，如搜绘制饼图的关键词<code>pie</code>，结果中的axes.Axes.pie对应ax.pie()的用法，pyplot.pie对应plt.pie()的函数接口。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-02-%E4%B8%A4%E5%A5%97%E6%8E%A5%E5%8F%A3.png" alt="两套接口"></p>
+<p>ax.×××()的写法看起来要写的语句多些，但这种面向对象(object-oriented)的写法通过<code>fig, ax = plt.subplots()</code>建立画布(figure)和定义轴域(axes)，能更明确在哪作画和映射规则，给用户更大的自由度和更精细的调参能力。Axes包含了一套坐标轴(axis)，确定了x/y坐标轴之后，数值再确定对应坐标，也就唯一确定了所在位置（这是二维情况下，更高维度就会对应着更多的axis），散点图是去确定点在轴域下的位置，柱状图是确定每个柱柱所在的位置，因此一套Axes就确定了唯一的独立的图，一个画布可以有多套Axes。更具体的辨析可读<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/93423829">姚太多啊的一篇文章</a>，简单说就是ax.×××()更方便调细节，初学者尽量避免用plt.×××系列来画图。</p>
+<h3 id="基础图表绘制"><a href="#基础图表绘制" class="headerlink" title="基础图表绘制"></a>基础图表绘制</h3><p>数据可视化从目的来说，是为了更直观展示数据或数据之间的对比、分布或关联关系。散点图、折线图、柱状图、条形图、饼图、直方图是非常常用而基础的可视化图。个人认为通过画这几种基础图并调细节是很好的学可视化实践。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-03-%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%88%B0%E5%90%84%E7%A7%8D%E5%8F%AF%E8%A7%86%E5%9B%BE.PNG" alt="将数据映射为可视图表"></p>
+<p>为了整体的美观和一致性，本文都用了一套自定义配色，通过<code>mpl.rcParams[&quot;axes.prop_cycle&quot;] = mpl.cycler(&#39;color&#39;,  [&#39;1EAFAE&#39;, &#39;A3FFFF&#39;, &#39;69FFFF&#39;])</code> 语句实现简单改配色，具体关于<code>mpl.rcParams</code>后面再展开。</p>
+<p>画散点图可以用两种主要的方法，<code>scatter(x,y)</code>和<code>plot(x,y,&#39;o&#39;)</code> 。<br>通过<code>ax.scatter(x,y)</code>绘制以x为横坐标，y为纵坐标的散点图，scatter的重要参数如下：</p>
+<ul>
+<li><code>x,y</code>：对应着x轴和y轴的数据，散点画在坐标轴里的[xi,yi]处。</li>
+<li><code>s,c,alpha</code>: 对应散点大小(size)、颜色(color)、透明度，都可以传一个和点数量相同长度的数组，如<code>s=df[&#39;z&#39;]</code>可以做气泡图，一般气泡图为了防止遮盖问题，通常设置一定的透明度，alpha的范围为0到1。<code>c=&#39;#BA5C25&#39;</code>设置点颜色，c赋值为一个数组可以做出每个点一个颜色的效果。</li>
+<li><code>marker</code>：设置点的形状；</li>
+<li><code>cmap</code>:颜色映射；</li>
+<li><code>norm</code>:当颜色c为一组浮点数时，把值标准化到[0,1]做颜色映射，<code>vmin</code>和<code>vamx </code>参数是结合 <code>norm</code> 来用的；</li>
+</ul>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-04-%E6%95%A3%E7%82%B9%E5%9B%BE%E5%8F%82%E6%95%B0%E7%A4%BA%E4%BE%8B-1.png" alt="02-mat-04-散点图参数示例"></p>
+<p><code>ax.plot(x,y,&#39;o&#39;)</code>也可以画散点图，ax.plot()核心是绘制坐标系下的点和点之间的连线的，当突出点的大小而省略线时，就是散点图了，同样突出线就变成了折线图。通过fmt(也就是format_string)参数来控制这些，包括点的形状、颜色、线的风格颜色等。折线图基础绘制效果可回看上一部分<strong>可视化基础框架</strong>。</p>
+<p>plot()的常用参数如下：</p>
+<ul>
+<li><code>x,y</code>: x轴和y轴的数据，当plot()只有一个输入列表或数组时，参数被当做y轴，也就是value，x轴以索引自动生成，也就是<code>ax.plot(y)</code>相当于<code>ax.plot(range(len(y)),y)</code>;</li>
+<li><code>fmt</code>: 控制x,y绘制的折线的点形状、颜色、线的风格、颜色；</li>
+<li>其他的<em>lines.Line2D</em>支持的属性， 如<code>color</code>控制线颜色，<code>marker</code>控制点形状，<code>linestyle</code>控制线风格类型及<code>linewidth</code>控制线宽等，如果既设置了<code>fmt</code>又指定了<code>color</code>呢？可以实践一下，线的颜色会根据color属性最终显示。</li>
+</ul>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-05-%E5%B8%B8%E7%94%A8fmt%E5%AD%97%E7%AC%A6%E6%84%8F%E4%B9%89%E6%95%B4%E7%90%86.png" alt="常用fmt字符意义整理"></p>
+<p>plot()除了plot(x,y,[fmt])这种写法之外，还可以传多套x,y以绘制多条折线，写法是<code>plot(x,y,[fmt],x2,y2,[fmt2],…)</code>。</p>
+<p>另外plot()还支持<code>plot(&#39;col1&#39;,&#39;col2&#39;,data=df)</code>这种写法，这是对二维表格数据更友好的接口。本文讲到的其他图形如bar、barh等基本也都是支持ax.×××(df[‘x’],df[‘y’]) 和ax.×××(x,y,data)写法的。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-06-3%E7%A7%8D%E5%86%99%E6%B3%95%E5%8F%8A%E7%BB%93%E6%9E%9C%E5%9B%BE.png" alt="plot 3种写法及结果图"></p>
+<p>通过<code>ax.bar(x,height)</code>绘制柱状图，条形图的绘制用<code>ax.barh(y,width)</code>，因bar和barh的用法很类似，参数之间有对应关系，这里结合着看。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-07-%E6%9F%B1%E7%8A%B6%E5%9B%BE%E7%BB%98%E5%88%B6%E5%8F%8A%E5%8F%82%E6%95%B0.png" alt="柱状图绘制及参数"></p>
+<ul>
+<li><code>x,height</code>: x轴的值和各柱的高，相当于折线图的x,y；</li>
+<li><code>width</code>: 柱的宽度，默认是0.8，也可以传入一个数组，画不等宽的柱状图；</li>
+<li><code>bottom</code>: 每个柱底部开始位置，默认是0，改bottom可以画堆积柱状图、瀑布图等；</li>
+<li><code>align</code>: 柱状的x是在柱底部中心还是边缘，{‘center’, ‘edge’}，默认是center；</li>
+<li><code>data</code>: 可以传入一个DataFrame，用法和前面说到的<code>ax.plot(&#39;col1&#39;,&#39;col2&#39;,data=df)</code>一致；</li>
+<li>其他像<code>color</code>(柱颜色)、<code>edgecolor</code>(柱边框色)、<code>linewidth</code>(边框线宽)等图元属性用法都一致，<code>linewidth</code>也是可以简写为<code>lw</code>的，颜色可以传一个数组，可以画出五彩斑斓的柱，也可借由这个参数美化瀑布图；</li>
+<li>条形图barh的参数有<code>barh(y,width,height,left,align)</code>，y是Y轴的值，每个柱的位置，因此barh的y对应bar的x，barh的width对应bar的height，barh的height对应bar的width。每个柱开始的位置是left，对应bar的bottom。align、data、color等一致。</li>
+</ul>
+<p>注意的是柱状图绘制语句<code>ax.bar(x,height)</code>的返回值是一个容器(BarContainer)，包含了所有画出来的柱。通过这个返回值可以对柱进行一些个性化的处理，另外的应用就是根据返回柱的属性给每个柱标上文本标签。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#给柱状图标上标签</span></span><br><span class="line">fig,ax= plt.subplots()</span><br><span class="line">rects=ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;y&#x27;</span>])</span><br><span class="line">ax.set_ylim(<span class="number">0</span>,<span class="number">100</span>)</span><br><span class="line"><span class="keyword">for</span> rect <span class="keyword">in</span> rects:</span><br><span class="line">    height = rect.get_height()</span><br><span class="line">    ax.annotate(<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(height),</span><br><span class="line">            xy=(rect.get_x() + rect.get_width() / <span class="number">2</span>, height),</span><br><span class="line">            xytext=(<span class="number">0</span>,<span class="number">1</span>),  <span class="comment"># 1 points vertical offset</span></span><br><span class="line">            textcoords=<span class="string">&quot;offset points&quot;</span>,</span><br><span class="line">            ha=<span class="string">&#x27;center&#x27;</span>, va=<span class="string">&#x27;bottom&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>通过给x以一定的偏移量，绘制簇状柱形图。代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#簇状柱 ClusterBar</span></span><br><span class="line">x = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">1</span>,<span class="built_in">len</span>(df)+<span class="number">1</span>)) </span><br><span class="line"></span><br><span class="line">width = <span class="number">0.2</span>  <span class="comment">#每个柱的宽度</span></span><br><span class="line">x1=[i-width <span class="keyword">for</span> i <span class="keyword">in</span> x]</span><br><span class="line">x2=[i+width <span class="keyword">for</span> i <span class="keyword">in</span> x]</span><br><span class="line">fig, ax = plt.subplots(figsize=(<span class="number">6</span>,<span class="number">5</span>))</span><br><span class="line">rects1 = ax.bar(x1,df[<span class="string">&#x27;y&#x27;</span>], width*<span class="number">2</span>, label=<span class="string">&#x27;Men&#x27;</span>,color=<span class="string">&#x27;#1EAFAE&#x27;</span>)</span><br><span class="line">rects2 = ax.bar(x2,df[<span class="string">&#x27;z&#x27;</span>], width*<span class="number">2</span>, label=<span class="string">&#x27;Women&#x27;</span>,color=<span class="string">&#x27;#69FFFF&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax.set_xticks(x)</span><br><span class="line">ax.set_xticklabels(df[<span class="string">&#x27;x&#x27;</span>])</span><br><span class="line">ax.legend()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-08-%E7%B0%87%E7%8A%B6%E6%9F%B1%E5%BD%A2%E5%9B%BE.png" alt="簇状柱形图"></p>
+<p>通过给bottom参数传一个数组，可以画堆叠柱状图：堆叠柱除了等值堆叠之外，还可以等比堆叠，思路就是将每个x对应的柱都做一下数值变换，把柱的高度约束在[0,1]，且堆叠之和为1，height=h[i]/sum(h)。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#堆叠柱状图</span></span><br><span class="line">fig,ax= plt.subplots()</span><br><span class="line">ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;y&#x27;</span>],label=<span class="string">&#x27;Men&#x27;</span>)</span><br><span class="line">ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;z&#x27;</span>],bottom=df[<span class="string">&#x27;y&#x27;</span>],label=<span class="string">&#x27;Women&#x27;</span>)</span><br><span class="line">ax.legend()</span><br><span class="line"></span><br><span class="line"><span class="comment">#等比例堆叠柱</span></span><br><span class="line">fig,ax= plt.subplots()</span><br><span class="line">df[<span class="string">&#x27;y1&#x27;</span>]=df.apply(<span class="keyword">lambda</span> x:(x[<span class="string">&#x27;y&#x27;</span>])*<span class="number">100</span>/(x[<span class="string">&#x27;y&#x27;</span>]+x[<span class="string">&#x27;z&#x27;</span>]),axis=<span class="number">1</span>)</span><br><span class="line">df[<span class="string">&#x27;z1&#x27;</span>]=df.apply(<span class="keyword">lambda</span> x:(x[<span class="string">&#x27;z&#x27;</span>])*<span class="number">100</span>/(x[<span class="string">&#x27;y&#x27;</span>]+x[<span class="string">&#x27;z&#x27;</span>]),axis=<span class="number">1</span>)</span><br><span class="line">ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;y1&#x27;</span>])</span><br><span class="line">ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;z1&#x27;</span>],bottom=df[<span class="string">&#x27;y1&#x27;</span>])</span><br><span class="line">ax.set_ylim(<span class="number">0</span>,<span class="number">100</span>) <span class="comment">#标签设置等代码省略</span></span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-09-%E5%A0%86%E5%8F%A0%E6%9F%B1%E7%8A%B6%E5%9B%BE%E7%BB%98%E5%88%B6%E6%95%88%E6%9E%9C.png" alt="堆叠柱状图绘制效果"></p>
+<p>调节<code>width</code>参数使得柱和柱之间的宽度为0，并对数据进行统计在画图，可以用ax.bar()绘制直方图，但也不需要这么复杂，Matplotlib提供了绘制直方图的接口<code>ax.hist(x,bins,normed)</code>，可以直接对某列数据绘制直方图。x是需要统计分布的数据列，bins控制分箱的个数，默认是10。</p>
+<p>箱线图在数据分析中挺常用的，箱线图对于数据分布有很好的展示作用，Matplotlib提供了<code>boxplot(x)</code>用于绘制箱线图。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fig, ax= plt.subplots()</span><br><span class="line">ax.boxplot(df[<span class="string">&#x27;y&#x27;</span>])  <span class="comment">#箱线图</span></span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-10-%E7%94%A8df%E7%BB%98%E5%88%B6%E7%9B%B4%E6%96%B9%E5%9B%BE%E5%92%8C%E7%AE%B1%E7%BA%BF%E5%9B%BE.png" alt="用同一列绘制的直方图和箱线图"></p>
+<p>饼图是可视化中基础而重要的图形，是各种数据报告的常客，Matplotlib绘制饼图时因为xy轴默认比例尺不同，为了得到不扁的饼，需设置xy轴1像素对应的值相等。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#绘制饼图</span></span><br><span class="line">fig,ax=plt.subplots(subplot_kw=<span class="built_in">dict</span>(aspect=<span class="string">&quot;equal&quot;</span>)) </span><br><span class="line">ax.pie(df[<span class="string">&#x27;y&#x27;</span>]) <span class="comment">#为了得到不扁的饼，设置xy轴比例尺相同</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---</span></span><br><span class="line"><span class="comment">#环状图</span></span><br><span class="line">fig, ax = plt.subplots(subplot_kw=<span class="built_in">dict</span>(aspect=<span class="string">&quot;equal&quot;</span>)) </span><br><span class="line">wps=<span class="built_in">dict</span>(width=<span class="number">0.3</span>, edgecolor=<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">ax.pie(df[<span class="string">&#x27;y&#x27;</span>], radius=<span class="number">1</span>,startangle=<span class="number">90</span>,counterclock=<span class="literal">False</span>,wedgeprops=wps)</span><br><span class="line">ax.pie(df[<span class="string">&#x27;z&#x27;</span>], radius=<span class="number">1</span>-<span class="number">0.3</span>,startangle=<span class="number">90</span>,counterclock=<span class="literal">False</span>,wedgeprops=wps)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-11-%E9%A5%BC%E5%9B%BE%E5%92%8C%E7%8E%AF%E7%8A%B6%E5%9B%BE.png" alt="饼图和环状图"></p>
+<h3 id="图表元素调校"><a href="#图表元素调校" class="headerlink" title="图表元素调校"></a>图表元素调校</h3><p>一张可视化图上除了主要的点、线、面之外，文本标签、坐标轴标签等也是很重要的可视媒介，特别是对于信息图表而言。<br>下面这张<a target="_blank" rel="noopener" href="https://matplotlib.org/tutorials/introductory/usage.html">图</a>基本囊括了用到的图形元素</p>
+<h4 id="图元"><a href="#图元" class="headerlink" title="图元"></a>图元</h4><p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-12-figure%E4%B8%8A%E7%9A%84%E5%9B%BE%E5%85%83.png" alt="figure上的图元"></p>
+<p>加文本可以通过<br><code>ax.text(x,y, &quot;Text&quot;)</code> 。添加标题通常写<code>ax.set_title()</code>，另外也可以用<code>ax.title.set_text(&#39;title&#39;) </code>或<code>ax.set(title=&#39;ttl&#39;)</code>设置标题，<br>整理如下：</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-12-%E5%B8%B8%E7%94%A8%E5%9B%BE%E8%A1%A8%E6%A0%87%E7%AD%BE%E6%B7%BB%E5%8A%A0%E7%9A%84%E6%8E%A5%E5%8F%A3.png" alt="常用图表标签添加的接口"></p>
+<ul>
+<li><code>ax.text(x,y, &quot;Text&quot;)</code>:在坐标[x,y]处添加文本Text，文本支持latex公式，如<code>ax.text(2,6, r&#39;$E=mc^2$&#39;, fontsize=15)</code>；</li>
+<li><code>ax.set_title()</code>:添加标题；</li>
+<li><code>ax.set_ylim(0,4)</code> 设置y轴值的范围（类似于函数的值域），例如对于y=[],直接ax.plot(y)画出来的折线图y轴范围是<br>，通过<code>ax.set_ylim(0,4)</code> 可以显示0~100范围的效果。同理通过<code>ax.set_ylim(0,4)</code>设置x轴范围（定义域）；</li>
+<li><code>ax.set_ylabel(&quot;Y axis label&quot;)</code>:给y轴加上坐标轴标题；</li>
+<li><code>ax.tick_params(which=&#39;major&#39;, width=1.0)</code>:细调坐标轴刻度；</li>
+<li><code>ax.legend()</code> : 设置图例 ；</li>
+</ul>
+<h4 id="形状与图片"><a href="#形状与图片" class="headerlink" title="形状与图片"></a>形状与图片</h4><p>图形元素设置除了文本类型之外，也可以往里加形状 。</p>
+<ul>
+<li>加线：<code>import matplotlib.lines as lines；ax.add_artist(lines.Line2D([15,15], [0, 10],color=&#39;#1EAFAE&#39;)) </code>，其效果可参考矩阵图绘制效果；</li>
+<li>加带箭头的线: <code>ax.arrow(0, 0, 0.5, 0.5, head_width=0.05, head_length=0.1, fc=&#39;k&#39;, ec=&#39;k&#39;)</code>；</li>
+<li>加一个垂直的平均线: <code>ax.axvline(x, ls=&#39;--&#39;, color=&#39;r&#39;)</code>，那水平平均线呢？<code>axhline(y=0, xmin=0, xmax=1, **kwargs)</code>；</li>
+<li>加垂直或水平的强调矩形: <code>ax.axhspan(ymin, ymax, xmin=0, xmax=1, **kwargs)</code> 和 <code>ax.axvspan(xmin, xmax, ymin=0, ymax=1, **kwargs)</code>；</li>
+<li>加矩形：<code>patches.append(mpatches.Rectangle([0.5, 0.5], 0.5,0.8))</code>，可用于绘制甘特图；</li>
+<li>加圆形(及椭圆): <code>patches.append( mpatches.Ellipse((x,y), width, height))</code>；</li>
+<li>加带箭头的形状：<code>ax.annotate(&#39;箭头文本&#39;, xy=(4,5), xytext=(3,2),color, arrowprops=dict( arrowstyle=&#39;-&gt;&#39;, connectionstyle=&quot;arc3&quot;))</code>，加图标型的箭头：<code>patches.append( mpatches.Arrow(x,y, dx,dy,width))</code>；</li>
+<li>加图片: <code>mpimg.imread(ipath); ax.axis(&#39;off&#39;); ax.imshow(img)</code>；</li>
+</ul>
+<p>给散点图加标签并加分隔线绘制矩阵图以实践一下以上方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import matplotlib.lines as lines</span><br><span class="line">fig, ax&#x3D; plt.subplots()</span><br><span class="line">ax.plot(df[&#39;z&#39;],df[&#39;y&#39;],&#39;o&#39;)</span><br><span class="line">ax.add_artist(lines.Line2D([70,70], [30,100],color&#x3D;&#39;#000000&#39;,lw&#x3D;3)) #是[x1,x2],[y1,y2] 不是[x1,y1],[x2,y2]</span><br><span class="line">ax.add_artist(lines.Line2D([30,100], [65,65],color&#x3D;&#39;#000000&#39;,lw&#x3D;3))</span><br><span class="line">ax.set_xlim(30,100)</span><br><span class="line">ax.set_ylim(30,100)</span><br><span class="line">ax.set_xlabel(&quot;z&quot;)</span><br><span class="line">ax.set_ylabel(&quot;y&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-13-%E7%9F%A9%E9%98%B5%E5%9B%BE%E7%BB%98%E5%88%B6%E7%A4%BA%E4%BE%8B.png" alt="矩阵图绘制示例"></p>
+<p>绘制瀑布图综合运用ax.bar()的参数和文本标签，并封装为一个函数，以后使用只需要调用就好：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#瀑布图</span></span><br><span class="line">x=[<span class="number">17</span>,-<span class="number">3</span>,<span class="number">7</span>,<span class="number">6</span>] <span class="comment">#原始数据</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">waterfall_chart</span>(<span class="params">x</span>):</span></span><br><span class="line">    j=<span class="number">0</span> <span class="comment">#sum(x) 最终柱的结果</span></span><br><span class="line">    k=<span class="number">0</span> <span class="comment">#k=x[i-1]</span></span><br><span class="line">    x0=[]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">        <span class="keyword">if</span> i&lt;<span class="number">0</span>:</span><br><span class="line">            x0.append(j+i)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            x0.append(j)</span><br><span class="line">        j+=i</span><br><span class="line"></span><br><span class="line">    x1=[<span class="built_in">abs</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> x]</span><br><span class="line"></span><br><span class="line">    c1=[<span class="string">&#x27;#1EAFAE&#x27;</span> <span class="keyword">if</span> i&gt;<span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;#69FFFF&#x27;</span> <span class="keyword">for</span> i <span class="keyword">in</span> x]</span><br><span class="line">    c1.append(<span class="string">&#x27;#BA5C25&#x27;</span>)</span><br><span class="line">    x0[<span class="number">0</span>]=<span class="number">0</span></span><br><span class="line">    x0.append(<span class="number">0</span>)</span><br><span class="line">    x1.append(j)</span><br><span class="line">    x.append(j)</span><br><span class="line">    w=<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">1</span>,<span class="built_in">len</span>(x)+<span class="number">1</span>))</span><br><span class="line">    fig,ax= plt.subplots(figsize=(<span class="number">6</span>,<span class="number">5</span>))</span><br><span class="line">    ax.bar(w,x0,alpha=<span class="number">0</span>) <span class="comment">#都透明度为0了，颜色不重要</span></span><br><span class="line">    rects=ax.bar(w,x1,bottom=x0,color=c1) <span class="comment">#颜色可传一个数组的</span></span><br><span class="line">    ax.set_ylim(<span class="number">0</span>, <span class="number">30</span>)</span><br><span class="line">    i=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> rect <span class="keyword">in</span> rects: <span class="comment">#加上适当的文本标签 </span></span><br><span class="line">        height = rect.get_height()+x0[i]</span><br><span class="line">        ax.annotate(<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(x[i]),</span><br><span class="line">                xy=(rect.get_x() + rect.get_width() / <span class="number">2</span>, height),</span><br><span class="line">                xytext=(<span class="number">0</span>,<span class="number">1</span>),  <span class="comment"># 1 points vertical offset</span></span><br><span class="line">                textcoords=<span class="string">&quot;offset points&quot;</span>,</span><br><span class="line">                ha=<span class="string">&#x27;center&#x27;</span>, va=<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line">        i+=<span class="number">1</span></span><br><span class="line">    ax.set_xticklabels([<span class="string">&#x27;&#x27;</span>,<span class="string">&#x27;Q1&#x27;</span>,<span class="string">&#x27;Q2&#x27;</span>,<span class="string">&#x27;Q3&#x27;</span>,<span class="string">&#x27;Q4&#x27;</span>,<span class="string">&#x27;Ys&#x27;</span>])</span><br><span class="line">    <span class="keyword">return</span> ax</span><br><span class="line">waterfall_chart(x)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-14-%E7%80%91%E5%B8%83%E5%9B%BE%E7%BB%98%E5%88%B6%E7%A4%BA%E4%BE%8B.png" alt="瀑布图效果"></p>
+<h3 id="组合图"><a href="#组合图" class="headerlink" title="组合图"></a>组合图</h3><p>为了更好地展现数据间的联系或变化，我们有时会需要将多种图表类型用在同一张可视化图里，一种是共用坐标轴的组合图，例如面积图+柱状图的组合、散点+折线图就是很基础的组合图。另一种是双坐标轴，很常见的图是左边的y轴是月活，画柱状图，右边的y轴是增长率，画折线图。</p>
+<h4 id="共用坐标轴"><a href="#共用坐标轴" class="headerlink" title="共用坐标轴"></a>共用坐标轴</h4><p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-15-%E5%85%B1%E7%94%A8%E5%9D%90%E6%A0%87%E8%BD%B4%E7%BB%84%E5%90%88%E5%9B%BE%E4%B8%A4%E4%BE%8B%E5%AD%90.png" alt="共用坐标轴组合图两例子"></p>
+<p>棒棒糖图(Lollipop)是将条形图的柱变得很细并突出末端的一类图，形似棒棒糖，特别适合于展示分类标签很多的数据。可以通过将柱状图和散点图结合的方法绘制，Matplotlib库绘制起来并不复杂，代码如下。但对于一些散点图的y轴不支持分类标签的库来说，要画棒棒糖图还是挺复杂的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">y = [<span class="number">5</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">8</span>,<span class="number">13</span>,<span class="number">15</span>,<span class="number">13</span>,<span class="number">19</span>]</span><br><span class="line">x=[<span class="string">&#x27;c&#x27;</span>+<span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(y))]</span><br><span class="line"></span><br><span class="line">fig, ax= plt.subplots(figsize=(<span class="number">6</span>,<span class="number">6</span>)) </span><br><span class="line">ax.barh(x,y,height=<span class="number">0.08</span>,zorder=<span class="number">1</span>) <span class="comment">#图层顺序的解决方案</span></span><br><span class="line">ax.scatter(y,x,zorder=<span class="number">2</span>,color=<span class="string">&#x27;#ba5c25&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>有时为了对比两类数据，除了用簇状柱形图或簇状条形图外，也可以试试哑铃图，理解了上面画棒棒糖图的方法之后，要组合出哑铃图并不难，对数据进行一定运算后用barh加两个scatter就可以画出来。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-16-%E6%A3%92%E6%A3%92%E7%B3%96%E5%9B%BE%E5%92%8C%E5%93%91%E9%93%83%E5%9B%BE.png" alt="棒棒糖图和哑铃图"></p>
+<p>帕累托图是双坐标轴的可视化典例。帕累托图特别适合展示符合长尾效应的数据。matplotlib给我们提供了<code>ax.twinx()</code>用于生成共用x轴的另一个Axes，效果就是左边的y轴比例尺和右边比例尺不一定一样，能更好地将两类图进行效果组合。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">y=[<span class="number">23</span>,<span class="number">162</span>,<span class="number">51</span>,<span class="number">119</span>,<span class="number">12</span>,<span class="number">3</span>,<span class="number">8</span>] <span class="comment">#模拟数据</span></span><br><span class="line">x=[<span class="built_in">str</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>,<span class="built_in">len</span>(y)+<span class="number">2</span>)]</span><br><span class="line">y=<span class="built_in">sorted</span>(y,reverse=<span class="literal">True</span>)</span><br><span class="line">ysum=<span class="built_in">sum</span>(y)</span><br><span class="line">y2=[]</span><br><span class="line">cc=<span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> y:</span><br><span class="line">    cc+=i</span><br><span class="line">    y2.append(cc/ysum*<span class="number">100</span>)</span><br><span class="line">fig = plt.figure()</span><br><span class="line">ax1 = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line">rects=ax1.bar(x,y,color=<span class="string">&#x27;#1EAFAE&#x27;</span>)</span><br><span class="line">ax1.set_ylabel(<span class="string">&#x27;Month IC&#x27;</span>)</span><br><span class="line">ax1.set_ylim(<span class="number">0</span>, <span class="number">180</span>)</span><br><span class="line">ax2 = ax1.twinx() </span><br><span class="line"><span class="comment">#https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.twinx.html#matplotlib.axes.Axes.twinx</span></span><br><span class="line">ax2.set_ylim(<span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">ax2.plot(x, y2,<span class="string">&#x27;o&#x27;</span>,color=<span class="string">&#x27;#FFA069&#x27;</span>,linewidth=<span class="number">2</span>,ls=<span class="string">&#x27;-&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax2.set_ylabel(<span class="string">&#x27;%&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> rect <span class="keyword">in</span> rects:</span><br><span class="line">    height = rect.get_height()</span><br><span class="line">    ax1.annotate(<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(height),</span><br><span class="line">            xy=(rect.get_x() + rect.get_width() / <span class="number">2</span>, height),</span><br><span class="line">            xytext=(<span class="number">0</span>,<span class="number">1</span>),  <span class="comment"># 1 points vertical offset</span></span><br><span class="line">            textcoords=<span class="string">&quot;offset points&quot;</span>,</span><br><span class="line">            ha=<span class="string">&#x27;center&#x27;</span>, va=<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line">ax1.set_title(<span class="string">&quot;Pareto in Matplotlib&quot;</span>) <span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-17-%E5%B8%95%E7%B4%AF%E6%89%98%E5%9B%BE.png" alt="帕累托图"></p>
+<h4 id="子图与分面"><a href="#子图与分面" class="headerlink" title="子图与分面"></a>子图与分面</h4><p>除了组合图外，有时候我们也需要将多个图并排以展现某种数据关系。前面说过一个画布下可以有多套Axes，正常情况下我们只需要一套Axes用来画图，但是也经常需要在一个画布中画多张图，形成分面或子母图的效果，前面我们基本都是写<code>fig, ax= plt.subplots()</code>，实际上<code>subplots()</code>可以设置nrows、ncols参数生成多套Axes。</p>
+<p>plt.subplots()的常用写法有：</p>
+<ul>
+<li><code>plt.subplot(3,2,4)</code>:在全局绘图区域中建立3行、2列的分区绘图区域，并定位到第4个子图区域，返回一个axes；</li>
+<li><code>plt.subplot(324)</code>: 效果和上面subplot(3,2,4)的写法一致；</li>
+<li><code>plt.subplots()</code>:  默认1行1列，生成的axes就是一个；</li>
+<li><code>plt.subplots(3,2)</code> : 没有指定绘图编号，返回值包括一个figure和多个axes，和<code>ax[0, 0].×××(x, y) </code>搭配着用；</li>
+<li><code>fig = plt.figure();  ax= fig.add_subplot(221)</code>:先建立一个画布，在画布上添加2x2个子图，并定位到顺序第一个子图；</li>
+</ul>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-18-%E7%94%9F%E6%88%90%E5%A4%9A%E4%B8%AA%E7%BB%98%E5%9B%BE%E5%8C%BA%E5%9F%9F.png" alt="生成多个绘图区域"></p>
+<p>图中代码在全局绘图区域中建立n行、m列的分区绘图区域，并定位到其中一个子图区域。之后ax的用法和前面一致，不赘述。</p>
+<p>生成的图片在shell环境中弹出的界面有保存图片的按键，在jupyter环境中可以点击图片然后右键保存。而如果要通过代码保存图片到本地，一般通过<code>plt.savefig(fname,dpi=300)</code>保存图片，参数有文件保存路径(fname)、图片每英寸像素(dpi)、边缘颜色(edgecolor)等。在shell环境中一般通过plt.show()展示图片，而jupyter notebook中通常写<code>%matplotlib inline </code>将图片直接在Out[]里输出展示。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-19-inline-vs-show.png" alt="matplotlib inline vs plt.show"></p>
+<p>Matplotlib的rcParams接口可以设置很多个性化内容，包括刚提到的savefig的edgecolor默认值，可以写<code>mpl.rcParams[&quot;savefig.edgecolor&quot;]=&#39;blue&#39;</code>改变原来的默认值white。直方图的默认分箱数可以通过<code>rcParams[&quot;hist.bins&quot;]=5</code>改变。</p>
+<p>而为了在Matplotlib中支持中文，各教程的解决方案基本都有<code>mpl.rcParams[&#39;font.family&#39;]=&#39;SimHei&#39;</code>这句，就是将Matplotlib的字体替换为微软雅黑。前面<strong>基础图表绘制部分</strong>通过更新mpl.rcParams[“axes.prop_cycle”]改变了绘图的主题色，Matplotlib本身是提供了备选的绘图渲染的各种主题，可以通过<code>style.use(&#39;ggplot&#39;)</code>调用ggplot主题（想换回默认主题用<code>style.use(&#39;default&#39;)</code>）。就像给输入法换皮肤一样，rcParams接口给了我们更多的自由度和个性化。</p>
+<h3 id="三维及科学可视化"><a href="#三维及科学可视化" class="headerlink" title="三维及科学可视化"></a>三维及科学可视化</h3><p>三维可视化和科学可视化是Matplotlib特别擅长的领域，人类作为三维生物，对三维的图像有一定的偏好，扁平化和三维各有优势，各有不同的应用场合，能画好二维可视化图也该会画三维的图表，且一些场景用好三维有奇效。Matplotlib的三维可视化封装在mpl_toolkits工具套件的<code>mplot3d</code>里，mplot3d下的API主要包括Axes3D(三维坐标轴区域)、art3d.xx3D(三维图元)和proj3d(三维坐标变换)。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpl_toolkits.mplot3d <span class="keyword">import</span> Axes3D  <span class="comment"># noqa: F401 unused import</span></span><br><span class="line">fig = plt.figure()</span><br><span class="line">ax = fig.add_subplot(<span class="number">111</span>, projection=<span class="string">&#x27;3d&#x27;</span>)</span><br><span class="line">ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;y&#x27;</span>], zs=<span class="number">0</span>, zdir=<span class="string">&#x27;y&#x27;</span>, alpha=<span class="number">0.8</span>)</span><br><span class="line">ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;z&#x27;</span>], zs=<span class="number">1</span>, zdir=<span class="string">&#x27;y&#x27;</span>, alpha=<span class="number">0.8</span>)</span><br><span class="line">ax.bar(df[<span class="string">&#x27;x&#x27;</span>],df[<span class="string">&#x27;y&#x27;</span>], zs=<span class="number">2</span>, zdir=<span class="string">&#x27;y&#x27;</span>, alpha=<span class="number">0.8</span>)</span><br><span class="line">ax.set_xlabel(<span class="string">&#x27;X&#x27;</span>)</span><br><span class="line">ax.set_ylabel(<span class="string">&#x27;Y&#x27;</span>)</span><br><span class="line">ax.set_zlabel(<span class="string">&#x27;Z&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax.set_yticks([<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-20-%E4%B8%89%E7%BB%B4%E4%B8%8B%E7%9A%843%E5%A5%97%E6%9F%B1%E5%9B%BE.png" alt="绘制三维下的3套柱图"></p>
+<p>三维可视化和科学可视化联系很紧密，科研作图中应用广泛，各种漂亮的参数曲面在官网示例里有很多，这里略过、当然二维下也能画出很优美的函数图像，结合numpy生成[0,2]之间的正弦函数曲线只需要4行代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t = np.arange(<span class="number">0.0</span>, <span class="number">2.0</span>, <span class="number">0.01</span>)</span><br><span class="line">s = <span class="number">1</span> + np.sin(<span class="number">2</span> * np.pi * t)</span><br><span class="line">fig, ax = plt.subplots()</span><br><span class="line">ax.plot(t, s)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-21-%E7%A7%91%E5%AD%A6%E5%8F%AF%E8%A7%86%E5%8C%96%E4%B9%8B%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0.png" alt="科学可视化之正弦函数图像"></p>
+<p>绘制指数函数、分形的雪花曲线也是类似的过程，在官网案例集有类似的例子，具体这里不展开。</p>
+<p>总结下本文从Matplotlib的可视化基础框架一步步画散点、折线、柱状、箱线等图，通过理解参数拓展画了瀑布图、矩阵图、棒棒糖图等，并且微调坐标轴文本、标题等图形元素，让可视化更完备，通过双y轴绘制帕累托图等组合图，也绘制了包含多张子图的图和三维图。</p>
+<p>通过以上实践可以看到的Matplotlib可视化语法的特点是绘图对象和标签标题等元素有一定独立性，且有不同层级的接口可以用来微调元素，例如设置标题就有多种写法 ，Matplotlib不同于ggplot2的管道写法、也不同于Altair等库将数据传到chart对象再调用mark_bar()等确定绘制什么图。可视化是要好看，也不能忘了所展现的数据与数据间的关系是重点。</p>
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-22-%E6%9C%AC%E6%96%87%E5%86%85%E5%AE%B9%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE.png" alt="本文内容思维导图"></p>
+<p>最后用极坐标绘心形线结束本文。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#极坐标绘心形线</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">theta= np.arange(<span class="number">0</span>, <span class="number">2</span>*np.pi, <span class="number">0.05</span>)</span><br><span class="line">r=<span class="number">5</span>*(<span class="number">1</span>-np.sin(theta)) <span class="comment">#a取5</span></span><br><span class="line">ax = plt.subplot(<span class="number">111</span>, projection=<span class="string">&#x27;polar&#x27;</span>)</span><br><span class="line">ax.plot(theta, r,lw=<span class="number">3</span>)</span><br><span class="line">ax.grid(<span class="literal">True</span>)</span><br><span class="line">ax.text(<span class="number">1.56</span>,<span class="number">6</span>,<span class="string">&#x27;r=a(1-sinθ)&#x27;</span>,ha=<span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">		fontsize=<span class="number">18</span>,color=<span class="string">&#x27;#1EAFAE&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/27/viz-matplotlib-in-action/02-mat-22-%E6%9E%81%E5%9D%90%E6%A0%87%E7%BB%98%E5%BF%83%E5%BD%A2%E7%BA%BF.png" alt="极坐标绘心形线"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/viz/" rel="tag"><i class="fa fa-tag"></i> viz</a>
+              <a href="/tags/matplotlib/" rel="tag"><i class="fa fa-tag"></i> matplotlib</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/20/24-points-game-coding-with-gui.html" rel="prev" title="编程实现一个有GUI的24点游戏">
+      <i class="fa fa-chevron-left"></i> 编程实现一个有GUI的24点游戏
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/29/viz-matplotlib-advanced.html" rel="next" title="可视化技能之Matplotlib(下)|可视化系列02">
+      可视化技能之Matplotlib(下)|可视化系列02 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96%E5%9F%BA%E7%A1%80%E6%A1%86%E6%9E%B6"><span class="nav-number">1.</span> <span class="nav-text">可视化基础框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%9B%BE%E8%A1%A8%E7%BB%98%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">基础图表绘制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E8%A1%A8%E5%85%83%E7%B4%A0%E8%B0%83%E6%A0%A1"><span class="nav-number">3.</span> <span class="nav-text">图表元素调校</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E5%85%83"><span class="nav-number">3.1.</span> <span class="nav-text">图元</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%A2%E7%8A%B6%E4%B8%8E%E5%9B%BE%E7%89%87"><span class="nav-number">3.2.</span> <span class="nav-text">形状与图片</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E5%90%88%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text">组合图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B1%E7%94%A8%E5%9D%90%E6%A0%87%E8%BD%B4"><span class="nav-number">4.1.</span> <span class="nav-text">共用坐标轴</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%90%E5%9B%BE%E4%B8%8E%E5%88%86%E9%9D%A2"><span class="nav-number">4.2.</span> <span class="nav-text">子图与分面</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%BB%B4%E5%8F%8A%E7%A7%91%E5%AD%A6%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">三维及科学可视化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

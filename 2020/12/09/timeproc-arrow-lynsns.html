@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Arrow简介Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，其GitHub页面 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python处理时间数据的另一种选择，在标准库之外|Arrow使用笔记">
+<meta property="og:url" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="Arrow简介Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，其GitHub页面 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns/time-1210-arrow-1-1-xmind.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns/Arrow-111.png">
+<meta property="article:published_time" content="2020-12-09T15:59:36.000Z">
+<meta property="article:modified_time" content="2020-12-18T14:41:04.063Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="time">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns/time-1210-arrow-1-1-xmind.PNG">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python处理时间数据的另一种选择，在标准库之外|Arrow使用笔记 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/12/09/timeproc-arrow-lynsns.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python处理时间数据的另一种选择，在标准库之外|Arrow使用笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-09 23:59:36" itemprop="dateCreated datePublished" datetime="2020-12-09T23:59:36+08:00">2020-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-18 22:41:04" itemprop="dateModified" datetime="2020-12-18T22:41:04+08:00">2020-12-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 1.4k 字 | ≈</span>
+           <span title="post.min2read">
+				5 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Arrow简介"><a href="#Arrow简介" class="headerlink" title="Arrow简介"></a>Arrow简介</h2><p>Arrow是一个优秀的Python时间处理库，比起Python内置的多个日期时间库，它简化了时间类型数据的解析和输出方法，增强了时间属性的获取能力。经过多年的发展，现在其他有追求的第三方Python时间处理库基本都会对标Arrow，足矣见其影响力。目前Arrow是0.17版，其<a target="_blank" rel="noopener" href="https://github.com/arrow-py/arrow">GitHub页面</a> 上有6千多Star，而且保持着活跃的更新，可见其未来会更加强大。</p>
+<p><img src="/2020/12/09/timeproc-arrow-lynsns/time-1210-arrow-1-1-xmind.PNG" alt="Arrow概览导图"></p>
+<a id="more"></a>
+
+<h2 id="时间数据输入与转换"><a href="#时间数据输入与转换" class="headerlink" title="时间数据输入与转换"></a>时间数据输入与转换</h2><p>从各种输入解析为时间对象是经常面对的需求，Arrow库将数据的输入解析统一封装在arrow.get()函数里，不需要去记time的strptime、gmtime等方法，只要将输入数据传给get，就可以得到一个时间对象，例如<code>dt=arrow.get(&#39;2020-12-07&#39;)</code>。当get()不输入参数时得到的是当前的UTC时间，相当于<code>datetime.utcnow()</code>；get(s)则解析字符串s里的日期要素；get()传入浮点数(float)或int则把输入当成时间戳进行解析；get还可以传入time或datetime的对象，转为arrow的时间对象。<br>arrow的时间对象是封装为自己的自定义类型，要转为datetime的时间对象可以调用<code>dt.datetime</code>，同理要转为时间戳格式使用<code>dt.timestamp</code>，时间戳一般为一个浮点数，表示时间基准点至特定时间dt的总秒数（小数部分对应毫秒等更精细的时间要素），基准点是格林威治时间1970年01月01日00时00分00秒这一时刻，也就是说如果dt是1970年1月1日0时0分0秒，则时间戳的值为0，而小于1970年是负数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> arrow <span class="comment">#Anaconda下已经安装</span></span><br><span class="line">arrow.get(<span class="string">&#x27;2020-12-07 14:20:10&#x27;</span>) <span class="comment">#内置的对象，不是datetime</span></span><br><span class="line"><span class="comment">#Out[]: &lt;Arrow [2020-12-07T14:20:10+00:00]&gt;</span></span><br><span class="line">arrow.now() <span class="comment">#获取当前时间</span></span><br><span class="line">dt=arrow.get(<span class="number">1607334506</span>) <span class="comment">#get可输入Unix时间戳，也可以输入datetime对象</span></span><br><span class="line">dt=arrow.get(datetime(<span class="number">2020</span>,<span class="number">12</span>,<span class="number">7</span>), <span class="string">&#x27;US/Pacific&#x27;</span>)</span><br><span class="line">dt=arrow.get(<span class="string">&#x27;June was born in May 1980&#x27;</span>, <span class="string">&#x27;MMMM YYYY&#x27;</span>)</span><br><span class="line">dt.datetime <span class="comment">#转为dateime类型</span></span><br><span class="line"><span class="comment">#datetime.datetime(2020, 12,...)</span></span><br><span class="line">dt.naive <span class="comment">#转为当地时区的datetime类型</span></span><br><span class="line">dt.year <span class="comment">#dt所在的年，输出 2020</span></span><br><span class="line">dt.floor(<span class="string">&#x27;hour&#x27;</span>) <span class="comment">#从小时处截断，取dt的小时，后面的分钟秒都是0</span></span><br><span class="line"><span class="comment">#&lt;Arrow [2020-12-07T14:00:00+00:00]&gt;</span></span><br><span class="line"><span class="comment">#对应的有 .ceil(&#x27;hour&#x27;)</span></span><br></pre></td></tr></table></figure>
+
+<p>arrow和Python内置的time、datetime库并不割裂，arrow有dt.time、dt.datetime、dt.timestamp将时间数据从Arrow内置对象转为time等库的时间对象，另一方面，从datetime等时间对象转为arrow对象也是容易的，不仅仅是通过<code>get()</code>转换，arrow的range、span_range也支持datetime对象作为参数输入。<br><code>arrow.now()</code> 可以获取当前时间，另外arrow也有<code>.utcnow()</code>获取当前时间UTC(Coordinated Universal Time，世界协调时)时间，在now()函数中可以传入时区 例如写<code>arrow.now(&#39;Asia/Shanghai&#39;)</code>。</p>
+<p>要修改时间的某些部分使用replace函数，输入的参数是时间要素的那些属性，如year、month等。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d2=d1.replace(hour=<span class="number">3</span>)</span><br><span class="line">d3=d1.shift(weeks=+<span class="number">4</span>) <span class="comment">#当前时间4周后</span></span><br><span class="line">d4=d1.to(<span class="string">&#x27;local&#x27;</span>) <span class="comment">#换时区</span></span><br></pre></td></tr></table></figure>
+<p>replace更侧重属性的修改，而shift更多是一种时间偏移的感觉，从当前时间向前或向后偏移一个时间间隔，通常在时间序列的生成中使用到。在转换时区时，除了修改时区的值外，还有一类需求是把当前时间转换为其他时区下的时间，例如dt是北京时间9点，转换成美国东部时间是多少点，这个使用的是<code>dt.to(&#39;US/Eastern&#39;)</code>。</p>
+<p>arrow使用format进行格式化，从时间对象转为特定格式的字符串，arrow没有使用strptime的 %Y类型的占位符，而是省略了%号。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dt.<span class="built_in">format</span>(<span class="string">&#x27;YYYY-MM-DD&#x27;</span>)</span><br><span class="line"><span class="comment">#&#x27;2020-12-07&#x27;</span></span><br><span class="line">dt.<span class="built_in">format</span>() <span class="comment">#不输入参数其实对应 YYYY-MM-DD HH:mm:ss ZZ</span></span><br><span class="line"><span class="comment">#&#x27;2020-12-07 20:42:18+08:00&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="时间序列"><a href="#时间序列" class="headerlink" title="时间序列"></a>时间序列</h2><p>arrow可以方便地生成一组时间，和其他数值组合成时间序列，这是datetime等内置库的弱点。通过Arrow.range(frame,start,end)可以生成从start开始，到end结束，按frame为周期重复的一个时间序列，range还支持的参数有<a target="_blank" rel="noopener" href="https://arrow.readthedocs.io/en/stable/">tz及limit</a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">list</span>(arrow.Arrow.<span class="built_in">range</span>(<span class="string">&#x27;hour&#x27;</span>,arrow.now(),arrow.now().shift(hours=<span class="number">5</span>)))</span><br><span class="line"><span class="comment">#输出:</span></span><br><span class="line"><span class="comment">#[&lt;Arrow [2020-12-10T20:54:19.878759+08:00]&gt;,&lt;Arrow [2020-12-10T21:54:19.878759+08:00]&gt;,  ...]</span></span><br></pre></td></tr></table></figure>
+
+<p>arrow另一大特色是可以把时间对象转为人类容易理解的自然语言形式进行输出，对应的方法为<code>dt.humanize()</code>，humanize还可以根据locale参数输出特定语言的自然语言，有趣的封装。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dt&#x3D;arrow.now().shift(hours&#x3D;-1)</span><br><span class="line">dt.humanize() #当前时间的自然语言表示</span><br><span class="line">#&#39;an hour ago&#39;</span><br><span class="line">future &#x3D;dt.shift(minutes&#x3D;75)</span><br><span class="line">dt.humanize(future, granularity&#x3D;&quot;minute&quot;)</span><br><span class="line">#&#39;in 75 minutes&#39; #两个时间的对比自然语言表示</span><br><span class="line">dt.humanize(locale&#x3D;&#39;ko_kr&#39;) #在韩语里的自然语言</span><br><span class="line">#&#39;2시간 전&#39;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从上文可看出，Arrow有着简洁友好的接口，get统筹各种输入的解析，replace负责各种时间要素的修改，format解决各类格式化输出的需求，range处理时间序列生成问题。<br>通过dt.year等很自然地获取时间对象的要素，也提供了dt.time等从Arrow自定义对象转为内置的time、datetime对象。Arrow通过收束接口增强了易用性，满足了大部分时间格式处理的需求，而类似的Pendulum、Maya等时间库在解析字符串及输出自然语言方面更进一步，在一些细节上比Arrow更强一些。</p>
+<p><img src="/2020/12/09/timeproc-arrow-lynsns/Arrow-111.png" alt="Arrow整体导图"></p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/arrow-py/arrow">Arrow GitHub页面</a></li>
+<li><a target="_blank" rel="noopener" href="https://arrow.readthedocs.io/en/stable/">Arrow 文档</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/time/" rel="tag"><i class="fa fa-tag"></i> time</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/03/viz-d3-07-layout.html" rel="prev" title="D3库实践笔记之几类特定图表与布局 |可视化系列37">
+      <i class="fa fa-chevron-left"></i> D3库实践笔记之几类特定图表与布局 |可视化系列37
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/10/timeproc-pendulum-lynsns.html" rel="next" title="挑战Arrow，需要怎样的实力？Pendulum使用笔记">
+      挑战Arrow，需要怎样的实力？Pendulum使用笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Arrow%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Arrow简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.</span> <span class="nav-text">时间数据输入与转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97"><span class="nav-number">3.</span> <span class="nav-text">时间序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

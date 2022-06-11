@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Seaborn简介Matplotlib虽然提供了丰富而强大的接口用于数据的可视化，但在展现多类数据关系时，需要较多数据处理过程，语句就变得繁琐，因此seaborn针对这类需求，基于matplotlib提供了更高层的接口，擅长统计数据的可视化。seaborn可视化的写法和matplotlib基本相同。其代码框架如下： 12345import seaborn as sns  #导入seabron库ti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="百川归海，四类图统揽统计图:Seaborn|可视化系列03">
+<meta property="og:url" content="http://lynsdata.cn/2020/04/28/viz-seborn.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="Seaborn简介Matplotlib虽然提供了丰富而强大的接口用于数据的可视化，但在展现多类数据关系时，需要较多数据处理过程，语句就变得繁琐，因此seaborn针对这类需求，基于matplotlib提供了更高层的接口，擅长统计数据的可视化。seaborn可视化的写法和matplotlib基本相同。其代码框架如下： 12345import seaborn as sns  #导入seabron库ti">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-01-428-01.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-02-relplot-428-01.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-02-regplot-428-01.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-1-2.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-02-distplot-428-01.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-1-6.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-02-catplot-428-01.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-0-9.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-0-8.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-0-4.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-0-5.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-1-7.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-1-1.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-1-4-jointplot.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-07-0-1-5.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-12-Seaborn-viz.png">
+<meta property="article:published_time" content="2020-04-28T08:22:44.000Z">
+<meta property="article:modified_time" content="2020-09-29T09:35:56.000Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="viz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/04/28/viz-seborn/03-01-428-01.PNG">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/04/28/viz-seborn.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>百川归海，四类图统揽统计图:Seaborn|可视化系列03 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/04/28/viz-seborn.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          百川归海，四类图统揽统计图:Seaborn|可视化系列03
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-28 16:22:44" itemprop="dateCreated datePublished" datetime="2020-04-28T16:22:44+08:00">2020-04-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-29 17:35:56" itemprop="dateModified" datetime="2020-09-29T17:35:56+08:00">2020-09-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">可视化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 3.2k 字 | ≈</span>
+           <span title="post.min2read">
+				12 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="Seaborn简介"><a href="#Seaborn简介" class="headerlink" title="Seaborn简介"></a>Seaborn简介</h3><p>Matplotlib虽然提供了丰富而强大的接口用于数据的可视化，但在展现多类数据关系时，需要较多数据处理过程，语句就变得繁琐，因此seaborn针对这类需求，基于matplotlib提供了更高层的接口，<strong>擅长统计数据的可视化</strong>。seaborn可视化的写法和matplotlib基本相同。其代码框架如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns  <span class="comment">#导入seabron库</span></span><br><span class="line">tips = pd.read_excel(<span class="string">&#x27;tips.xlsx&#x27;</span>)  <span class="comment">#dataframe数据</span></span><br><span class="line">sns.relplot(x=<span class="string">&quot;total_bill&quot;</span>, y=<span class="string">&quot;tip&quot;</span>, col=<span class="string">&quot;time&quot;</span>,</span><br><span class="line">            hue=<span class="string">&quot;smoker&quot;</span>, style=<span class="string">&quot;smoker&quot;</span>, size=<span class="string">&quot;size&quot;</span>,</span><br><span class="line">            data=tips)</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p><img src="/2020/04/28/viz-seborn/03-01-428-01.PNG" alt="效果图"></p>
+<p>seaborn对pandas数据结构的支持非常好，能充分利用DataFrame的特点而不需要做格式转换。别期待着只用seaborn绘制出各种常用图表，它更专注于展示统计数据里的信息，因此，我们换个角度，从数据本身的分布和数据列之间的关系来看可视化。<a target="_blank" rel="noopener" href="http://seaborn.pydata.org/">seaborn</a>没有直接枚举各种图的接口，而是抽象为了四种relplot、regplot、catplot及distplot，分别对应：数据关联、回归、分类变量和数据分布。</p>
+<h3 id="关联-relplot"><a href="#关联-relplot" class="headerlink" title="关联 relplot"></a>关联 relplot</h3><p>seaborn对于数据间的关联关系，相关可视图封装为<code>sns.relplot()</code>。rel指的是Relational，擅长处理两个变量或多个变量之间的关联关系可视化。</p>
+<p>relplot(x,y,data)默认是画出两个变量x,y的散点图以体现data中x列和y列的数据关系。</p>
+<p>relplot的参数如下：</p>
+<ul>
+<li>data、x、y：分别是数据集、x轴对应值(data里的某一列的列名)、y轴对应值；</li>
+<li>hue：色调，对数据的一种分类，通过颜色进行区分；如何指定颜色映射的规则呢？如Q1对应黄色，Q2对应青色？可通过palette及hue_norm/hue_order等参数进行定义；</li>
+<li>kind：绘制图表的类型，relplot有两种选择，分别为<code>&quot;scatter&quot;</code>和<code>&quot;line&quot;</code>，默认是散点图，也即scatter；</li>
+<li>style：映射不同的散点形状，圆形、三角形、十字等，容易想到ax.plot()里的标记字符fmt；</li>
+<li>palette：调色板，指定hue的颜色映射用；</li>
+<li>size：映射散点的大小；</li>
+<li>sizes：控制散点大小的范围，和size搭配着用，如sizes=(10,100)就把size对应列的值标准化到[10,100]；</li>
+<li>col、row：根据col和row参数决定分面后图的个数；</li>
+</ul>
+<p>总结如图：</p>
+<p><img src="/2020/04/28/viz-seborn/03-02-relplot-428-01.PNG" alt="relplot参数卡片"></p>
+<p>绘制最基础散点图以直观展现x和y的关系，只需要写<code>relplot(x,y,data)</code>，而要用颜色做分类、设置不同数据点形状及大小时，不需要像matplotlib一样先自己对数据做筛选，再调用多个<code>ax.plot(x1,y1)</code>来绘制。而是写sns.relplot(x=”total_bill”, y=”tip”, hue=”smoker”, size=”size”,data=tips)。</p>
+<p>从本文的示例代码能看到的是，seaborn大部分都只需要调用一个函数，传参出图不墨迹，不需要自己写细节的数据处理代码。这就是高层次封装的意义。</p>
+<p>relplot默认绘制的是散点图，设置参数<code>kind=&quot;line&quot;</code>可以将点连成线，也就是绘制折线图表示x和y的关系。</p>
+<p>示例代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df=pd.DataFrame(&#123;<span class="string">&#x27;x&#x27;</span>:<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">8</span>)),</span><br><span class="line">                 <span class="string">&#x27;y&#x27;</span>:[i**<span class="number">3</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">8</span>)]&#125;)</span><br><span class="line">sns.relplot(x=<span class="string">&#x27;x&#x27;</span>,y=<span class="string">&#x27;y&#x27;</span>,data=df,kind=<span class="string">&#x27;line&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="回归-regplot"><a href="#回归-regplot" class="headerlink" title="回归 regplot"></a>回归 regplot</h3><p>x和y之间的关系除了靠我们直观地看出来之外，我们需要有更量化的数据证据，统计数据少不了用统计的手段处理，回归曲线就是很好地表达数据关系的一种手段。sns.regplot(x,y,data)用于绘制散点+回归曲线图，默认包含置信区间，主要还是线性回归。reg表示的是Regression，regplot()绘图效果及主要参数如下：</p>
+<p><img src="/2020/04/28/viz-seborn/03-02-regplot-428-01.png" alt="regplot"></p>
+<p>regplot()主要参数和relplot()挺类似，多了关于统计回归的个性化参数，且没有kind参数，</p>
+<ul>
+<li>data、x、y：分别对应数据集、x轴对应值、y轴对应值；</li>
+<li>x_estimator：是否显示x的估计量；</li>
+<li>ci：回归的置信区间范围，在 0～100之间；</li>
+<li>x_ci：可选”ci”或”sd”；</li>
+<li>order：如果大于1，会使用numpy.polyfit来绘制高阶回归；</li>
+<li>logx：如果是True，就变成了计算 y~log(x)的回归关系；</li>
+<li>robust：如果是true，会使用统计模型考虑回归的鲁棒性，忽略异常值；</li>
+<li>logistic：是否使用逻辑回归；</li>
+<li>marker：散点的标记字符；</li>
+<li>color：控制散点和回归线的颜色；</li>
+</ul>
+<p>regplot()进行非线性回归的代码如下，主要是改了order参数，示例数据建的是一个y=x^3的数据集。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df=pd.DataFrame(&#123;<span class="string">&#x27;x&#x27;</span>:<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">8</span>)),<span class="string">&#x27;y&#x27;</span>:[i**<span class="number">3</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">8</span>)]&#125;)</span><br><span class="line">sns.regplot(x=<span class="string">&quot;x&quot;</span>, y=<span class="string">&quot;y&quot;</span>, data=df,order=<span class="number">2</span>, ci=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-1-2.PNG" alt="03-07-0-1-2"></p>
+<p>Regression部分的接口还有<code>.lmplot()</code>和 <code>residplot()</code>可以用，lmplot扩展了regplot的分面绘图功能，关于分面后续再展开，residplot用于绘制线性回归的残差(residuals)。对数据分类绘制多条回归线的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sns.lmplot(x=<span class="string">&quot;total_bill&quot;</span>, y=<span class="string">&quot;tip&quot;</span>, </span><br><span class="line">           hue=<span class="string">&quot;smoker&quot;</span>, data=tips,markers=[<span class="string">&quot;o&quot;</span>, <span class="string">&quot;x&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+<p>和Altair、plotnine、ggplot等可视化库一样，seaborn提供了好多个数据集，涵盖了各种数据关系和数据特征，方便教学使用，其中就包括久负盛名的iris(鸢尾花数据集)、titanic(泰坦尼克号船员数据集)等。通过<code>iris=sns.load_dataset(&#39;iris&#39;)</code>载入为标准的DataFrame格式，上一段绘制回归曲线就用到了seaborn提供的tips数据集。通过<code>sns.get_dataset_names()</code>可参看seaborn库所有的数据集名称。</p>
+<h3 id="分布-distplot"><a href="#分布-distplot" class="headerlink" title="分布 distplot"></a>分布 distplot</h3><p>数据列与列之间隐藏着某种关系，我们很关注。我们也关心数据列内部的分布，是平均分布、随机分布还是聚集分布?？是每天花钱一样多还是某天就花了预算的80%？</p>
+<p>数据的分布情况seaborn的绘制接口是<code>sns.distplot(a,bins)</code>，其主要参数和示例效果如下：</p>
+<p><img src="/2020/04/28/viz-seborn/03-02-distplot-428-01.png" alt="03-02-distplot-428-01"></p>
+<p>distplot()参数：</p>
+<ul>
+<li>a：一个一维的数组，没有data参数了，需要写df[‘a’]传入一个Series，不支持<code>sns.distplot(a=&#39;x&#39;,data=df)</code>  写法是一种遗憾，至少本文发出时这么写seaborn会报错：got an unexpected keyword argument ‘data’；</li>
+<li>bins：分箱数，对应matplotlib的hist()的bins参数；</li>
+<li>hist：默认distplot会画直方图和密度曲线，hist=False则只画密度曲线；</li>
+<li>kde：核密度估计(kernel density estimate)，如果要只显示直方图呢？靠的就是kde参数，设置kde=False则只画分布直方图，没有密度曲线了；</li>
+<li>rug：在直方图基础上再绘制地毯图效果，可以用sns.kdeplot(a)只画地毯图；</li>
+<li>vertical：是否画垂直的直方图，类似条形图对应柱状图，vertial=True则绘制转了90度的直方图，分面的时候用得到；</li>
+</ul>
+<p>两个维度上的数据分布情况我们也很关心，seaborn也提供了相应的接口，用到的就是kdeplot，示例效果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.kdeplot(tips[<span class="string">&#x27;total_bill&#x27;</span>],tips[<span class="string">&#x27;tip&#x27;</span>])</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-1-6.PNG" alt="kdeplot"></p>
+<h3 id="分类变量-catplot"><a href="#分类变量-catplot" class="headerlink" title="分类变量 catplot"></a>分类变量 catplot</h3><p>统计数据也不总是数值类型的，也会包含分类类型的数据(Categorical)，例如餐饮消费数据可以分早餐、午餐、晚餐。分类数据的特点是两个类别间不一定等间隔划分，周一到周二间隔是24小时，但早餐到午餐的间隔和午餐到晚餐的间隔就不一致，又如地震四级到五级的间隔与五到六级间隔的区别。</p>
+<p>对于单一变量，我们可以统计出其在列中的出现次数，绘制柱状图、饼图等，用Matplotlib绘制需要自己做数据透视或value_counts()操作。seaborn将分类变量相关的可视图表封装在<code>sns.catplot()</code>里。</p>
+<p><img src="/2020/04/28/viz-seborn/03-02-catplot-428-01.png" alt="catplot"></p>
+<p>catplot参数：</p>
+<ul>
+<li>data、x、y：分别对应数据集、x轴对应值、y轴对应值，x会默认是一个分类变量，不是连续的数值；</li>
+<li>hue：色调，将数据列映射到颜色；</li>
+<li>orient：水平方向还是垂直方向上的分类；类似于柱状图vs条形图，可选{‘v’,’h’},对应vertical，horizontal；</li>
+<li>kind：绘制图表类型，目前有{“point”, “bar”, “strip”, “swarm”, “box”, “violin”, “boxen”} 8种可选，是目前四大接口里支持最多的，可分为三类：分类散点图、分类变量分布图和分类变量估计图；各种有对应的plot一级接口，例如 .catplot(x,y,data,kind=’point’) 也可以写 .pointplot(x,y,data)，其他的也类似；</li>
+</ul>
+<p>统计tips数据集晚餐和午餐的出现次数，变成柱状图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.catplot(x=<span class="string">&#x27;time&#x27;</span>,y=<span class="string">&#x27;total_bill&#x27;</span>,data=tips,kind=<span class="string">&#x27;bar&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-0-9.PNG" alt="03-07-0-0-9"></p>
+<p>countplot和barplot有些许不同，countplot不展示统计值的置信区间，countplot如果省略x而给y传参，得到的是条形图效果。</p>
+<p><img src="/2020/04/28/viz-seborn/03-07-0-0-8.PNG" alt="03-07-0-0-8"></p>
+<p>箱线图是在数据分析中高频出现的图，总览数据分布的时候又不失细节，绘制变量的箱线图也只需要一行代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.catplot(x=<span class="string">&#x27;time&#x27;</span>,y=<span class="string">&#x27;tip&#x27;</span>,data=tips,kind=<span class="string">&#x27;box&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-0-4.PNG" alt="03-07-0-0-4"></p>
+<p>可以看出晚餐在tips上数值范围更广，中位数也更高。</p>
+<p>小提琴图比起箱线图，更好地利用宽度的变化来展现在同一个y处数据点的分布，绘制的形状像一个小提琴因此叫小提琴图(violin)。同样的数据列，绘制为小提琴图效果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.catplot(x=<span class="string">&#x27;time&#x27;</span>,y=<span class="string">&#x27;tip&#x27;</span>,data=tips,kind=<span class="string">&#x27;violin&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-0-5.PNG" alt="03-07-0-0-5"></p>
+<p><code>kind=&#39;point&#39;</code>绘制包含置信区间的点+折线图，端点有置信区间。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.catplot(x=<span class="string">&quot;time&quot;</span>, y=<span class="string">&quot;total_bill&quot;</span>,hue=<span class="string">&quot;smoker&quot;</span>,kind=<span class="string">&quot;point&quot;</span>,data=tips, dodge=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-1-7.PNG" alt="03-07-0-1-7"></p>
+<h3 id="分面与子图"><a href="#分面与子图" class="headerlink" title="分面与子图"></a>分面与子图</h3><p>为了更好地展现数据间的关系，我们会需要将多张图排列展现多指标的情况，需要结合大小图突出信息。Facet提供了相应的接口。最常用的是<code>pairplot</code>和<code>jointplot</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">g = sns.FacetGrid(tips, col=<span class="string">&quot;time&quot;</span>)</span><br><span class="line">g.<span class="built_in">map</span>(plt.hist, <span class="string">&quot;tip&quot;</span>);</span><br><span class="line">sns.pairplot(tips, hue=<span class="string">&quot;time&quot;</span>, diag_kind=<span class="string">&quot;kde&quot;</span>, height=<span class="number">2.5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>g = sns.FacetGrid(tips, col=&quot;time&quot;)</code>可根据tips数据集的time列构建出多张图，每个time的取值（一般是分类变量）对应一张图，col参数在relplot的实践中提到过，通过<code>g.map(plt.hist, &quot;tip&quot;)</code>应用直方图，效果如下：</p>
+<p><img src="/2020/04/28/viz-seborn/03-07-0-1-1.PNG" alt="03-07-0-1-1"></p>
+<p>结合回归曲线图和直方图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.jointplot(x=<span class="string">&quot;total_bill&quot;</span>, y=<span class="string">&quot;tip&quot;</span>, data=tips,kind=<span class="string">&quot;reg&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-1-4-jointplot.PNG" alt="03-07-0-1-4-jointplot"></p>
+<p>热力图可以展现一个矩阵类型的数据，用来展现x和y可能存在的某种模式，除了地理上的分布模式外，日历图是热力图的一个经典例子，基于tips数据的热力图绘制效果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.heatmap(tips.loc[:,[<span class="string">&#x27;total_bill&#x27;</span>,<span class="string">&#x27;tip&#x27;</span>,<span class="string">&#x27;size&#x27;</span>]].head(<span class="number">10</span>), cmap=<span class="string">&quot;YlGnBu&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-seborn/03-07-0-1-5.PNG" alt="03-07-0-1-5"></p>
+<p>可视化时除了图表类型的挑选外，为了更好看及主题一致性等目的，颜色和样式的个性化配置也是很重要的，可视化库自然不能忽略相关的接口，seaborn有个总览的<code>sns.set()</code>接口，也有<code>sns.set_palette(&quot;husl&quot;)</code>和<code>sns.set_style(&quot;darkgrid&quot;,&#123;&quot;axes.facecolor&quot;: &quot;.9&quot;&#125;)</code>和<code>sns.set_context(&quot;paper&quot;)</code>可以用，seaborn内置了挺多色盘，可以通过<code>sns.dark_palette()</code>类似的语句获取色盘，通过<code>sns.set_palette(sns.color_palette([&quot;#9b59b6&quot;, &quot;#3498db&quot;, &quot;#95a5a6&quot;]))</code>设置个性化色盘。</p>
+<p>seaborn的数据集挂在<a target="_blank" rel="noopener" href="https://github.com/mwaskom/seaborn-data">https://github.com/mwaskom/seaborn-data</a>下，在使用sns.load_dataset(‘iris’)如果遇到<br>报错（timeout error、URLError、OSError或其他），可以从这个github地址直接下载数据再通过pd.read_csv()导入使用，整个数据集合一共4.5MB，占资源并不大。<br>根据数据的类型选择可视化类型可以参考<a target="_blank" rel="noopener" href="https://www.data-to-viz.com/">data-to-viz.com</a>。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>可视化图表类型众多，echarts的案例菜单栏就分了27种有效图表、antv的案例菜单目前分了14种可视图，百川归海，seaborn将统计数据的可视化分为了四类，简化了绘图语句，并提供了多套配色和主题效果可以选择，让我们节约在绘图上的时间，更好地探索数据中的信息。因为seaborn是基于matplotlib的，两者可以很好地协作，通过调用不同层级的接口来实现更精细的需求。</p>
+<p>seaborn目前是0.10.1版本，例子和API文档都还不够丰富，如很多绘图的API只有一段文字说明，没有绘制效果的例子；又如catplot的文档在最上面列出了hue，而详细解释部分没有hue。期待其后续更强大的功能和更详细的文档。</p>
+<p><img src="/2020/04/28/viz-seborn/03-12-Seaborn-viz.png" alt="seaborn库API思维导图"></p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://seaborn.pydata.org/">官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.data-to-viz.com/">https://www.data-to-viz.com</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/viz/" rel="tag"><i class="fa fa-tag"></i> viz</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/27/viz-d3-zero-to-one-00-overview.html" rel="prev" title="《使用D3设计交互式图表》简读笔记|可视化系列31">
+      <i class="fa fa-chevron-left"></i> 《使用D3设计交互式图表》简读笔记|可视化系列31
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/28/viz-pygal.html" rel="next" title="一个小巧而有特色的Python矢量可视化库：pygal">
+      一个小巧而有特色的Python矢量可视化库：pygal <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Seaborn%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Seaborn简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E8%81%94-relplot"><span class="nav-number">2.</span> <span class="nav-text">关联 relplot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92-regplot"><span class="nav-number">3.</span> <span class="nav-text">回归 regplot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83-distplot"><span class="nav-number">4.</span> <span class="nav-text">分布 distplot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E5%8F%98%E9%87%8F-catplot"><span class="nav-number">5.</span> <span class="nav-text">分类变量 catplot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%9D%A2%E4%B8%8E%E5%AD%90%E5%9B%BE"><span class="nav-number">6.</span> <span class="nav-text">分面与子图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

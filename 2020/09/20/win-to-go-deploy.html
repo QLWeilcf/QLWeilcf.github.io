@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="为什么需要配Windows to go Windows To Go 是 Windows 10 企业版和 Windows 10 教育版中的一项功能，支持创建可从电脑上 USB 连接的外部驱动器启动的 Windows To Go 工作区。   说得通俗一点就是把 Windows 系统集成到U盘等便携设备上，且能在不同的电脑硬件上直接运行。无论走到天涯海角，都可以在任何一台符合基本条件的电脑上，使用U盘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="折腾Windows to Go小记">
+<meta property="og:url" content="http://lynsdata.cn/2020/09/20/win-to-go-deploy.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="为什么需要配Windows to go Windows To Go 是 Windows 10 企业版和 Windows 10 教育版中的一项功能，支持创建可从电脑上 USB 连接的外部驱动器启动的 Windows To Go 工作区。   说得通俗一点就是把 Windows 系统集成到U盘等便携设备上，且能在不同的电脑硬件上直接运行。无论走到天涯海角，都可以在任何一台符合基本条件的电脑上，使用U盘">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/20/win-to-go-deploy/301365770.jpg">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/20/win-to-go-deploy/python-in-cmd-16.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/20/win-to-go-deploy/namespace-setting.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/20/win-to-go-deploy/winlogon-setting.jpg">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/20/win-to-go-deploy/using-at-ots.png">
+<meta property="article:published_time" content="2020-09-20T04:14:37.000Z">
+<meta property="article:modified_time" content="2020-12-17T15:04:23.683Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/09/20/win-to-go-deploy/301365770.jpg">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/09/20/win-to-go-deploy.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>折腾Windows to Go小记 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/09/20/win-to-go-deploy.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          折腾Windows to Go小记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-20 12:14:37" itemprop="dateCreated datePublished" datetime="2020-09-20T12:14:37+08:00">2020-09-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-17 23:04:23" itemprop="dateModified" datetime="2020-12-17T23:04:23+08:00">2020-12-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 2.1k 字 | ≈</span>
+           <span title="post.min2read">
+				7 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="为什么需要配Windows-to-go"><a href="#为什么需要配Windows-to-go" class="headerlink" title="为什么需要配Windows to go"></a>为什么需要配Windows to go</h3><blockquote>
+<p>Windows To Go 是 Windows 10 企业版和 Windows 10 教育版中的一项功能，支持创建可从电脑上 USB 连接的外部驱动器启动的 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/deployment/planning/windows-to-go-overview">Windows To Go 工作区</a>。 </p>
+</blockquote>
+<p>说得通俗一点就是把 Windows 系统集成到U盘等便携设备上，且能在不同的电脑硬件上直接运行。无论走到天涯海角，都可以在任何一台符合基本条件的电脑上，使用U盘里安装的系统。这个系统是包含了安装的各种软件和个性化设置的Windows系统。大家配置Windows to go（简称WTG）的原因主要有：电脑是Mac，想有Windows打游戏；经常出差需要用其他地方的电脑，不习惯用那些电脑的Win 7甚至XP；配某些开发环境，换一个环境只需要再拿这个U盘做一次Windows to go。</p>
+<a id="more"></a>
+
+<p>对于我来说，目前主力机不是Windows系统，但因处理数据经常用Excel、Power BI等需要有Windows 10系统，用了半年虚拟机，感觉性能不够（电脑是中端机型），考虑了双系统、surface、WTG等解决方案后，选择配一个Windows to go系统，只需带个U盘，在其他地方也能用这个包含了特定软件的Windows系统。</p>
+<p>确定了要做，那就动手吧。</p>
+<p>主要准备好两样东西：</p>
+<ul>
+<li>16G以上的U盘</li>
+<li>Windows系统iso文件</li>
+</ul>
+<p>一个装载好的Windows 10系统占10多G的空间，因此U盘最好32G以上，为了读取速度，最好是USB 3.0或3.1，USB 2.0就捉襟见肘了，我买的是128G的闪迪cz880，U盘的选择当然越大越好，速度越快体验越好，价格也越高，根据自己的需求取舍，一些IT论坛会列出推荐的U盘型号。<br>在电商网站下单后，等快递的同时下载Windows 10的系统，系统下载完而U盘也备好之后，开始正式制作。</p>
+<h3 id="配置过程"><a href="#配置过程" class="headerlink" title="配置过程"></a>配置过程</h3><p>在Windows 10<strong>企业版和教育版</strong>中内置了Windows to go的制作工具，在系统搜索栏可搜索到，如果没有就选择用第三方工具制作，我是用的第三方工具制作的（需在Windows系统电脑下配置，如果手头是Mac电脑就去找一台Windows电脑&lt;如借朋友同学的&gt;去制作）。相关教程采用的工具有：Rufus、WTG Free、WTGA等，自己用的是WTGA<a target="_blank" rel="noopener" href="https://bbs.luobotou.org/thread-761-1-1.html">WTG辅助工具</a>，下载辅助工具后，插入u盘后运行工具软件，选择Windows ios镜像，自己是选择VHD模式去做的，然后点<strong>部署</strong>，等待10多分钟安装好。</p>
+<p>安装之后就是启动WTG中的系统了，Mac在第一次启动WTG之前，需要下载WindowsSupport 软件，具体过程可参考<a target="_blank" rel="noopener" href="https://sspai.com/post/44699">少数派的教程</a>，自己并没有Mac去实践。</p>
+<p>非Mac电脑就比较容易，将电脑关机，按开机键后按F12进入bios（大部分牌子的电脑是F12键进入，少部分是F2或F7，可搜索<em>电脑品牌+bios</em> 找到快捷键），选择从移动设备启动，然后开机进入的就是WTG上的Windows 10系统了，首次进入需要配一些基础的内容，和买电脑时进入系统的配置一致。</p>
+<p><img src="/2020/09/20/win-to-go-deploy/301365770.jpg" alt="进入系统启动后"></p>
+<p>进入后首先下载各种必备软件，包括输入法、chrome、云笔记及office（或WPS）等，还有Python也是必备的。之前为了方便重装系统、换手机等的初始化，一直在维护一个个人装机软件列表，我自己是按照列表中的提示去安软件的。下载安装过程中做一些基础的个性化，换桌面背景图、设置账户头像、删除回收站的图标等。</p>
+<p><img src="/2020/09/20/win-to-go-deploy/python-in-cmd-16.PNG" alt="安装Python并启动"></p>
+<h3 id="Windows个性化"><a href="#Windows个性化" class="headerlink" title="Windows个性化"></a>Windows个性化</h3><p>拥有自己各种常用设置和排布的系统才是有灵魂的。因此还需要做一些进一步的设置。</p>
+<p><strong>删减“此电脑”下的显示</strong>：每次看文件管理右边的视频、文档、图片等占了很大文字，大部分数据自己还是更习惯存在D盘，因此视频这些基本用不到，因此选择把这个快捷链接删掉（不是删掉原始的文件夹，原始的文件夹位于C:\Users\XXX（用户名））。通过编辑注册表解决；首先是按Win+R之后输入Regedit进入注册表编辑器，定位到<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace</code>（可通过复制路径在编辑器里输入直接跳转，就像文件管理下输入文件路径跳转一样），在NameSpace下删除想删的注册表项之后那几个按钮就没了（如果觉得日后又需要显示这些可以先把NameSpace导出）。</p>
+<p><img src="/2020/09/20/win-to-go-deploy/namespace-setting.PNG" alt="mycomputer-namespace-setting"></p>
+<p>六个按钮对应的路径如下：</p>
+<ul>
+<li><p><strong>“下载”文件夹：</strong>{088e3905-0323-4b02-9826-5d99428e115f}</p>
+</li>
+<li><p><strong>“图片”文件夹：</strong>{24ad3ad4-a569-4530-98e1-ab02f9417aa8}</p>
+</li>
+<li><p><strong>“音乐”文件夹：</strong>{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}</p>
+</li>
+<li><p><strong>“文档”文件夹：</strong>{d3162b92-9365-467a-956b-92703aca08af}</p>
+</li>
+<li><p><strong>“视频”文件夹：</strong>{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}</p>
+</li>
+<li><p><strong>“桌面”文件夹：</strong>{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}</p>
+</li>
+</ul>
+<p>自己保留图片和下载文件夹链接，其余的链接删掉。</p>
+<p><strong>清理桌面右键菜单</strong>：同样是打开注册表，定位到<code>HKEY_CLASSES_ROOT\Directory\Background\shellex\ContextMenuHandlers </code>文件夹下面自己不需要的菜单项删除掉。</p>
+<p><strong>设置登录时的文本显示</strong>：同样是通过注册表编辑实现，在注册表编辑器中定位到<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon</code> ，在右侧查找名为“LegalNoticeCaption”和“LegalNoticeText”的两个文件。只要我们把想要显示在用户登录（或电脑锁定界面）的文字依次填写在这两个文件的数值数据中就OK了。“LegalNoticeCaption”中填写的内容为正常字体显示，而“LegalNoticeText”显示的字体较小，类似注释。登录时的效果如下（据说给别人修电脑时使用有奇效）：</p>
+<p><img src="/2020/09/20/win-to-go-deploy/winlogon-setting.jpg" alt="Winlogon-setting"></p>
+<p>设置这个的不好之处是每次开机还要额外点一下确定才能进入登录界面（好处是每次开机可以被上面的话激励，适合用来设置打鸡血的文字），如果不需要这一功能就把LegalNoticeCaption和LegalNoticeText的文本清空就OK。</p>
+<p><strong>设置Adobe产品启动图</strong>：将PS的启动图设置为自己喜欢的图，通过ResHacker软件修改PS安装目录下的PSArt.dll文件修改PNGF/SPLASHBACKGROUND.PNG的资源文件为相应图片，之后再启动PS时就是个性化的酷炫效果了，另外将PSArt.dll文件复制到资料文件里，以后重装系统只需要用这个PSArt.dll替代就可以，不需要每次重头做。<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xV--3K3QBUhgYbgSgDIGyQ">具体过程可参考</a></p>
+<p><strong>删除移动操作系统标识</strong>：有时候可能会遇到WTG系统在使用时出现：当前为windows go to 分区，无法执行本操作，需要在注册表中定位到<code>计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control</code>，然后找到PortableOperatingSystem，右键单击删除。这个注册表项是WinToGo专有的，在正常安装的Windows里不存在，因此删除不影响正常功能。</p>
+<p>设置完毕后，就是享受这个系统的便利性。</p>
+<p><img src="/2020/09/20/win-to-go-deploy/using-at-ots.png" alt="在其他电脑启动的效果图"></p>
+<h3 id="个人使用体验"><a href="#个人使用体验" class="headerlink" title="个人使用体验"></a>个人使用体验</h3><p>自己已经体验WTG有5天了，也尝试了各种日常需求场景的使用。之前用VMware跑虚拟机的时候，电脑风扇总是声音挺大的，跑不动编程集成环境，带不动Pr（于是就卸载了），用Excel打开15MB以上的excel经常会卡。而目前用WTG开类似的Excel使用正常，在Idea及Pycharm上运行代码也不卡。 </p>
+<p>与虚拟机及双系统相比相比，WTG不占用原有的磁盘空间，和使用它的设备相互独立。WTG的缺点是同一时间只能用一个系统了，同一时间两个系统都要用的场景不多，都可以通过相应软件及云笔记在同一个系统实现需求。anyway，这次配置的WTG是自己之后近3年的Windows主力。</p>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/deployment/planning/windows-to-go-overview">微软官网文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://bbs.luobotou.org/thread-2427-1-1.html">将Windows 8/10 系统装进优盘</a></li>
+<li><a target="_blank" rel="noopener" href="https://sspai.com/post/44699">说走就走的「Windows」—— Windows To Go 制作详解</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag"><i class="fa fa-tag"></i> 工具</a>
+              <a href="/tags/Windows/" rel="tag"><i class="fa fa-tag"></i> Windows</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/03/viz-altair-stat-datasets-elegant-trans.html" rel="prev" title="统计图表的优雅变换:Altair|可视化系列06">
+      <i class="fa fa-chevron-left"></i> 统计图表的优雅变换:Altair|可视化系列06
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/20/sudoku-backtracking.html" rel="next" title="数独的暴力回溯解法和Python-GUI">
+      数独的暴力回溯解法和Python-GUI <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%85%8DWindows-to-go"><span class="nav-number">1.</span> <span class="nav-text">为什么需要配Windows to go</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">配置过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows%E4%B8%AA%E6%80%A7%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">Windows个性化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AA%E4%BA%BA%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C"><span class="nav-number">4.</span> <span class="nav-text">个人使用体验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

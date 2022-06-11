@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="布局(Layout)可以看成是D3对图形元素的一种排布方式，在绘制柱状图时，是在横平竖直的直角坐标系下，确定矩形的左上角坐标，就可以画出随着高度变化的一系列柱子，以体现数据值的差异，而如果要画饼图呢，有一列数据[30,10,6]，映射到饼图的不同楔形里，是一个个手动计算角度和初始位置么？根据图形语法，只需要将坐标系变成极坐标，一系列数据很容易对应为角度。布局和比例尺一样，也属于一种映射，能够将我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="D3库实践笔记之几类特定图表与布局 |可视化系列37">
+<meta property="og:url" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="布局(Layout)可以看成是D3对图形元素的一种排布方式，在绘制柱状图时，是在横平竖直的直角坐标系下，确定矩形的左上角坐标，就可以画出随着高度变化的一系列柱子，以体现数据值的差异，而如果要画饼图呢，有一列数据[30,10,6]，映射到饼图的不同楔形里，是一个个手动计算角度和初始位置么？根据图形语法，只需要将坐标系变成极坐标，一系列数据很容易对应为角度。布局和比例尺一样，也属于一种映射，能够将我们">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-02-1004-d3-pie.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-03-1004-d3-pie-innerradius.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-04-1004-d3-stack-bar.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-05-1004-d3-hist-bins.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-07-1004-d3-chord.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-08-1004-d3-tree.png">
+<meta property="article:published_time" content="2020-10-03T13:47:55.000Z">
+<meta property="article:modified_time" content="2020-12-18T15:01:19.721Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="viz">
+<meta property="article:tag" content="d3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-02-1004-d3-pie.png">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/10/03/viz-d3-07-layout.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>D3库实践笔记之几类特定图表与布局 |可视化系列37 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/10/03/viz-d3-07-layout.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          D3库实践笔记之几类特定图表与布局 |可视化系列37
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-03 21:47:55" itemprop="dateCreated datePublished" datetime="2020-10-03T21:47:55+08:00">2020-10-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-18 23:01:19" itemprop="dateModified" datetime="2020-12-18T23:01:19+08:00">2020-12-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">可视化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 3.1k 字 | ≈</span>
+           <span title="post.min2read">
+				16 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>布局(Layout)可以看成是D3对图形元素的一种排布方式，在绘制柱状图时，是在横平竖直的直角坐标系下，确定矩形的左上角坐标，就可以画出随着高度变化的一系列柱子，以体现数据值的差异，而如果要画饼图呢，有一列数据[30,10,6]，映射到饼图的不同楔形里，是一个个手动计算角度和初始位置么？根据图形语法，只需要将坐标系变成极坐标，一系列数据很容易对应为角度。布局和比例尺一样，也属于一种映射，能够将我们提供的数据重新映射/变换成新格式，以便于在某些更特定的图表中的使用。</p>
+<h3 id="饼图布局"><a href="#饼图布局" class="headerlink" title="饼图布局"></a>饼图布局</h3><a id="more"></a>
+
+<p>在v3.x版本中，d3的布局在d3.layout接口下，通过<code>d3.layout.pie()</code>创建一个饼状图布局，而到v5x及最新的v6之后，是<code>d3.pie()</code>，不再使用d3.layout系列，在控制台输入<code>d3.layout</code> 是undefined。在使用饼图布局后，不需要把SVG整个画布的坐标系转成极坐标系，而是将系列数据做转换。</p>
+<p>对于一个数组<code>dataset = [76,37,90,60,50]</code>，通过<code>arcs=d3.pie()(dataset)</code>转换成适合生成饼图的格式，在套上前几篇都用过的生成svg和添加形状的框架，一个饼图就诞生了。传入arcs绘制每个楔形用的是SVG的<code>&lt;path&gt;</code>标签。</p>
+<p><img src="/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-02-1004-d3-pie.png" alt="d3-pie"></p>
+<p>绘制饼图的具体代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> dataset = [<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>]; <span class="comment">//要绘制的数据</span></span><br><span class="line"><span class="keyword">var</span> cls=[<span class="string">&quot;#F3D2AC&quot;</span>,<span class="string">&quot;#F3B8B1&quot;</span>,<span class="string">&quot;#CC99CC&quot;</span>,<span class="string">&quot;#7DC8CA&quot;</span>,<span class="string">&quot;#CAE9E0&quot;</span>];</span><br><span class="line"><span class="keyword">var</span> outerRadius = <span class="number">500</span>/<span class="number">2</span>, innerRadius = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">var</span> arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);</span><br><span class="line"><span class="comment">//var arcs=d3.pie()(dataset);</span></span><br><span class="line"><span class="keyword">var</span> pie = d3.pie().sort(<span class="literal">null</span>);</span><br><span class="line"><span class="keyword">var</span> arcs=pie(dataset); <span class="comment">//不使用排序</span></span><br><span class="line"><span class="keyword">var</span> svg = d3.select(<span class="string">&quot;body&quot;</span>)</span><br><span class="line">   			.append(<span class="string">&quot;svg&quot;</span>)</span><br><span class="line">   			.attr(<span class="string">&quot;width&quot;</span>,<span class="string">&#x27;600&#x27;</span>)</span><br><span class="line">   			.attr(<span class="string">&quot;height&quot;</span>,<span class="string">&#x27;500&#x27;</span>)</span><br><span class="line"><span class="comment">//为每个要绘制的扇形创建新的分组( g ), 并进行数据绑定</span></span><br><span class="line"><span class="keyword">var</span> a= svg.selectAll(<span class="string">&quot;g.arc&quot;</span>)</span><br><span class="line">		  .data(arcs)</span><br><span class="line">		  .enter()</span><br><span class="line">		  .append(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">		  .attr(<span class="string">&quot;class&quot;</span>, <span class="string">&quot;arc&quot;</span>)</span><br><span class="line">		  .attr(<span class="string">&quot;transform&quot;</span>, <span class="string">&quot;translate(&quot;</span> + outerRadius + <span class="string">&quot;, &quot;</span> + outerRadius</span><br><span class="line">											+ <span class="string">&quot;)&quot;</span>);</span><br><span class="line">    a.append(<span class="string">&quot;path&quot;</span>)  <span class="comment">//绘制每个楔形</span></span><br><span class="line">     .attr(<span class="string">&quot;fill&quot;</span>,<span class="function"><span class="keyword">function</span>(<span class="params">d, i</span>) </span>&#123;<span class="keyword">return</span> cls[i];&#125;)</span><br><span class="line">     .attr(<span class="string">&quot;d&quot;</span>, arc);</span><br><span class="line">	a.append(<span class="string">&quot;text&quot;</span>)  <span class="comment">//添加文本标签</span></span><br><span class="line">     .attr(<span class="string">&quot;transform&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params">d</span>) </span>&#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="string">&quot;translate(&quot;</span> + arc.centroid(d) + <span class="string">&quot;)&quot;</span>;</span><br><span class="line">			&#125;)</span><br><span class="line">	 .attr(<span class="string">&quot;text-anchor&quot;</span>, <span class="string">&quot;middle&quot;</span>)</span><br><span class="line">	 .text(<span class="function"><span class="params">d</span> =&gt;</span> d.value);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>直接使用<code>d3.pie()(dataset)</code>得到的数据序列arcs绘制的饼图是经过排序的，饼图效果是从12点钟开始第一个楔形，顺时针从大到小排列，从上图也可看出，数据的索引没变，<code>arcs[0]</code>还是76，但起始角度为0的数据是90，因此可以重写一下pie函数<code>pie = d3.pie().sort(null)</code>，会按照数据的顺序排列饼图的每个楔形。实际中使用排序还是没排序的效果根据需求选择。innerRadius设置为0是饼图，当其大于0可以得到环状图。outerRadius可以理解为整个图表的半径，因为生成的SVG是[600,500]像素，因此把outerRadius设置为高度的一半，绘制的饼图效果较好。</p>
+<p>饼图还有两个实用的参数是cornerRadius和padAngle，</p>
+<ul>
+<li>cornerRadius：应用在<code>d3.arc()</code>上，设置每个楔形弧段边缘的圆角效果，类似于<code>&lt;rect&gt;</code>标签的rx属性，rx用来绘制圆角矩形；</li>
+<li>padAngle：应用在<code>d3.pie()</code>上，设置每个楔形排列的间隔；</li>
+</ul>
+<p>调整这三个参数生成的<em>“饼图”</em>效果如下：</p>
+<p><img src="/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-03-1004-d3-pie-innerradius.png" alt="d3-pie-innerradius"></p>
+<h3 id="堆叠布局"><a href="#堆叠布局" class="headerlink" title="堆叠布局"></a>堆叠布局</h3><p>用<code>d3.stack()</code>将数据变成适合堆叠图的数据格式。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//初始数据</span></span><br><span class="line"><span class="keyword">var</span> data=[&#123;<span class="string">&quot;y&quot;</span>:<span class="number">76</span>,<span class="string">&quot;z&quot;</span>:<span class="number">37</span>&#125;,&#123;<span class="string">&quot;y&quot;</span>:<span class="number">37</span>,<span class="string">&quot;z&quot;</span>:<span class="number">46</span>&#125;,</span><br><span class="line">		  &#123;<span class="string">&quot;y&quot;</span>:<span class="number">90</span>,<span class="string">&quot;z&quot;</span>:<span class="number">53</span>&#125;,&#123;<span class="string">&quot;y&quot;</span>:<span class="number">60</span>,<span class="string">&quot;z&quot;</span>:<span class="number">81</span>&#125;,&#123;<span class="string">&quot;y&quot;</span>:<span class="number">50</span>,<span class="string">&quot;z&quot;</span>:<span class="number">60</span>&#125;];</span><br><span class="line"><span class="keyword">var</span> stack= d3.stack()</span><br><span class="line">		   .keys([<span class="string">&quot;y&quot;</span>, <span class="string">&quot;z&quot;</span>]);</span><br><span class="line"><span class="keyword">var</span> ds=stack(data);</span><br><span class="line"><span class="comment">//输出的ds：</span></span><br><span class="line"><span class="comment">// [[[0,76],[0,37],[0,90],[0,60],[0,50]],</span></span><br><span class="line"><span class="comment">//  [[76,113],[37,83],[90,143],[60,141],[50,110]] ]</span></span><br></pre></td></tr></table></figure>
+
+<p>基于这一格式的数据就可以绘制堆叠柱状图以及垂直的堆叠条形图。</p>
+<p><img src="/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-04-1004-d3-stack-bar.png" alt="d3-stack-bar"></p>
+<h3 id="直方图"><a href="#直方图" class="headerlink" title="直方图"></a>直方图</h3><p>将序列数据处理为适合直方图的形式用<code>d3.bin()</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> data=[<span class="number">5.1</span>, <span class="number">4.9</span>, <span class="number">8.6</span>, <span class="number">6.2</span>, <span class="number">5.1</span>, <span class="number">7.1</span>, <span class="number">6.7</span>, <span class="number">6.1</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">5.2</span>, <span class="number">7.9</span>, <span class="number">10.5</span>, <span class="number">5.9</span>, <span class="number">5.5</span>, <span class="number">5.6</span>, <span class="number">6.5</span>, <span class="number">7.7</span>, <span class="number">5.7</span>, <span class="number">6.5</span>, <span class="number">6.1</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">5.2</span>, <span class="number">7.9</span>,<span class="number">6.7</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bins= d3.bin().thresholds(<span class="number">10</span>)(data);</span><br><span class="line"><span class="keyword">var</span> margin = (&#123;<span class="attr">top</span>: <span class="number">20</span>, <span class="attr">right</span>: <span class="number">20</span>, <span class="attr">bottom</span>: <span class="number">30</span>, <span class="attr">left</span>: <span class="number">40</span>&#125;);</span><br><span class="line"><span class="keyword">var</span> x = d3.scaleLinear()</span><br><span class="line">    .domain([bins[<span class="number">0</span>].x0, bins[bins.length - <span class="number">1</span>].x1])</span><br><span class="line">    .range([<span class="number">40</span>, <span class="number">400</span>]);</span><br><span class="line"><span class="keyword">var</span> y = d3.scaleLinear()</span><br><span class="line">    .domain([<span class="number">0</span>, d3.max(bins, <span class="function"><span class="params">d</span> =&gt;</span> d.length)]).nice()</span><br><span class="line">    .range([<span class="number">470</span>,<span class="number">20</span>]);</span><br><span class="line">xAxis = <span class="function"><span class="params">g</span> =&gt;</span> g</span><br><span class="line">    .attr(<span class="string">&quot;transform&quot;</span>, <span class="string">`translate(0,<span class="subst">$&#123;<span class="number">470</span>&#125;</span>)`</span>)</span><br><span class="line">    .call(d3.axisBottom(x).ticks(<span class="number">500</span> / <span class="number">80</span> ).tickSizeOuter(<span class="number">0</span>))</span><br><span class="line">    .call(<span class="function"><span class="params">g</span> =&gt;</span> g.append(<span class="string">&quot;text&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;x&quot;</span>, <span class="number">450</span>).attr(<span class="string">&quot;y&quot;</span>, -<span class="number">4</span>)</span><br><span class="line">        .attr(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;currentColor&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;font-weight&quot;</span>, <span class="string">&quot;bold&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;text-anchor&quot;</span>, <span class="string">&quot;end&quot;</span>)</span><br><span class="line">        .text(data.x));</span><br><span class="line">yAxis = <span class="function"><span class="params">g</span> =&gt;</span> g</span><br><span class="line">    .attr(<span class="string">&quot;transform&quot;</span>, <span class="string">`translate(<span class="subst">$&#123;<span class="number">40</span>&#125;</span>,0)`</span>)</span><br><span class="line">    .call(d3.axisLeft(y).ticks(<span class="number">500</span>/ <span class="number">80</span>))</span><br><span class="line">    .call(<span class="function"><span class="params">g</span> =&gt;</span> g.select(<span class="string">&quot;.domain&quot;</span>).remove())</span><br><span class="line">    .call(<span class="function"><span class="params">g</span> =&gt;</span> g.select(<span class="string">&quot;.tick:last-of-type text&quot;</span>).clone()</span><br><span class="line">        .attr(<span class="string">&quot;x&quot;</span>, <span class="number">4</span>).attr(<span class="string">&quot;text-anchor&quot;</span>, <span class="string">&quot;start&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;font-weight&quot;</span>, <span class="string">&quot;bold&quot;</span>).text(data.y));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> svg = d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;svg&quot;</span>)</span><br><span class="line">   			.attr(<span class="string">&quot;width&quot;</span>,<span class="string">&#x27;600&#x27;</span>).attr(<span class="string">&quot;height&quot;</span>,<span class="string">&#x27;500&#x27;</span>);</span><br><span class="line">	svg.append(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">       .attr(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;steelblue&quot;</span>)</span><br><span class="line">       .selectAll(<span class="string">&quot;rect&quot;</span>).data(bins).join(<span class="string">&quot;rect&quot;</span>)</span><br><span class="line">       .attr(<span class="string">&quot;x&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> x(d.x0) + <span class="number">1</span>)</span><br><span class="line">       .attr(<span class="string">&quot;width&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">Math</span>.max(<span class="number">0</span>, x(d.x1) - x(d.x0) - <span class="number">1</span>))</span><br><span class="line">       .attr(<span class="string">&quot;y&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> y(d.length)).style(<span class="string">&quot;fill&quot;</span>,<span class="string">&quot;#1EAFAE&quot;</span>)</span><br><span class="line">       .attr(<span class="string">&quot;height&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> y(<span class="number">0</span>) - y(d.length));</span><br><span class="line"></span><br><span class="line">  svg.append(<span class="string">&quot;g&quot;</span>).call(xAxis);</span><br><span class="line">  svg.append(<span class="string">&quot;g&quot;</span>).call(yAxis);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-05-1004-d3-hist-bins.png" alt="d3-hist"></p>
+<h3 id="力导向图"><a href="#力导向图" class="headerlink" title="力导向图"></a>力导向图</h3><p>力导向(force-directed)图布局效果通过<code>d3.forceSimulation(nodes).force()</code>实现，将输入的节点表和关系表转换为带坐标点方便SVG里绘制<code>circle</code>和<code>line</code>的数据。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> data=&#123;<span class="string">&quot;nodes&quot;</span>:[&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;a&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">1</span>&#125;,&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;b&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">1</span>&#125;,&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;c&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">2</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;d&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">1</span>&#125;,&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;e&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">2</span>&#125;],</span><br><span class="line">          <span class="string">&quot;links&quot;</span>:[&#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;a&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;b&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">5</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;a&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;c&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">4</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;b&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;d&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">1</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;c&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;e&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">2</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;a&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;e&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">5</span>&#125;]&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> links = data.links.map(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">Object</span>.create(d));</span><br><span class="line"><span class="keyword">var</span> nodes = data.nodes.map(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">Object</span>.create(d));</span><br><span class="line"><span class="keyword">var</span> simulation = d3.forceSimulation(nodes)</span><br><span class="line">      .force(<span class="string">&quot;link&quot;</span>, d3.forceLink(links).id(<span class="function"><span class="params">d</span> =&gt;</span> d.id))</span><br><span class="line">      .force(<span class="string">&quot;charge&quot;</span>, d3.forceManyBody())</span><br><span class="line">      .force(<span class="string">&quot;center&quot;</span>, d3.forceCenter(<span class="number">400</span> / <span class="number">2</span>,<span class="number">400</span>/ <span class="number">2</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> svg = d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;svg&quot;</span>)</span><br><span class="line">            .attr(<span class="string">&quot;width&quot;</span>,<span class="string">&#x27;600&#x27;</span>).attr(<span class="string">&quot;height&quot;</span>,<span class="string">&#x27;500&#x27;</span>);</span><br><span class="line">  <span class="keyword">const</span> link = svg.append(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;stroke&quot;</span>, <span class="string">&quot;#ba5c25&quot;</span>).attr(<span class="string">&quot;stroke-opacity&quot;</span>, <span class="number">0.6</span>)</span><br><span class="line">      .selectAll(<span class="string">&quot;line&quot;</span>).data(links).join(<span class="string">&quot;line&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;stroke-width&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">Math</span>.sqrt(d.value));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> node = svg.append(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;stroke&quot;</span>, <span class="string">&quot;#fff&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;stroke-width&quot;</span>, <span class="number">1.5</span>)</span><br><span class="line">    .selectAll(<span class="string">&quot;circle&quot;</span>).data(nodes)</span><br><span class="line">    .append(<span class="string">&quot;circle&quot;</span>).attr(<span class="string">&quot;r&quot;</span>, <span class="number">5</span>).attr(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;#CAE9E0&quot;</span>);</span><br><span class="line">  node.append(<span class="string">&quot;title&quot;</span>).text(<span class="function"><span class="params">d</span> =&gt;</span> d.id);</span><br><span class="line">  simulation.on(<span class="string">&quot;tick&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    link</span><br><span class="line">        .attr(<span class="string">&quot;x1&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.source.x)</span><br><span class="line">        .attr(<span class="string">&quot;y1&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.source.y)</span><br><span class="line">        .attr(<span class="string">&quot;x2&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.target.x)</span><br><span class="line">        .attr(<span class="string">&quot;y2&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.target.y);</span><br><span class="line">    node</span><br><span class="line">        .attr(<span class="string">&quot;cx&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.x)</span><br><span class="line">        .attr(<span class="string">&quot;cy&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.y);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="弦图"><a href="#弦图" class="headerlink" title="弦图"></a>弦图</h3><p>弦图(Chord Diagram)用于表示一组元素之间的联系。输入的数据仍然是节点表nodes和节点间关系表links，弦图将数据节点环状分布，内部通过弦连接，弦的宽度反应连接的强度(values)。数据需要转换为一个NxN的矩阵，矩阵中的a、b、c等在弦图的外圆上用相互分隔的几段弧来表示，对应节点。节点的长度为该元素所在行的总和。</p>
+<p>在d3中通过<code>d3.chordDirected()(matrix)</code>得到需要的数据，具体代码如下，因为还需要绘制节点的排布效果，因此会调用<code>d3.arc()</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> data=&#123;<span class="string">&quot;nodes&quot;</span>:[&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;a&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">1</span>&#125;,&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;b&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">1</span>&#125;,&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;c&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">2</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;d&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">1</span>&#125;,&#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;e&quot;</span>,<span class="string">&quot;group&quot;</span>:<span class="number">2</span>&#125;],</span><br><span class="line">          <span class="string">&quot;links&quot;</span>:[&#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;a&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;b&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">5</span>&#125;,&#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;a&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;c&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">4</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;b&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;d&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">1</span>&#125;,&#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;c&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;e&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">2</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;c&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;a&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">6</span>&#125;,&#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;b&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;c&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">3</span>&#125;,</span><br><span class="line">                   &#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;e&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;b&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">2</span>&#125;,&#123;<span class="string">&quot;source&quot;</span>: <span class="string">&quot;a&quot;</span>, <span class="string">&quot;target&quot;</span>: <span class="string">&quot;e&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="number">5</span>&#125;]&#125;;</span><br><span class="line"><span class="keyword">var</span> links = data.links;</span><br><span class="line"><span class="keyword">var</span> nodes = data.nodes;</span><br><span class="line"><span class="keyword">var</span> names= <span class="built_in">Array</span>.from(<span class="keyword">new</span> <span class="built_in">Set</span>(links.flatMap(<span class="function"><span class="params">d</span> =&gt;</span> [d.source, d.target])));</span><br><span class="line"><span class="keyword">var</span> index = <span class="keyword">new</span> <span class="built_in">Map</span>(names.map(<span class="function">(<span class="params">name, i</span>) =&gt;</span> [name, i]));</span><br><span class="line"><span class="keyword">var</span> matrix = <span class="built_in">Array</span>.from(index, <span class="function">() =&gt;</span> <span class="keyword">new</span> <span class="built_in">Array</span>(names.length).fill(<span class="number">0</span>));</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> &#123;source, target, value&#125; <span class="keyword">of</span> links) matrix[index.get(source)][index.get(target)]+= value;</span><br><span class="line"><span class="keyword">var</span> innerRadius = <span class="number">200</span>,outerRadius = <span class="number">206</span>;</span><br><span class="line"><span class="keyword">var</span> width = <span class="number">440</span>,height = <span class="number">440</span>;</span><br><span class="line"><span class="keyword">var</span> ribbon = d3.ribbonArrow().radius(innerRadius - <span class="number">0.5</span>).padAngle(<span class="number">1</span> / innerRadius);</span><br><span class="line"><span class="keyword">var</span> color = d3.scaleOrdinal(names, d3.schemeCategory10)</span><br><span class="line"><span class="keyword">var</span> chord = d3.chordDirected().padAngle(<span class="number">12</span> / innerRadius)</span><br><span class="line">    .sortSubgroups(d3.descending).sortChords(d3.descending);</span><br><span class="line"><span class="keyword">var</span> chords = chord(matrix);</span><br><span class="line"><span class="keyword">var</span> svg = d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;svg&quot;</span>).attr(<span class="string">&quot;viewBox&quot;</span>, [-<span class="number">600</span> / <span class="number">2</span>, -<span class="number">600</span> / <span class="number">2</span>, <span class="number">600</span>, <span class="number">600</span>]);</span><br><span class="line"><span class="keyword">var</span> formatValue = <span class="function"><span class="params">x</span> =&gt;</span> <span class="string">`<span class="subst">$&#123;x.toFixed(<span class="number">0</span>)&#125;</span>B`</span>;</span><br><span class="line"><span class="keyword">var</span> arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);</span><br><span class="line">	svg.append(<span class="string">&quot;path&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;none&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;d&quot;</span>, d3.arc()(&#123;outerRadius, <span class="attr">startAngle</span>: <span class="number">0</span>, <span class="attr">endAngle</span>: <span class="number">2</span> * <span class="built_in">Math</span>.PI&#125;));</span><br><span class="line"></span><br><span class="line">	svg.append(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;fill-opacity&quot;</span>, <span class="number">0.75</span>)</span><br><span class="line">      .selectAll(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .data(chords)</span><br><span class="line">      .join(<span class="string">&quot;path&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;d&quot;</span>, ribbon)</span><br><span class="line">      .attr(<span class="string">&quot;fill&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> color(names[d.target.index]))</span><br><span class="line">      .style(<span class="string">&quot;mix-blend-mode&quot;</span>, <span class="string">&quot;multiply&quot;</span>);</span><br><span class="line">    svg.append(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .selectAll(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .data(chords.groups)</span><br><span class="line">      .join(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .call(<span class="function"><span class="params">g</span> =&gt;</span> g.append(<span class="string">&quot;path&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;d&quot;</span>, arc)</span><br><span class="line">        .attr(<span class="string">&quot;fill&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> color(names[d.index]))</span><br><span class="line">        .attr(<span class="string">&quot;stroke&quot;</span>, <span class="string">&quot;#fff&quot;</span>))</span><br><span class="line">      .call(<span class="function"><span class="params">g</span> =&gt;</span> g.append(<span class="string">&quot;text&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;dy&quot;</span>, -<span class="number">3</span>)</span><br><span class="line">      .append(<span class="string">&quot;textPath&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;startOffset&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.startAngle * outerRadius)</span><br><span class="line">        .text(<span class="function"><span class="params">d</span> =&gt;</span> names[d.index]));</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-07-1004-d3-chord.png" alt="d3-chord"></p>
+<h3 id="分层树图"><a href="#分层树图" class="headerlink" title="分层树图"></a>分层树图</h3><p>要绘制思维导图等分层的树图，在d3中使用的是<code>d3.hierarchy(data)</code>转换为层级数据，再通过<code>d3.tree()(data)</code>建立树的节点，用svg里的<code>&lt;circle&gt;</code>绘制节点，用<code>&lt;path&gt;</code>绘制边，从而有流线的效果。一个绘制示例如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> data=&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;a&quot;</span>,<span class="string">&quot;children&quot;</span>:[&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;b&quot;</span>,<span class="string">&quot;children&quot;</span>:[&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;c&quot;</span>,<span class="string">&quot;value&quot;</span>:<span class="number">710</span>&#125;]&#125;,</span><br><span class="line">                      &#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;d&quot;</span>,<span class="string">&quot;value&quot;</span>:<span class="number">250</span>&#125;,</span><br><span class="line">                      &#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;e&quot;</span>,<span class="string">&quot;value&quot;</span>:<span class="number">863</span>&#125;]&#125;;</span><br><span class="line"><span class="keyword">var</span> width = <span class="number">500</span>;</span><br><span class="line"><span class="keyword">var</span> root = d3.hierarchy(data);</span><br><span class="line">    root.dx = <span class="number">30</span>;</span><br><span class="line">    root.dy = width / (root.height*<span class="number">5</span> + <span class="number">1</span>);</span><br><span class="line">    root= d3.tree().nodeSize([root.dx, root.dy])(root);</span><br><span class="line"><span class="keyword">var</span> svg = d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;svg&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;viewBox&quot;</span>, [-<span class="number">20</span>, -<span class="number">100</span>,<span class="number">350</span>,<span class="number">300</span>]);;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> link = svg.append(<span class="string">&quot;g&quot;</span>).attr(<span class="string">&quot;fill&quot;</span>, <span class="string">&quot;none&quot;</span>)</span><br><span class="line">    .attr(<span class="string">&quot;stroke&quot;</span>, <span class="string">&quot;#555&quot;</span>).attr(<span class="string">&quot;stroke-opacity&quot;</span>, <span class="number">0.4</span>)</span><br><span class="line">    .attr(<span class="string">&quot;stroke-width&quot;</span>, <span class="number">1.5</span>).selectAll(<span class="string">&quot;path&quot;</span>)</span><br><span class="line">    .data(root.links()).join(<span class="string">&quot;path&quot;</span>)</span><br><span class="line">    .attr(<span class="string">&quot;d&quot;</span>, d3.linkHorizontal().x(<span class="function"><span class="params">d</span> =&gt;</span> d.y).y(<span class="function"><span class="params">d</span> =&gt;</span> d.x));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> node = svg.append(<span class="string">&quot;g&quot;</span>).attr(<span class="string">&quot;stroke-linejoin&quot;</span>, <span class="string">&quot;round&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;stroke-width&quot;</span>, <span class="number">3</span>).selectAll(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .data(root.descendants()).join(<span class="string">&quot;g&quot;</span>)</span><br><span class="line">      .attr(<span class="string">&quot;transform&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> <span class="string">`translate(<span class="subst">$&#123;d.y&#125;</span>,<span class="subst">$&#123;d.x&#125;</span>)`</span>);</span><br><span class="line"></span><br><span class="line">    node.append(<span class="string">&quot;circle&quot;</span>).attr(<span class="string">&quot;fill&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.children ? <span class="string">&quot;#555&quot;</span> : <span class="string">&quot;#999&quot;</span>)</span><br><span class="line">        .attr(<span class="string">&quot;r&quot;</span>, <span class="number">2.5</span>).attr(<span class="string">&quot;fill&quot;</span>,<span class="string">&quot;#1EAFAE&quot;</span>);</span><br><span class="line"></span><br><span class="line">    node.append(<span class="string">&quot;text&quot;</span>) <span class="comment">//文本标签</span></span><br><span class="line">        .attr(<span class="string">&quot;dy&quot;</span>, <span class="string">&quot;0.31em&quot;</span>).attr(<span class="string">&quot;x&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.children ? -<span class="number">6</span> : <span class="number">6</span>)</span><br><span class="line">        .attr(<span class="string">&quot;text-anchor&quot;</span>, <span class="function"><span class="params">d</span> =&gt;</span> d.children ? <span class="string">&quot;end&quot;</span> : <span class="string">&quot;start&quot;</span>)</span><br><span class="line">        .text(<span class="function"><span class="params">d</span> =&gt;</span> d.data.name).clone(<span class="literal">true</span>).attr(<span class="string">&quot;stroke&quot;</span>, <span class="string">&quot;white&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/03/viz-d3-07-layout/viz-d3-notes-all/31-06-08-1004-d3-tree.png" alt="d3-tree"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>布局实现的是数据的变换，从序列数据或二维数据变换为方便绘制一些主题图的数据，例如变成饼图的每个楔形、变成直方图的分箱统计、力导向图的坐标点和连接线等。在d3的v3.x版本里，饼图、直方图等数据转换函数汇总在layout下。通过<code>d3.layout.pie()</code>使用，而v5.x之后的版本没有了layout的集合，而是使用<code>d3.pie()(data)</code>。本篇笔记学习和实践了饼图、堆叠柱图、直方图、力导向图、弦图及层级树图的绘制。还可以深入学习的有树状图(<code>d3.treemap()</code>)、径向堆叠柱状图、汇聚气泡图(<code>d3.pack()</code>)、桑吉图(<code> d3.sankey()</code>)等等。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/viz/" rel="tag"><i class="fa fa-tag"></i> viz</a>
+              <a href="/tags/d3/" rel="tag"><i class="fa fa-tag"></i> d3</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/03/viz-d3-06-interactive.html" rel="prev" title="D3库实践笔记之图表交互 |可视化系列36">
+      <i class="fa fa-chevron-left"></i> D3库实践笔记之图表交互 |可视化系列36
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/09/timeproc-arrow-lynsns.html" rel="next" title="Python处理时间数据的另一种选择，在标准库之外|Arrow使用笔记">
+      Python处理时间数据的另一种选择，在标准库之外|Arrow使用笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A5%BC%E5%9B%BE%E5%B8%83%E5%B1%80"><span class="nav-number">1.</span> <span class="nav-text">饼图布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E5%8F%A0%E5%B8%83%E5%B1%80"><span class="nav-number">2.</span> <span class="nav-text">堆叠布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%96%B9%E5%9B%BE"><span class="nav-number">3.</span> <span class="nav-text">直方图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9B%E5%AF%BC%E5%90%91%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text">力导向图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%A6%E5%9B%BE"><span class="nav-number">5.</span> <span class="nav-text">弦图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%A0%91%E5%9B%BE"><span class="nav-number">6.</span> <span class="nav-text">分层树图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

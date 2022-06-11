@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="D3是什么？狭义的理解是一个JavaScript可视化库。通过操作HTML的基础元素或SVG元素构建可视化图形，绘制出精美交互性强的可视化图像。D3是Data-Driven Documents的简写，一个基于数据操纵文档的JavaScript库，文档指的是HTML的DOM，即文档对象模型(Document Object Model)，D3提供了各种实用的方法将数据绑定到DOM，根据数据操纵文档，画">
+<meta property="og:type" content="article">
+<meta property="og:title" content="D3库实践笔记之幻化万千的返璞归真 |可视化系列32">
+<meta property="og:url" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="D3是什么？狭义的理解是一个JavaScript可视化库。通过操作HTML的基础元素或SVG元素构建可视化图形，绘制出精美交互性强的可视化图像。D3是Data-Driven Documents的简写，一个基于数据操纵文档的JavaScript库，文档指的是HTML的DOM，即文档对象模型(Document Object Model)，D3提供了各种实用的方法将数据绑定到DOM，根据数据操纵文档，画">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-01-1002-html-to-d3-html.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-03-1002-d3code-svg-res.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-05-1003-d3-bar.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-06-1003-infinite-d3.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-02-03-1003-dom-note-tree.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-02-04-1003-css-demo.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-03-1002-d3code-svg-res.png">
+<meta property="article:published_time" content="2020-10-02T04:47:55.000Z">
+<meta property="article:modified_time" content="2020-12-18T15:01:52.823Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="viz">
+<meta property="article:tag" content="d3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-01-1002-html-to-d3-html.png">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>D3库实践笔记之幻化万千的返璞归真 |可视化系列32 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/10/02/viz-d3-02-viz-back-to-basics.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          D3库实践笔记之幻化万千的返璞归真 |可视化系列32
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-02 12:47:55" itemprop="dateCreated datePublished" datetime="2020-10-02T12:47:55+08:00">2020-10-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-18 23:01:52" itemprop="dateModified" datetime="2020-12-18T23:01:52+08:00">2020-12-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">可视化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 3.6k 字 | ≈</span>
+           <span title="post.min2read">
+				14 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>D3是什么？狭义的理解是一个JavaScript可视化库。通过操作HTML的基础元素或SVG元素构建可视化图形，绘制出精美交互性强的可视化图像。D3是Data-Driven Documents的简写，一个基于数据操纵文档的JavaScript库，文档指的是HTML的DOM，即文档对象模型(Document Object Model)，D3提供了各种实用的方法将数据绑定到DOM，根据数据操纵文档，画图只是它的功能之一。</p>
+<h3 id="D3第一行代码"><a href="#D3第一行代码" class="headerlink" title="D3第一行代码"></a>D3第一行代码</h3><a id="more"></a>
+
+<p>D3操作的是Web上的文档，可以便捷快速地生成和发布可视化作品，对操作系统和设备的依赖很低。</p>
+<p>D3库的功能和特点：</p>
+<ul>
+<li>将数据和DOM绑定在一起、图形随着数据变化；</li>
+<li>数据转换和绘制独立；不是提供Pie()这类函数绘图而是将数据转换成饼图数据，再按需绘图。像面粉可以做出各种糕点而不是直接提供面条；</li>
+<li>擅长矢量图形，缩放不损失图形精度，不擅长位图和瓦片，不擅长探索型可视化；</li>
+<li>作为HTML文档，不隐藏原始数据，<em>如果不想共享数据，为什么还要将它们可视化呢？</em></li>
+</ul>
+<p>D3本质上还是JavaScript，这意味着我们可以用原生JavaScript代码实现讲到的所有功能，但D3对各种常用操作进行了很好的封装，大大减轻了做可视化的工作量并应对各种需求。用D3做可视化的代码框架如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">title</span>&gt;</span>D3可视化代码框架<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./d3/d3.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--直接引入在线的d3库： &lt;script src=&quot;https://d3js.org/d3.v6.min.js&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"><span class="comment"> --&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span></span><br><span class="line"><span class="javascript">     <span class="comment">// D3 代码部分</span></span></span><br><span class="line"><span class="javascript">     d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;p&quot;</span>).text(<span class="string">&quot;hello world！&quot;</span>);</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>来细看这段代码，除<code>d3.select(&quot;body&quot;)...</code>句外，都是通用的HTML代码，D3的第一行代码就只是<code>d3.select(&quot;body&quot;).append(&quot;p&quot;).text(&quot;hello world！&quot;);</code>。HTML标记中，<html><head></head><body></body></html>划分了层次结构，发挥功能的d3代码在<script></script>块里。这段d3脚本代码的作用是在html的body元素里加入一个文本段落(<code>&lt;p&gt;&lt;/p&gt;</code>)，并把文本内容<code>hello world！</code>添加给这个段落。</p>
+<p>需要说明的是，本系列笔记都基于v6.x版本，v5之后的版本和网上各种教程用的v3.x差别还挺大的，亲测一些书籍和教程里的写法都不能正常运行了，典型的一些例子后续具体内容里会提到。</p>
+<p>总结一下D3可视化的基本步骤如下：</p>
+<ul>
+<li>创建新元素并绑定数据（html的元素可理解为划定区域和声明类型的闭合标签，如p表示其是一个段落，是段落就可以有段落文本、长宽、id等属性和标识）；</li>
+<li>设置相应元素的可视属性，将数据值映射为元素大小、颜色、位置等可视属性；</li>
+<li>对元素进行排列和变换，还有响应交互；</li>
+</ul>
+<p>D3那句链式调用了.select()、append()等，也可以用中间变量承接，写成：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//拆成多个语句的写法：</span></span><br><span class="line"><span class="keyword">var</span> body = d3.select(<span class="string">&quot;body&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> p = body.append(<span class="string">&quot;p&quot;</span>);</span><br><span class="line">p.text(<span class="string">&quot;hello world!&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>原始HTML文档和浏览器中D3代码发挥作用后生成的HTML文档对比效果如下，左边是原始代码，右边的HTML文档中<body>标签里多了一行文本<p>hello world!</p>。</body></p>
+<p><img src="/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-01-1002-html-to-d3-html.png" alt="从原html到效果html"></p>
+<h3 id="幻化万千的返璞归真"><a href="#幻化万千的返璞归真" class="headerlink" title="幻化万千的返璞归真"></a>幻化万千的返璞归真</h3><p>操纵<code>&lt;p&gt;</code>等HTML标签是牛刀小试，绘制可视化图形主流做法是生成和操作<code>&lt;svg&gt;</code>标签生成点线面，再组合成柱图、饼图、地图等可视化图表。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> svg=d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;svg&quot;</span>)</span><br><span class="line">     	  .attr(<span class="string">&quot;width&quot;</span>,<span class="number">600</span>).attr(<span class="string">&#x27;height&#x27;</span>,<span class="number">500</span>);</span><br><span class="line">svg.append(<span class="string">&quot;rect&quot;</span>).style(<span class="string">&quot;fill&quot;</span>,<span class="string">&quot;#1EAFAE&quot;</span>)</span><br><span class="line">		  .attr(<span class="string">&quot;x&quot;</span>,<span class="number">30</span>).attr(<span class="string">&quot;y&quot;</span>,<span class="number">50</span>).attr(<span class="string">&quot;width&quot;</span>,<span class="number">60</span>).attr(<span class="string">&quot;height&quot;</span>,<span class="number">80</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-03-1002-d3code-svg-res.png" alt="d3代码-&gt;svg-&gt;结果图像"></p>
+<p>画一个完整的统计图表还需要绘制坐标轴、加文本标签、加标题/图例等图元，这些d3都可以通过操纵<code>&lt;svg&gt;</code>实现。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> dataset = [<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>];</span><br><span class="line"><span class="keyword">var</span> h=<span class="number">400</span>,w=<span class="number">500</span>,m=<span class="number">25</span>;</span><br><span class="line"><span class="keyword">var</span> svg=d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;svg&quot;</span>).attr(<span class="string">&quot;class&quot;</span>,<span class="string">&quot;axis&quot;</span>)</span><br><span class="line">		  .attr(<span class="string">&quot;width&quot;</span>,w).attr(<span class="string">&#x27;height&#x27;</span>,h);</span><br><span class="line">renderXAxis();</span><br><span class="line">renderYAxis(); <span class="comment">//部分代码省略</span></span><br><span class="line">svg.selectAll(<span class="string">&quot;rect&quot;</span>).data(dataset).enter().append(<span class="string">&quot;rect&quot;</span>)</span><br><span class="line">   .attr(<span class="string">&quot;class&quot;</span>,<span class="string">&quot;bar&quot;</span>).style(<span class="string">&quot;fill&quot;</span>,<span class="string">&quot;#1EAFAE&quot;</span>)</span><br><span class="line">   .attr(<span class="string">&quot;x&quot;</span>,<span class="function"><span class="keyword">function</span>(<span class="params">d,i</span>)</span>&#123;<span class="keyword">return</span> i*<span class="number">75</span>+<span class="number">75</span> +<span class="string">&quot;px&quot;</span>;&#125;)</span><br><span class="line">   .attr(<span class="string">&quot;y&quot;</span>,<span class="function"><span class="keyword">function</span>(<span class="params">d</span>)</span>&#123;<span class="keyword">return</span> (<span class="number">375</span>-d*<span class="number">3.5</span>) +<span class="string">&quot;px&quot;</span>;&#125;)</span><br><span class="line">   .attr(<span class="string">&quot;width&quot;</span>,<span class="number">50</span>).attr(<span class="string">&quot;height&quot;</span>,<span class="function"><span class="params">d</span> =&gt;</span> d*<span class="number">3.5</span> +<span class="string">&quot;px&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-05-1003-d3-bar.png" alt="D3绘制基础柱状图"></p>
+<p>数据+坐标系+布局+文本图元，最终幻化万千可视图。</p>
+<p><img src="/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-06-1003-infinite-d3.png" alt="d3绘制的各种可视化成果"></p>
+<h3 id="D3基础技术概念"><a href="#D3基础技术概念" class="headerlink" title="D3基础技术概念"></a>D3基础技术概念</h3><p>为了更方便地理解D3代码和实现原理，本节对d3可视化设计到的一些前端技术概念进行概述，如果对HTML、CSS、JavaScript、SVG很了解可以跳过这部分。</p>
+<h4 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h4><p>HTML(Hypertext Markup Language, 超文本标记语言) ，用于向浏览器说明内容的标记结构，例如显示什么文字、用段落显示还是表格显示等。HTML 的核心功能就是让你“标记”内容,进而给出结构。文字还是那些文字,但加上结构之后,可读性就不一样了。HTML每个元素都有一个标记标签(Markup Tag)。之前的代码里就用到了<code>&lt;html&gt;</code>、<code>&lt;body&gt;</code>、<code>&lt;p&gt;</code>等标签，都是用一对尖括号包围的。标签有成对出现的，如<code>&lt;p&gt;&lt;/p&gt;</code>;也有不成对出现的,如<code>&lt;br/&gt;</code>。</p>
+<p>HTML 有上百个元素，日常使用和d3学习中只需要知道少数几种。拿之前的d3代码框架对照着看：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>D3可视化代码框架<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;./d3/d3.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--直接引入在线的d3库： &lt;script src=&quot;https://d3js.org/d3.v6.min.js&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"><span class="comment"> 	--&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span></span><br><span class="line"><span class="javascript">     	d3.select(<span class="string">&quot;body&quot;</span>).append(<span class="string">&quot;p&quot;</span>).text(<span class="string">&quot;hello world！&quot;</span>);</span></span><br><span class="line">	 <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p><code>&lt;!DOCTYPE html&gt;</code>：这是标准的文档类型声明，必须在文档的第一行，不是HTML标签，其主要目<br>的是告诉浏览器HTML的版本信息。</p>
+</li>
+<li><p>html标签：包含文档中的所有 HTML 内容；</p>
+</li>
+<li><p>head：文档的头部,包含所有文档的元数据。比如标题和对外部样式表、脚本的引用。里面的标签有title、meta、script等；</p>
+</li>
+<li><p>meta：定义文档的元数据内容，没有结束标签，内容作为属性写在标签里；例如<code>&lt;meta charset=&quot;utf-8&quot;&gt;</code>；</p>
+</li>
+<li><p>title：文档的标题。浏览器会把这个元素的内容显示在窗口标题栏中，并在收藏网页时使用这一标题；典型写法如<code>&lt;title&gt;D3可视化代码框架&lt;/title&gt;</code>；</p>
+</li>
+<li><p>body：所有不包含在 head 中的内容,都包含在 body 中。这里面的内容是可以在网页中看到的；</p>
+</li>
+<li><p>h1 、 h2 、 h3 、 h4、h5：用于标记不同级别的标题。 h1 代表顶级标题, h2 代表二级标题,依此类推；</p>
+</li>
+<li><p>ul 、 ol 、 li：ul 用于标记无序列表,也就是带项目符号的列表， ol 用于标记有序列表，带编号。 ul 和 ol 都包含 li 元素,用于标记列表项；</p>
+</li>
+<li><p>p：一个段落；</p>
+</li>
+<li><p>strong：<strong>加粗文本</strong>，表示额外强调，<code>&lt;b&gt;</code>标签也是加粗文本；</p>
+</li>
+<li><p>em：表示强调，显示<em>斜体文本</em>，<code>&lt;i&gt;</code>标签表示的是一般的斜体文本；</p>
+</li>
+<li><p>span：任意文本，一般都包含在 p 这样的大容器元素中；</p>
+</li>
+<li><p>div：任意文本块，常用于分组相关元素和个性化内容；</p>
+</li>
+<li><p>a：链接，一般显示为带下划线的蓝色文本，例如<code>&lt;a href=&quot;https://d3js.org/&quot;&gt;D3网站&lt;/a&gt;</code>；</p>
+</li>
+<li><p>link：用于引用外部资源，如引用同一文件夹下的css文件：<code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;style.css&quot; /&gt;</code>；</p>
+</li>
+<li><p>style：用于在文档中定义CSS样式；如果内容很多，则建议写在外部文件中,再用<code>&lt;link&gt;</code>标签引用；</p>
+</li>
+<li><p>script：用于定义客户端脚本,最常见的是JavaScript脚本，我们写的d3代码在<code>&lt;script&gt; &lt;/script&gt;</code>标签里；</p>
+</li>
+<li><p>注释：html里注释的写法为<code>&lt;!-- 要注释的内容 --&gt;</code>；</p>
+</li>
+</ul>
+<p>DOM，指文档对象模型(Document Object Model)，是针对结构化文档的一个接口，它允许程序和脚本动态地访问和修改文档。使用这套模型即可任意访问和修改HTML元素。D3中的函数大量脱胎于DOM。DOM是以树形结构来描述HTML文档的，其被称为节点树，每个HTML元素都是树上的一个节点。</p>
+<p><img src="/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-02-03-1003-dom-note-tree.png" alt="一颗节点树的例子"></p>
+<h4 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h4><p>CSS(Cascading Style Sheets,层叠样式表)控制 DOM 元素的视觉外观，用于定义HTML元素的样式,如字体大小、背景颜色、布局等。一个CSS语句例子和效果如下：</p>
+<p><img src="/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-02-04-1003-css-demo.png" alt="CSS语句例子"></p>
+<p>CSS 样式由选择符和属性组成。选择符后面跟着属性，被一对花括号所包围。属性和值由冒号分隔，每个属性声明以分号结尾。相同的属性可以应用给多个选择符，只要用逗号分隔选择符即可。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">选择符 <span class="selector-tag">A</span>,</span><br><span class="line">选择符 <span class="selector-tag">B</span> &#123;</span><br><span class="line">	属性1 : 值 ;</span><br><span class="line">	属性2 : 值 ;</span><br><span class="line">	属性3 : 值 ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="JavaScript"><a href="#JavaScript" class="headerlink" title="JavaScript"></a>JavaScript</h4><p>JavaScript 是动态脚本语言，通过操作 DOM 动态修改页面。D3是一个JavaScript库，也就是说D3的写法符合JavaScript的语法规范。</p>
+<p>JavaScript单行注释用<code>//</code>，多行注释用 <code>/*  */</code>，和C家族的语言一致，css的注释也是用的 <code>/*  */</code>，和JavaScript一样。JavaScript区分大小写，每条语句结尾用分号(;)标识，是弱类型语言，声明变量通常用var，不论是浮点数、字符串或者数组，都可以用var，通过<code>var a=5;</code>给变量a赋值5。也可以写<code>let a=5</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> pi=<span class="number">3.14</span>; <span class="comment">//数值</span></span><br><span class="line"><span class="keyword">var</span> d=<span class="string">&quot;蛰虫始航&quot;</span>; <span class="comment">//字符串</span></span><br><span class="line"><span class="keyword">var</span> t=<span class="literal">true</span>; <span class="comment">//false 布尔值</span></span><br><span class="line"><span class="keyword">var</span> ds = [<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>]; <span class="comment">//数组</span></span><br><span class="line"><span class="keyword">var</span> apple = &#123;<span class="attr">kind</span>: <span class="string">&quot;fruit&quot;</span>,</span><br><span class="line">		color: <span class="string">&quot;red&quot;</span>, <span class="attr">quantity</span>:<span class="number">10</span>, <span class="attr">tasty</span>: <span class="literal">true</span></span><br><span class="line">	&#125; <span class="comment">//对象，可以认为是一个字典dict</span></span><br></pre></td></tr></table></figure>
+
+<p>数值间的加(+)、减(-)、乘(*)、除(/)、比较运算等都是常规的写法。</p>
+<p>分支和循环的写法和C语言家族基本一致，函数通过<code>function(arr)&#123;return arr&#125;</code>定义。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (t==<span class="literal">true</span>)&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;ds.length;i++)&#123;</span><br><span class="line">		<span class="built_in">console</span>.log(ds[i]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> count_ds=<span class="function"><span class="keyword">function</span>(<span class="params">d</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> c=<span class="number">0</span>;</span><br><span class="line">    d.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123; <span class="comment">//数组可以用forEach循环</span></span><br><span class="line">        c+=e</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> c0=ds.forEach(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(e)) <span class="comment">//函数的简写方法</span></span><br></pre></td></tr></table></figure>
+
+<p>JavaScript脚本除了直接写在HTML的<code>&lt;script&gt;</code>标签里，也可以保存在独立的js文件里，通过<code>&lt;script type=&quot;text/javascript&quot; src=&quot;d3-learning.js&quot;&gt;&lt;/script&gt;</code>引入。</p>
+<h4 id="SVG"><a href="#SVG" class="headerlink" title="SVG"></a>SVG</h4><p>SVG（Scalable Vector Graphics，可伸缩矢量图形）基于XML标签来表示图形。基于HTML文档的可视化基本都使用canvas或svg元素作为数据到图形的映射容器。D3也可以直接操作div或其他原生HTML元素来绘图，但这就显得笨重不灵活，且容易出现浏览器间不一致的问题。而用 SVG就更可靠，图形效果更一致，且绘图速度更快。</p>
+<p>SVG 元素可以理解为能在上面绘制各种形状的画布。一个基础的svg示例如下，描述了一个半径为20像素的圆形，在网页端就可以显示为一个圆形。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">width</span>=<span class="string">&quot;500&quot;</span> <span class="attr">height</span>=<span class="string">&quot;50&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">circle</span> <span class="attr">cx</span>=<span class="string">&quot;200&quot;</span> <span class="attr">cy</span>=<span class="string">&quot;30&quot;</span> <span class="attr">r</span>=<span class="string">&quot;20&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在SVG的预定义元素里，有6种基本元素rect(矩形)、circle(圆形)、ellipse(椭圆)、line(线段)、polyline(折线)、polygon(多边形)和功能强大的path(路径)，在SVG里也可以添加text(文本)元素。</p>
+<p>和一些编程语言的坐标系统一样，基于像素的坐标系统的原点位于画布的<strong>左上角</strong>。这意味着增大 x 的值，图形会向右移动；增大 y 值，图形会向下移动。</p>
+<p><img src="/2020/10/02/viz-d3-02-viz-back-to-basics/viz-d3-notes-all/31-01-03-1002-d3code-svg-res.png" alt="d3代码-&gt;svg-&gt;结果图像"></p>
+<p>关于于 SVG 元素，最关键是要记住它们的各个方面都是通过属性来设定的。换句话说，就是通过标签中的属性:值对来指定 SVG 元素的各方面特征，比如：<code>&lt;rect x=&quot;30&quot;&gt;&lt;/rect&gt;</code><br>如果熟悉HTML就会觉得很容易上手<code>&lt;p class=&quot;lyndon&quot;&gt;txt&lt;/p&gt;</code>，毕竟都是基于XML进行标记数据。</p>
+<h3 id="D3学习资源"><a href="#D3学习资源" class="headerlink" title="D3学习资源"></a>D3学习资源</h3><p>D3库一些实用的文档和资源。<a target="_blank" rel="noopener" href="https://d3js.org/">D3官网</a>有最新版本最权威的API列表和各种示例的链接，有个中文版的文档网站<a target="_blank" rel="noopener" href="https://d3js.org.cn/">https://d3js.org.cn/</a>；</p>
+<ul>
+<li>各种d3案例：<a target="_blank" rel="noopener" href="https://bl.ocks.org/mbostock">https://bl.ocks.org/mbostock</a> </li>
+<li>可以用函数名称等检索bl.ocks的网站：<a target="_blank" rel="noopener" href="http://bl.ocksplorer.org/">http://bl.ocksplorer.org/</a> </li>
+<li>基于d3的动态可视化封装js库：<a target="_blank" rel="noopener" href="https://github.com/NPashaP/Viz">https://github.com/NPashaP/Viz</a></li>
+<li>专门为探索大型、多维数据集而进行优化的js库：<a target="_blank" rel="noopener" href="http://dc-js.github.io/dc.js/">http://dc-js.github.io/dc.js/</a></li>
+<li>基于d3画动态排序条形图：<a target="_blank" rel="noopener" href="https://github.com/Jannchie/Historical-ranking-data-visualization-based-on-d3.js">Historical-ranking-data-visualization-based-on-d3</a></li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>D3是一个基于数据操纵文档的JavaScript库，大家普遍用来作为可视化库，可以绘制出丰富的可视化图表，很多JavaScript库基于D3来绘图，很多Python可视化库基于d3封装，例如altair、bokeh、bqplot、mpld3等等，足以见其影响力，而且经过这些年的发展，d3有着丰富的实例库和和生态。深入学d3的好处在于可以体验从点线面到可视化图形的成就感，加深对SVG的了解，更深刻地理解一些可视化库的原理和接口设置，有更底层的视野和感悟。</p>
+<p>后续文章继续学习用D3操作svg从0到1绘制包含交互统计图。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/viz/" rel="tag"><i class="fa fa-tag"></i> viz</a>
+              <a href="/tags/d3/" rel="tag"><i class="fa fa-tag"></i> d3</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/28/viz-bqplot.html" rel="prev" title="基于图形语法的声明式可视化框架:bqplot">
+      <i class="fa fa-chevron-left"></i> 基于图形语法的声明式可视化框架:bqplot
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/02/viz-d3-03-select-enter.html" rel="next" title="D3库实践笔记之元素定位与数据绑定 |可视化系列33">
+      D3库实践笔记之元素定位与数据绑定 |可视化系列33 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#D3%E7%AC%AC%E4%B8%80%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">D3第一行代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BB%E5%8C%96%E4%B8%87%E5%8D%83%E7%9A%84%E8%BF%94%E7%92%9E%E5%BD%92%E7%9C%9F"><span class="nav-number">2.</span> <span class="nav-text">幻化万千的返璞归真</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D3%E5%9F%BA%E7%A1%80%E6%8A%80%E6%9C%AF%E6%A6%82%E5%BF%B5"><span class="nav-number">3.</span> <span class="nav-text">D3基础技术概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTML"><span class="nav-number">3.1.</span> <span class="nav-text">HTML</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CSS"><span class="nav-number">3.2.</span> <span class="nav-text">CSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JavaScript"><span class="nav-number">3.3.</span> <span class="nav-text">JavaScript</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SVG"><span class="nav-number">3.4.</span> <span class="nav-text">SVG</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D3%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90"><span class="nav-number">4.</span> <span class="nav-text">D3学习资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

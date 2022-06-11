@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数独起源于18世纪初瑞士数学家欧拉等人研究的拉丁方阵，20世纪70年代，经过美国及日本学者的推广和改良，定名为数独(Sudoku)，大致的意思是“独个的数字”或“只出现一次的数字”。标准的九宫格数独包含9×9个格子，且每3×3的区域组成一宫，数独的规则要求在空出来的格子里填如1~9的数字，要满足每行、每列和每宫内的数字都不重复，也就是行、列及宫里都是由不重复的1~9构成。数独还包含了一些6×6、不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数独的暴力回溯解法和Python-GUI">
+<meta property="og:url" content="http://lynsdata.cn/2020/09/20/sudoku-backtracking.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="数独起源于18世纪初瑞士数学家欧拉等人研究的拉丁方阵，20世纪70年代，经过美国及日本学者的推广和改良，定名为数独(Sudoku)，大致的意思是“独个的数字”或“只出现一次的数字”。标准的九宫格数独包含9×9个格子，且每3×3的区域组成一宫，数独的规则要求在空出来的格子里填如1~9的数字，要满足每行、每列和每宫内的数字都不重复，也就是行、列及宫里都是由不重复的1~9构成。数独还包含了一些6×6、不">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/20/sudoku-backtracking/1-%E5%90%84%E7%A7%8D%E6%95%B0%E7%8B%AC-001.PNG">
+<meta property="article:published_time" content="2020-09-20T05:16:35.000Z">
+<meta property="article:modified_time" content="2020-12-17T14:55:11.916Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="GUI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/09/20/sudoku-backtracking/1-%E5%90%84%E7%A7%8D%E6%95%B0%E7%8B%AC-001.PNG">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/09/20/sudoku-backtracking.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数独的暴力回溯解法和Python-GUI | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/09/20/sudoku-backtracking.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数独的暴力回溯解法和Python-GUI
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-20 13:16:35" itemprop="dateCreated datePublished" datetime="2020-09-20T13:16:35+08:00">2020-09-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-17 22:55:11" itemprop="dateModified" datetime="2020-12-17T22:55:11+08:00">2020-12-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/GUI/" itemprop="url" rel="index"><span itemprop="name">GUI</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 3.4k 字 | ≈</span>
+           <span title="post.min2read">
+				14 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>数独起源于18世纪初瑞士数学家欧拉等人研究的拉丁方阵，20世纪70年代，经过美国及日本学者的推广和改良，定名为数独(Sudoku)，大致的意思是“独个的数字”或“只出现一次的数字”。<br>标准的九宫格数独包含9×9个格子，且每3×3的区域组成一宫，数独的规则要求<strong>在空出来的格子里填如1~9的数字，要满足每行、每列和每宫内的数字都不重复</strong>，也就是行、列及宫里都是由不重复的1~9构成。数独还包含了一些6×6、不规则九宫等个性数独，本篇仅讨论标准九宫格数独的情况。</p>
+<a id="more"></a>
+
+<p><img src="/2020/09/20/sudoku-backtracking/1-%E5%90%84%E7%A7%8D%E6%95%B0%E7%8B%AC-001.PNG" alt="各种数独"></p>
+<p>手动解的技巧有唯余解法、基础排除法、区块排除法、数对唯余法等，进阶的有唯一矩形法、数对占位法、双分支匹配等。<br>【数独示例及手动解法概览】</p>
+<p>(数独解法概览来自<a target="_blank" rel="noopener" href="https://book.douban.com/subject/30161079" title="标准数独(从入门到精通)">标准数独</a>）<br>用电脑解最通用的还是穷举整个解空间，根据数独规则进行剪枝和回溯。效率和递归深度、需要缓存的中间过程有关，递归深度主要由挖空的个数决定。最简单的穷举算法是对每个单元格都用1~9分别尝试，满足条件继续尝试下一个挖空的格，直到所有单元格都填了合适的数字，且检查符合数独规则就算找到一个解。唯一解要求当前盘面有且只有这一个解。</p>
+<p>进一步的做法是为每个挖空的格子维护一个候选数列表，用这个列表中的值进行试数，出现矛盾就回溯，很暴力但其实挺有效的。更高级一点的舞蹈链法及利用模拟退火等方法，也还是离不开试数和回溯的思路。因此下面主要实现的是基于候选数的回溯解法。</p>
+<p>首先数独中的数值我们可以用一个一维长度为81的数组表示，也可以用二维9×9的数组表示，下面采用9×9的数组表示，例如一个数独，其盘面用二维数组表示如下：</p>
+<p>【图】</p>
+<p>回溯的思路是：从第一个挖空的单元格开始，根据其相关20格（本行、本列及所在宫内的单元格）生成候选数列表lst，lst的生成直接地利用了唯余法进行排除，对列表lst中的值进行向下尝试，尝试下一个挖空的单元格，当不满足数独规则时，回退到上一个挖空的单元格。</p>
+<p>写成代码如下：</p>
+<p>【图】</p>
+<p>再把<code>getPrem(x,y,board) </code>及<code>cheackNotSame(x,y,v,board)</code>实现后，就可以变成完整的代码了，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">class sovSudoku:  #求解数独</span><br><span class="line">    def __init__(self,board&#x3D;[]):</span><br><span class="line">        self._b&#x3D;board.copy()  #直接写&#x3D;board会直接修改传进来的列表</span><br><span class="line">    def trysxy(self,x,y): #主循环，尝试x，y处的解答</span><br><span class="line">        if self._b[x][y]&#x3D;&#x3D;0: #不等于0的情况在调用外处理</span><br><span class="line">            pv&#x3D;self.getPrem(x,y)</span><br><span class="line">            #for v in range(1,10): #从1到9尝试</span><br><span class="line">            for v in pv:</span><br><span class="line">                self._t+&#x3D;1 #递归次数+1</span><br><span class="line">                if self.checkNotSame(x,y,v):# 符合 行列宫均满足v符合条件 的</span><br><span class="line">                    self._b[x][y]&#x3D;v</span><br><span class="line">                    nx,ny&#x3D;self.getNext(x,y) #得到下一个0值格</span><br><span class="line">                    if nx&#x3D;&#x3D;-1: #没有下一个0格了；and ny&#x3D;&#x3D;-1可以写但没必要</span><br><span class="line">                        return True</span><br><span class="line">                    else:</span><br><span class="line">                        _end&#x3D;self.trysxy(nx,ny) #向下尝试,递归</span><br><span class="line">                        if not _end:</span><br><span class="line">                            self._b[x][y]&#x3D;0 #回溯，继续for v循环</span><br><span class="line">                            #只需要改x，y处的值，不改其他值</span><br><span class="line">                        else:</span><br><span class="line">                            return True</span><br><span class="line">	</span><br><span class="line">    def checkNotSame(self,x,y,val):#检查每行,列及宫内是否有和b[x,y]相同项</span><br><span class="line">        for row_item in self._b[x]: #第x行</span><br><span class="line">            if row_item&#x3D;&#x3D;val:</span><br><span class="line">                return False</span><br><span class="line">        for rows in self._b:#y所在列</span><br><span class="line">            if rows[y]&#x3D;&#x3D;val:</span><br><span class="line">                return False</span><br><span class="line">        ax&#x3D;x&#x2F;&#x2F;3*3 #把0~3中的值映射到[0,3]</span><br><span class="line">        ab&#x3D;y&#x2F;&#x2F;3*3</span><br><span class="line">        for r in range(ax,ax+3):</span><br><span class="line">            for c in range(ab,ab+3):#注意r&#x3D;&#x3D;x &amp; c&#x3D;&#x3D;y的情况下，其实没必要，val不会是0</span><br><span class="line">                if self._b[r][c]&#x3D;&#x3D;val:</span><br><span class="line">                    return False</span><br><span class="line">        return True</span><br><span class="line">    def getNext(self,x,y): #得到下一个未填项,从x,y往下数，值等于0就返回新下标</span><br><span class="line">        for ny in range(y+1,9): #下标是[0,8]</span><br><span class="line">            if self._b[x][ny]&#x3D;&#x3D;0:</span><br><span class="line">                return (x,ny)</span><br><span class="line">        for row in range(x+1,9):</span><br><span class="line">            for ny in range(0,9):</span><br><span class="line">                if self._b[row][ny]&#x3D;&#x3D;0:</span><br><span class="line">                    return (row,ny)</span><br><span class="line">        return (-1,-1) #不存在下一个未填项的情况</span><br><span class="line">    def getPrem(self,x,y): #得到x，y处可以填的值</span><br><span class="line">        prem&#x3D;[]</span><br><span class="line">        rows&#x3D;list(self._b[x])</span><br><span class="line">        rows.extend([self._b[i][y] for i in range(9)])</span><br><span class="line">        cols&#x3D;set(rows)</span><br><span class="line">        for i in range(1,10):</span><br><span class="line">            if i not in cols:</span><br><span class="line">                prem.append(i)</span><br><span class="line">        return prem</span><br><span class="line">    def solve(self):</span><br><span class="line">        #x,y&#x3D;(0,0) if self._b[0][0]&#x3D;&#x3D;0 else self.getNext(0,0)</span><br><span class="line">        if self._b[0][0]&#x3D;&#x3D;0:#更容易理解的写法</span><br><span class="line">            self.trysxy(0,0)</span><br><span class="line">        else:</span><br><span class="line">            x,y&#x3D;self.getNext(0,0)</span><br><span class="line">            self.trysxy(x,y)</span><br><span class="line">			#以下为辅助代码</span><br><span class="line">	def updateSudo(self,cb): #传入一个数独盘面</span><br><span class="line">        if len(cb)&#x3D;&#x3D;9 and len(cb[0])&#x3D;&#x3D;9:</span><br><span class="line">            self._b&#x3D;cb</span><br><span class="line">        else:</span><br><span class="line">            print(&#39;files size not shape&#39;,len(cb),len(cb[0]))</span><br><span class="line">    def __str__(self): #print(sovSudoku)</span><br><span class="line">        return &#39;&#123;0&#125;&#123;1&#125;&#123;2&#125;&#39;.format(&#39;[&#39;,&#39;,\n&#39;.join([str(i) for i in self._b]),&#39;]&#39;)</span><br></pre></td></tr></table></figure>
+
+<p>对于上面的最难数独，在本机上求解效果如下，耗时在秒级，回溯性能也不是很差。<br>【图】</p>
+<p>网上再找几个数独进行测试，各自耗时如下：</p>
+<p>【图】</p>
+<p>在leetcode上有两道数独相关的题目，第37题就是根据输入的数独（用9×9的二维数组表示）求结果。它是用<code>&#39;.&#39;</code>代表挖空，把上面的代码改一下，提交运行的效果如下：</p>
+<p>【图】</p>
+<p>运行时间在秒级以下，因为回溯会有多次栈调用，内存花费在10多MB。大于平常的一些练习题。</p>
+<p>第36题是检查当前盘面的合法性，不考虑该数独能否求解，只需要根据数独规则判断是否满足数独条件，将以上代码修改后提交的结果如下：</p>
+<p>【图】</p>
+<h3 id="数独游戏GUI"><a href="#数独游戏GUI" class="headerlink" title="数独游戏GUI"></a>数独游戏GUI</h3><p>有了上面的检查数独是否合法以及解数独的代码后，再加上生成数独的代码就可以写一个小游戏训练自己了。81个单元格，假设每次挖掉n 个数字形成一个数独题目，根据排列组合的算法，一共有C(81,n)种挖法。要保证数独有唯一解，则<a target="_blank" rel="noopener" href="https://www.ituring.com.cn/book/1605" title="算法的乐趣">至少要保留17个提示数</a>，也就是说n 最多只能是81-17=64。n取1,2这种数也没什么好玩的，只挖一两个空太好解了，因此n应该有个合理的最小值，如果每行挖两个空，那就是18个空，因此n可以取[18,64]，从量级上我们就能看出，就算我们每天接触1万个数独，穷尽一生接触到的数独题目数量也只占冰山一角，因此不需要担心会刷到重复的数独，概率太低。直接随机某个位置随机填入一个数字再随机其他位置来生成数独效率并不高，比较合理的做法是程序内部有几个完整的数独，通过<strong>数字置换</strong>和<strong>随机挖空</strong>来产生新的数独。</p>
+<p>考虑数独的特点，如果我们有一个数组[6,8,5,1,9,4,3,2,7]，表示将数独中的数字1变成数字6，把2变成8，以此类推……，类似凯撒加密的做法。由数独的特点可以推出新生成的数独也是符合规则的。</p>
+<p>挖空操作就是随机挖去n处的值，再验证是否有唯一解，就可以生成一个数独题目了。</p>
+<p>GUI程序的流程还是遵从：</p>
+<blockquote>
+<p>导入tk库，创建主窗体-&gt;添加控件-&gt;处理交互-&gt;进入主事件循环</p>
+</blockquote>
+<p>最后实现的GUI如下：</p>
+<p>【几个盘面以及交互，初始数独，填写验证，电脑解】</p>
+<p>各按钮交互简介：</p>
+<ul>
+<li>生成数独： 随机生成一个数独；</li>
+<li>验证答案： 没填完的情况下，根据当前所填进行验证；填完了，不满足条件则提示，满足说明解答正确，进行弹窗；</li>
+<li>电脑解：电脑对当前基础盘面进行计算，把值渲染到数独上（可以对字体、颜色进行进一步个性化）；</li>
+<li>清空：把所有值都清空，方便用户输入一个盘面。</li>
+</ul>
+<p>部分代码如下，继续用内置的tkinter库实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><span class="line">root=tk.Tk()</span><br><span class="line">root.geometry(<span class="string">&#x27;310x350+400+100&#x27;</span>) <span class="comment">#大小和位置</span></span><br><span class="line">root.title(<span class="string">&#x27;Sudoku&#x27;</span>)</span><br><span class="line">btnlst=[] <span class="comment"># 每一个输入框  全局变量</span></span><br><span class="line">evs=[] <span class="comment">#和btnlst对应的变量列表 仅get，set操作</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initOneSudo</span>(<span class="params">s0</span>):</span> <span class="comment">#根据初始数独和挖空个数，生成一个一维的数独列表</span></span><br><span class="line">    s1=xyTo81(s0) <span class="comment">#s0是二维的</span></span><br><span class="line">    u=randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">    <span class="keyword">if</span> u!=<span class="number">0</span>:s1=resetsd(s1,u) <span class="comment">#对s1中的数进行“替换加密”</span></span><br><span class="line">    m=randint(<span class="number">18</span>,<span class="number">41</span>) <span class="comment">#挖空个数。目前允许多解</span></span><br><span class="line">    wlst=[] <span class="comment">#挖空位置 </span></span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(wlst)&lt;m:</span><br><span class="line">        i=randint(<span class="number">0</span>,<span class="number">80</span>)</span><br><span class="line">        <span class="keyword">while</span> i <span class="keyword">in</span> wlst:</span><br><span class="line">            i+=<span class="number">2</span> <span class="comment">#或者这里继续用随机数</span></span><br><span class="line">            <span class="keyword">if</span> i&gt;<span class="number">80</span>:</span><br><span class="line">                i-=<span class="number">30</span></span><br><span class="line">        s1[i]=<span class="number">0</span></span><br><span class="line">        wlst.append(i)</span><br><span class="line">    <span class="keyword">return</span> s1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initSudo</span>(<span class="params">s1,evs</span>):</span></span><br><span class="line">    sk1=xyTo81(s1)</span><br><span class="line">    <span class="keyword">if</span> evs==[]:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">81</span>):</span><br><span class="line">            evs.append(tk.IntVar(root,sk1[j]))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">81</span>):</span><br><span class="line">            evs[j].<span class="built_in">set</span>(sk1[j])</span><br><span class="line">    <span class="keyword">return</span> evs</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isValidSudoku</span>(<span class="params">board</span>):</span></span><br><span class="line">    <span class="keyword">if</span> board[<span class="number">0</span>][<span class="number">0</span>]!=<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> validCheck(<span class="number">0</span>,<span class="number">0</span>,board)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        nx,ny=getNext(<span class="number">0</span>,<span class="number">0</span>,board)</span><br><span class="line">        <span class="keyword">if</span> nx==-<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> validCheck(nx,ny,board)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">validCheck</span>(<span class="params">x,y,b</span>):</span><span class="comment">#检查数独是否合法</span></span><br><span class="line">    v=b[x][y]</span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">9</span>):</span><br><span class="line">        <span class="keyword">if</span> r!=x:</span><br><span class="line">            <span class="keyword">if</span> b[r][y]==v:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> r!=y:</span><br><span class="line">            <span class="keyword">if</span> b[x][r]==v:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    ax=x//<span class="number">3</span>*<span class="number">3</span></span><br><span class="line">    ab=y//<span class="number">3</span>*<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(ax,ax+<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(ab,ab+<span class="number">3</span>):</span><br><span class="line">            <span class="keyword">if</span> b[r][c]==v <span class="keyword">and</span> r!=x <span class="keyword">and</span> c!=y:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    nx,ny=getNext(x,y,b)</span><br><span class="line">    <span class="keyword">if</span> nx==-<span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> validCheck(nx,ny,b)</span><br><span class="line"></span><br><span class="line"><span class="comment">### 主函数   s0:内置的基础数独</span></span><br><span class="line">s1=initOneSudo(s0)  <span class="comment">#81</span></span><br><span class="line">s1=nighty2xy(s1,n=<span class="number">9</span>)</span><br><span class="line"></span><br><span class="line">s1cp=s1.copy()</span><br><span class="line">s2=zeroToNAstr(s1,<span class="number">0</span>) <span class="comment">#9*9</span></span><br><span class="line">evs=initSudo(s2,[])</span><br><span class="line"></span><br><span class="line">i=<span class="number">0</span> <span class="comment">#用81个输入框表示每个数独单元格</span></span><br><span class="line"><span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">9</span>):</span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">9</span>):</span><br><span class="line">        <span class="keyword">if</span> r&gt;<span class="number">2</span> <span class="keyword">and</span> r&lt;<span class="number">6</span> <span class="keyword">and</span> c&gt;<span class="number">2</span> <span class="keyword">and</span> c&lt;<span class="number">6</span>:</span><br><span class="line">            btnlst.append(tk.Entry(root,textvariable=evs[i],justify=<span class="string">&#x27;center&#x27;</span>))</span><br><span class="line">        <span class="keyword">elif</span> r&gt;<span class="number">2</span> <span class="keyword">and</span> r&lt;<span class="number">6</span>:</span><br><span class="line">            btnlst.append(tk.Entry(root,textvariable=evs[i],justify=<span class="string">&#x27;center&#x27;</span>))</span><br><span class="line">            btnlst[i][<span class="string">&#x27;background&#x27;</span>]=<span class="string">&#x27;#AFEEEE&#x27;</span></span><br><span class="line">        <span class="keyword">elif</span> c&gt;<span class="number">2</span> <span class="keyword">and</span> c&lt;<span class="number">6</span>:</span><br><span class="line">            btnlst.append(tk.Entry(root,textvariable=evs[i],justify=<span class="string">&#x27;center&#x27;</span>))</span><br><span class="line">            btnlst[i][<span class="string">&#x27;background&#x27;</span>]=<span class="string">&#x27;#AFEEEE&#x27;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            btnlst.append(tk.Entry(root,textvariable=evs[i],justify=<span class="string">&#x27;center&#x27;</span>))</span><br><span class="line">        btnlst[i].place(x=<span class="number">5</span>+c*<span class="number">30</span>,y=<span class="number">0</span>+r*<span class="number">30</span>,width=<span class="number">30</span>,height=<span class="number">30</span>)</span><br><span class="line">        i+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">btnClick</span>(<span class="params">x</span>):</span> <span class="comment">#按钮点击的回调函数</span></span><br><span class="line">    <span class="keyword">global</span> evs,s1,s1cp</span><br><span class="line">    <span class="keyword">if</span> x==<span class="string">&#x27;c&#x27;</span>: <span class="comment">#清空</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">81</span>):</span><br><span class="line">            evs[i].<span class="built_in">set</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    <span class="keyword">elif</span> x==<span class="string">&#x27;n&#x27;</span>:</span><br><span class="line">        s1=initOneSudo(s0) <span class="comment">#81</span></span><br><span class="line">        s1cp=nighty2xy(s1,n=<span class="number">9</span>)</span><br><span class="line">        <span class="keyword">for</span> k1 <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">81</span>):</span><br><span class="line">            <span class="keyword">if</span> s1[k1]==<span class="number">0</span>:</span><br><span class="line">                evs[k1].<span class="built_in">set</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                evs[k1].<span class="built_in">set</span>(s1[k1])</span><br><span class="line">    <span class="keyword">elif</span> x==<span class="string">&#x27;m&#x27;</span>: <span class="comment">#电脑解；这里涉及用户输入，确实需要的约束判断挺多的</span></span><br><span class="line">        s5,msg=getSudo(evs,<span class="number">0</span>) <span class="comment">#9*9</span></span><br><span class="line">        <span class="keyword">if</span> msg[<span class="number">0</span>]!=<span class="string">&#x27;&#x27;</span>:</span><br><span class="line">            messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,msg[<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">elif</span> msg[<span class="number">1</span>]!=<span class="string">&#x27;&#x27;</span>: <span class="comment">#有空值来验证</span></span><br><span class="line">            s6=s5.copy()</span><br><span class="line">            isvs=isValidSudoku(s6)</span><br><span class="line">            <span class="keyword">if</span> isvs==-<span class="number">1</span>:</span><br><span class="line">                messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面为空，请先手动输入一个合法盘面或点生成数独&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> isvs:</span><br><span class="line">                ss=sovSudoku(s1cp)</span><br><span class="line">                ss.solve()</span><br><span class="line">                s3=ss.getSudoku() <span class="comment">#[[1,2],[3,4]]</span></span><br><span class="line">                s4=xyTo81(s3)</span><br><span class="line">                <span class="keyword">for</span> k1 <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">81</span>): <span class="comment">#从s3写入盘面</span></span><br><span class="line">                    <span class="keyword">if</span> s4[k1]==<span class="number">0</span>:</span><br><span class="line">                        evs[k1].<span class="built_in">set</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        evs[k1].<span class="built_in">set</span>(s4[k1])</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面包含不满足数独条件的值，请检查&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:<span class="comment">#填完了的情况</span></span><br><span class="line">            s6=s5.copy()</span><br><span class="line">            isvs=isValidSudoku(s6)</span><br><span class="line">            <span class="keyword">if</span> isvs==-<span class="number">1</span>:</span><br><span class="line">                messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面为空，请先手动输入一个合法盘面或点生成数独&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> isvs:</span><br><span class="line">                messagebox.showinfo(<span class="string">&#x27;恭喜&#x27;</span>,<span class="string">&#x27;恭喜，当前数独已解答正确！&#x27;</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面包含不满足数独条件的值，请检查&#x27;</span>)</span><br><span class="line">    <span class="keyword">elif</span> x==<span class="string">&#x27;s&#x27;</span>: <span class="comment">#验证盘面</span></span><br><span class="line">        s5,msg=getSudo(evs,<span class="number">0</span>) <span class="comment">#9*9</span></span><br><span class="line">        <span class="keyword">if</span> msg[<span class="number">0</span>]!=<span class="string">&#x27;&#x27;</span>:</span><br><span class="line">            messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,msg[<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">elif</span> msg[<span class="number">1</span>]!=<span class="string">&#x27;&#x27;</span>: <span class="comment">#有空值来验证</span></span><br><span class="line">            s6=s5.copy()</span><br><span class="line">            isvs=isValidSudoku(s6)</span><br><span class="line">            <span class="keyword">if</span> isvs==-<span class="number">1</span>:messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面为空，请先手动输入一个合法盘面或点生成数独&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> isvs:messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面满足数独条件,请继续作答或选择电脑解答&#x27;</span>)</span><br><span class="line">            <span class="keyword">else</span>:messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面包含不满足数独条件的值，请检查&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:<span class="comment">#填完了的情况</span></span><br><span class="line">            s6=s5.copy()</span><br><span class="line">            isvs=isValidSudoku(s6)</span><br><span class="line">            <span class="keyword">if</span> isvs:messagebox.showinfo(<span class="string">&#x27;恭喜&#x27;</span>,<span class="string">&#x27;恭喜，当前数独已解答正确！&#x27;</span>)</span><br><span class="line">            <span class="keyword">else</span>:messagebox.showinfo(<span class="string">&#x27;提示&#x27;</span>,<span class="string">&#x27;当前盘面包含不满足数独条件的值，请检查&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#随机生成 电脑解 验证答案</span></span><br><span class="line">ranInitBtn=tk.Button(root,text=<span class="string">&#x27;生成数独&#x27;</span>,command=<span class="keyword">lambda</span> x=<span class="string">&#x27;n&#x27;</span>:btnClick(x)) <span class="comment">#new one sudo</span></span><br><span class="line">ranInitBtn.place(x=<span class="number">5</span>,y=<span class="number">310</span>,width=<span class="number">60</span>,height=<span class="number">30</span>)</span><br><span class="line"><span class="comment">#……</span></span><br><span class="line">root.mainloop()</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="打包GUI为exe文件"><a href="#打包GUI为exe文件" class="headerlink" title="打包GUI为exe文件"></a>打包GUI为exe文件</h3><p>还是用<code>pyinstaller</code>把程序变成exe可执行文件，大小是8点多M，作为Python导出的exe文件，这个大小是有优势的，结果如下：</p>
+<p>【内存大小，图】</p>
+<p>本文从解数独的手动解法引入，讲到解数独常用的回溯法，并且按照思路实现回溯代码，通过这一思路去解两个LeetCode题，为了可玩性增加随机生成一个数独的代码，并把以上功能整合为一个GUI程序，用于平时的数独训练，并且把这一GUI脚本打包为一个exe文件，在Windows系统下使用。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/GUI/" rel="tag"><i class="fa fa-tag"></i> GUI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/20/win-to-go-deploy.html" rel="prev" title="折腾Windows to Go小记">
+      <i class="fa fa-chevron-left"></i> 折腾Windows to Go小记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/22/hexo-personalize-config.html" rel="next" title="Hexo NexT 主题个性化配置(保持更新)">
+      Hexo NexT 主题个性化配置(保持更新) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%8B%AC%E6%B8%B8%E6%88%8FGUI"><span class="nav-number">1.</span> <span class="nav-text">数独游戏GUI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%8C%85GUI%E4%B8%BAexe%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">打包GUI为exe文件</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="pygal 是一个基于SVG的动态可视化Python库，该库枚举了各种常用不常用的图表类型，满足基本的可视化需求，可以画简单的地图。其特点是接口易用，有很多简化的写法，方便得绘制出统计图表，可以生成迷你图，有基本交互，不需要额外的语句，鼠标移动到图表上有文本标签强化效果。但图表不能直接渲染到notebook里，不能合并多个图，例如柱+折线形成复合图，因此使用范围还是比较有限。 绘图框架一个很sex">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个小巧而有特色的Python矢量可视化库：pygal">
+<meta property="og:url" content="http://lynsdata.cn/2020/04/28/viz-pygal.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="pygal 是一个基于SVG的动态可视化Python库，该库枚举了各种常用不常用的图表类型，满足基本的可视化需求，可以画简单的地图。其特点是接口易用，有很多简化的写法，方便得绘制出统计图表，可以生成迷你图，有基本交互，不需要额外的语句，鼠标移动到图表上有文本标签强化效果。但图表不能直接渲染到notebook里，不能合并多个图，例如柱+折线形成复合图，因此使用范围还是比较有限。 绘图框架一个很sex">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-01-1-pygal-bar.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-01-2-pygal-bar.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-01-3-pygal-stackbar.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-01-4-pygal-line.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-01-5-pygal.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-02-1-pygal-rader.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-02-2-pygal-gauge.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-05-2-pygal.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-05-3-pygal.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-05-1-pygal.png">
+<meta property="article:published_time" content="2020-04-28T08:22:44.000Z">
+<meta property="article:modified_time" content="2021-01-03T16:18:49.029Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="viz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/04/28/viz-pygal/0-907-13-01-1-pygal-bar.png">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/04/28/viz-pygal.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>一个小巧而有特色的Python矢量可视化库：pygal | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/04/28/viz-pygal.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一个小巧而有特色的Python矢量可视化库：pygal
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-28 16:22:44" itemprop="dateCreated datePublished" datetime="2020-04-28T16:22:44+08:00">2020-04-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-04 00:18:49" itemprop="dateModified" datetime="2021-01-04T00:18:49+08:00">2021-01-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">可视化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 1.7k 字 | ≈</span>
+           <span title="post.min2read">
+				7 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a target="_blank" rel="noopener" href="http://www.pygal.org/">pygal</a> 是一个基于SVG的动态可视化Python库，该库枚举了各种常用不常用的图表类型，满足基本的可视化需求，可以画简单的地图。其特点是接口易用，有很多简化的写法，方便得绘制出统计图表，可以生成迷你图，有基本交互，不需要额外的语句，鼠标移动到图表上有文本标签强化效果。但图表不能直接渲染到notebook里，不能合并多个图，例如柱+折线形成复合图，因此使用范围还是比较有限。</p>
+<h3 id="绘图框架"><a href="#绘图框架" class="headerlink" title="绘图框架"></a>绘图框架</h3><p>一个很sexy的写法：</p>
+<a id="more"></a>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pygal</span><br><span class="line">pygal.Bar()(<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>)(<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>).render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p>链式写法，各种配置浓缩到一个语句里。</p>
+<p><img src="/2020/04/28/viz-pygal/0-907-13-01-1-pygal-bar.png" alt="pygal基础绘制示例"></p>
+<p>为了更容易理解，一个个对象的赋值写法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pygal</span><br><span class="line">bar= pygal.Bar() <span class="comment">#初始化一个柱状图</span></span><br><span class="line">bar.add(<span class="string">&#x27;A&#x27;</span>, [<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>]) <span class="comment">#给柱图添加数据 </span></span><br><span class="line">bar.render_to_file(<span class="string">&#x27;bar_chart.svg&#x27;</span>)  <span class="comment">#渲染出图</span></span><br></pre></td></tr></table></figure>
+
+<p>也是新建对象后用add()添加数据的做法，和pyecharts等前端封装库的接口很相似。</p>
+<h3 id="基础统计图"><a href="#基础统计图" class="headerlink" title="基础统计图"></a>基础统计图</h3><p>除了柱状图的<code>Bar()</code>之外，其他类型的图有XY、Line、Pie、Box、Histogram等，挺常规。</p>
+<p>在个性化配置方面，初始化bar对象时可设置颜色、设置标题、设置x轴，再加y轴数据，最后渲染出图。</p>
+<p>细化的属性包括控制柱的形状，如获得圆角矩形柱。print_values控制是否显示图上的文本标签。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pygal.style <span class="keyword">import</span> Style</span><br><span class="line">bar= pygal.Bar(style=Style(colors=[<span class="string">&#x27;#1eafae&#x27;</span>,<span class="string">&#x27;#ba5c25&#x27;</span>]), print_values=<span class="literal">True</span>, print_values_position=<span class="string">&#x27;top&#x27;</span>)</span><br><span class="line">bar.title = <span class="string">&#x27;柱状图01&#x27;</span>  <span class="comment">#设置标题和x轴标签</span></span><br><span class="line">bar.x_labels =[<span class="string">&#x27;Mon.&#x27;</span>,<span class="string">&#x27;Tue.&#x27;</span>,<span class="string">&#x27;Wed.&#x27;</span>,<span class="string">&#x27;Thu.&#x27;</span>,<span class="string">&#x27;Fri.&#x27;</span>]</span><br><span class="line">bar.add(<span class="string">&#x27;Y&#x27;</span>,[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">bar.add(<span class="string">&#x27;Z&#x27;</span>,[<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>]) <span class="comment">#簇状柱图</span></span><br><span class="line"></span><br><span class="line">bar.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bar= pygal.Bar(rounded_bars=<span class="number">20</span>)  <span class="comment">#控制柱的形状，圆角矩形柱</span></span><br><span class="line">bar.x_labels =[<span class="string">&#x27;Mon.&#x27;</span>,<span class="string">&#x27;Tue.&#x27;</span>,<span class="string">&#x27;Wed.&#x27;</span>,<span class="string">&#x27;Thu.&#x27;</span>,<span class="string">&#x27;Fri.&#x27;</span>]</span><br><span class="line">bar.add(<span class="string">&#x27;Y&#x27;</span>,[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">bar.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-01-2-pygal-bar.png" alt="簇状柱图绘制效果"></p>
+<p>多个add是簇状柱图，会自动处理x轴上排列的细节，不需要手动配置。从柱状图变成堆叠柱状图用StackedBar，示例如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bar= pygal.StackedBar(style=Style(colors=[<span class="string">&#x27;#1eafae&#x27;</span>,<span class="string">&#x27;#ba5c25&#x27;</span>]),print_values=<span class="literal">True</span>)</span><br><span class="line">bar.title = <span class="string">&#x27;堆叠柱状图&#x27;</span></span><br><span class="line">bar.x_labels =[<span class="string">&#x27;Mon.&#x27;</span>,<span class="string">&#x27;Tue.&#x27;</span>,<span class="string">&#x27;Wed.&#x27;</span>,<span class="string">&#x27;Thu.&#x27;</span>,<span class="string">&#x27;Fri.&#x27;</span>]</span><br><span class="line">bar.add(<span class="string">&#x27;Y&#x27;</span>,[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">bar.add(<span class="string">&#x27;Z&#x27;</span>,[<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>])</span><br><span class="line">bar.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-01-3-pygal-stackbar.png" alt="堆叠柱状图绘制示例"></p>
+<p>XY表示散点图，其他库可能更喜欢用Scatter。Line绘制折线图，在初始化<code>pygal.Line()</code>时设置参数fill=True，则绘制的是填充的面积图。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">chart= pygal.Line(interpolate=<span class="string">&#x27;cubic&#x27;</span>,fill=<span class="literal">True</span>,style=Style(colors=[<span class="string">&#x27;#1eafae&#x27;</span>,<span class="string">&#x27;#ba5c25&#x27;</span>]),print_values=<span class="literal">True</span>,print_values_position=<span class="string">&#x27;top&#x27;</span>)</span><br><span class="line">chart.title = <span class="string">&#x27;平滑曲线图（填充）&#x27;</span>  </span><br><span class="line">chart.x_labels =[<span class="string">&#x27;Mon.&#x27;</span>,<span class="string">&#x27;Tue.&#x27;</span>,<span class="string">&#x27;Wed.&#x27;</span>,<span class="string">&#x27;Thu.&#x27;</span>,<span class="string">&#x27;Fri.&#x27;</span>]</span><br><span class="line">chart.add(<span class="string">&#x27;Y&#x27;</span>,[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">chart.add(<span class="string">&#x27;Z&#x27;</span>,[<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>])</span><br><span class="line">chart.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-01-4-pygal-line.png" alt="pygal绘制折线图"></p>
+<p><img src="/2020/04/28/viz-pygal/0-907-13-01-5-pygal.png" alt="填充面积图示例"></p>
+<p>pygal绘制一些实用特色图表很方便，因为都封装好了，并且可调节的参数不少，这是该库的优势之一。</p>
+<h3 id="特色图表"><a href="#特色图表" class="headerlink" title="特色图表"></a>特色图表</h3><p>通过Radar可以初始化一个雷达图。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rdr= pygal.Radar(style=Style(colors=[<span class="string">&#x27;#1eafae&#x27;</span>,<span class="string">&#x27;#ba5c25&#x27;</span>]),print_values=<span class="literal">True</span>,print_values_position=<span class="string">&#x27;top&#x27;</span>)</span><br><span class="line">rdr.title = <span class="string">&#x27;雷达图&#x27;</span> </span><br><span class="line">rdr.x_labels =[<span class="string">&#x27;Mon.&#x27;</span>,<span class="string">&#x27;Tue.&#x27;</span>,<span class="string">&#x27;Wed.&#x27;</span>,<span class="string">&#x27;Thu.&#x27;</span>,<span class="string">&#x27;Fri.&#x27;</span>]</span><br><span class="line">rdr.add(<span class="string">&#x27;Y&#x27;</span>,[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">rdr.add(<span class="string">&#x27;Z&#x27;</span>,[<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>])</span><br><span class="line"></span><br><span class="line">rdr.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-02-1-pygal-rader.png" alt="pygal绘制雷达图"></p>
+<p>在pygal源码中，Rader继承自Line，符合图形语法的理念， Line()则是直接继承Graph。</p>
+<p>能快速绘制出仪表盘图的Python库并不多，仪表盘图在pygal里是SolidGauge，可以设置是半饼或360度的仪表盘范围，仪表盘是各种可视图表的规律排列，而仪表盘图在实际应用中可以形象地表示任务KPI的完成进度，和温度计图功能相似。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#仪表盘图</span></span><br><span class="line">gauge = pygal.SolidGauge(half_pie=<span class="literal">True</span>, inner_radius=<span class="number">0.70</span>,print_values=<span class="literal">True</span>)</span><br><span class="line">gauge.title = <span class="string">&#x27;当前完成度&#x27;</span> </span><br><span class="line">gauge.value_formatter =<span class="keyword">lambda</span> x: <span class="string">&#x27;&#123;:.1f&#125;%&#x27;</span>.<span class="built_in">format</span>(x)</span><br><span class="line">gauge.add(<span class="string">&#x27;cur&#x27;</span>,<span class="number">80</span>)</span><br><span class="line">gauge.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-02-2-pygal-gauge.png" alt="仪表盘图绘制示例"></p>
+<p>Pyramid表示金字塔图，也称为蝴蝶图，可以方便地对比两组数据的分布结构。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Pyramid</span></span><br><span class="line">chart = pygal.Pyramid(style=Style(colors=[<span class="string">&#x27;#1eafae&#x27;</span>,<span class="string">&#x27;#ba5c25&#x27;</span>]))</span><br><span class="line">chart.title = <span class="string">&#x27;金字塔图(Y和Z同组对比)&#x27;</span> </span><br><span class="line">chart.add(<span class="string">&#x27;Y&#x27;</span>,[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">chart.add(<span class="string">&#x27;Z&#x27;</span>,[<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>])</span><br><span class="line"></span><br><span class="line">chart.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-05-2-pygal.png" alt="pygal绘制金字塔图"></p>
+<p>pygal绘制树状图使用Treemap，电脑磁盘文件的归属关系和文件大小比较可以形象地用树状图表示出来，输入的数据结构不需要很复杂，一些细节的调节和排列pygal都处理好了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Treemap</span></span><br><span class="line">treemap = pygal.Treemap()</span><br><span class="line">treemap.title = <span class="string">&#x27;树状图&#x27;</span></span><br><span class="line">treemap.add(<span class="string">&#x27;X&#x27;</span>, [<span class="number">9</span>,<span class="number">7</span>,<span class="number">81</span>,<span class="number">40</span>])</span><br><span class="line">treemap.add(<span class="string">&#x27;Y&#x27;</span>, [<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">treemap.add(<span class="string">&#x27;Z&#x27;</span>, [<span class="number">37</span>,<span class="number">46</span>,<span class="number">53</span>,<span class="number">81</span>,<span class="number">60</span>])</span><br><span class="line">treemap.add(<span class="string">&#x27;K&#x27;</span>, [<span class="number">52</span>, <span class="number">71</span>])</span><br><span class="line"></span><br><span class="line">treemap.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-05-3-pygal.png" alt="树状图绘制示例"></p>
+<p>pygal还可以绘制分层设色的地图，但有依赖库，绘制地图需要额外安装三个库。<br>pygal_maps_world用于绘制全球各个国家投影地图，通过国家名称缩写索引到对应的国家，也可以索引到各大洲，可以对国家进行分层设色，是面状要素，没有点、线的个性化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">chart=pygal.maps.world.world.World(style=Style(colors=[<span class="string">&#x27;#1eafae&#x27;</span>,<span class="string">&#x27;#69ffff&#x27;</span>, <span class="string">&#x27;#ba5c25&#x27;</span>, <span class="string">&#x27;#ffa069&#x27;</span>, <span class="string">&#x27;#a3ffff&#x27;</span>,<span class="string">&#x27;#d7ce88&#x27;</span>]))</span><br><span class="line">chart.title = <span class="string">&#x27;分层设色地图 pygal&#x27;</span></span><br><span class="line">chart.add(<span class="string">&#x27;2020&#x27;</span>, &#123;</span><br><span class="line">  <span class="string">&#x27;af&#x27;</span>: <span class="number">14</span>,</span><br><span class="line">  <span class="string">&#x27;cn&#x27;</span>: <span class="number">100</span>,</span><br><span class="line">  <span class="string">&#x27;in&#x27;</span>: <span class="number">95</span>,</span><br><span class="line">  <span class="string">&#x27;ir&#x27;</span>: <span class="number">74</span>,</span><br><span class="line">  <span class="string">&#x27;sa&#x27;</span>: <span class="number">39</span>,</span><br><span class="line">  <span class="string">&#x27;us&#x27;</span>: <span class="number">49</span>,</span><br><span class="line">  <span class="string">&#x27;pk&#x27;</span>: <span class="number">1</span></span><br><span class="line">&#125;)</span><br><span class="line">chart.render_in_browser()</span><br></pre></td></tr></table></figure>
+
+<p>世界地图的地图图元用的是worldmap.svg。<br>pygal_maps_fr库用于法式地图，pygal_maps_ch绘制瑞士地图，具体使用时调用方式和上面的pygal_maps_world一致，都是可以根据缩写索引进行分层设色。</p>
+<h3 id="迷你图"><a href="#迷你图" class="headerlink" title="迷你图"></a>迷你图</h3><p>pygal另外一大特色是单独支持生成数据的迷你图。对应的接口有<code>.render_sparkline()</code>和<code>.render_sparktext()</code><br>迷你图作为添色，可以用于快速概览数据的大小对比。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chart = pygal.Line()</span><br><span class="line">chart.add(<span class="string">&#x27;Y&#x27;</span>,[<span class="number">76</span>,<span class="number">37</span>,<span class="number">90</span>,<span class="number">60</span>,<span class="number">50</span>])</span><br><span class="line">chart.render_sparktext()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/28/viz-pygal/0-907-13-05-1-pygal.png" alt="pygal的特色之迷你图"></p>
+<p>在实际使用中，chart初始化可以不是Line ，写其他也行，但成图就是无间隔柱状图，还是Line。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>pygal在Python可视化库中是很有特色的，很好地平衡了基础的统计图表类型和几个特色图表，接口使用方便，对使用者友好，是一个小巧且性感的库，值得了解和使用。其优点有接口容易使用、轻量化、能方便地绘制带交互效果的仪表盘图、仪表盘图、金字塔图和简单地图，SVG方便前端使用，也方便编辑，能够和d3等可视化库协同。目前该库在Github上有2.3k的star，说明认可和使用pygal的人挺多的。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.pygal.org/en/stable/documentation/index.html">pygal文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Kozea/pygal">pygal Github页面</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/viz/" rel="tag"><i class="fa fa-tag"></i> viz</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/28/viz-seborn.html" rel="prev" title="百川归海，四类图统揽统计图:Seaborn|可视化系列03">
+      <i class="fa fa-chevron-left"></i> 百川归海，四类图统揽统计图:Seaborn|可视化系列03
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/01/viz-cutecharts.html" rel="next" title="手绘效果为图表添色，cutecharts带你画Q版可视图|可视化系列04">
+      手绘效果为图表添色，cutecharts带你画Q版可视图|可视化系列04 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%98%E5%9B%BE%E6%A1%86%E6%9E%B6"><span class="nav-number">1.</span> <span class="nav-text">绘图框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%BB%9F%E8%AE%A1%E5%9B%BE"><span class="nav-number">2.</span> <span class="nav-text">基础统计图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E8%89%B2%E5%9B%BE%E8%A1%A8"><span class="nav-number">3.</span> <span class="nav-text">特色图表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%B7%E4%BD%A0%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text">迷你图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Matplotlib tries to make easy things easy and hard things possible.  在本系列的上篇文章里，我们从Matplotlib的基础可视化框架开始，逐步画出折线图、柱状图等基础图表，通过对坐标轴标签、标题文本等的精细调节画出信息更明确丰富的可视图，也实践了双轴图及子图，最后看了下极坐标系下绘图的效果。本篇继续探索Matplotlib的强">
+<meta property="og:type" content="article">
+<meta property="og:title" content="可视化技能之Matplotlib(下)|可视化系列02">
+<meta property="og:url" content="http://lynsdata.cn/2020/03/29/viz-matplotlib-advanced.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="Matplotlib tries to make easy things easy and hard things possible.  在本系列的上篇文章里，我们从Matplotlib的基础可视化框架开始，逐步画出折线图、柱状图等基础图表，通过对坐标轴标签、标题文本等的精细调节画出信息更明确丰富的可视图，也实践了双轴图及子图，最后看了下极坐标系下绘图的效果。本篇继续探索Matplotlib的强">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/03/29/viz-matplotlib-advanced/02-mat-101-%E6%AF%8F%E6%AC%A1%E6%8A%93%E7%89%8C%E6%97%B6%E5%88%A4%E6%96%AD%E6%96%B0%E7%89%8C%E7%9A%84%E5%90%88%E9%80%82%E4%BD%8D%E7%BD%AE.PNG">
+<meta property="article:published_time" content="2020-03-29T09:18:34.000Z">
+<meta property="article:modified_time" content="2020-09-25T19:23:54.000Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="viz">
+<meta property="article:tag" content="matplotlib">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/03/29/viz-matplotlib-advanced/02-mat-101-%E6%AF%8F%E6%AC%A1%E6%8A%93%E7%89%8C%E6%97%B6%E5%88%A4%E6%96%AD%E6%96%B0%E7%89%8C%E7%9A%84%E5%90%88%E9%80%82%E4%BD%8D%E7%BD%AE.PNG">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/03/29/viz-matplotlib-advanced.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>可视化技能之Matplotlib(下)|可视化系列02 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/03/29/viz-matplotlib-advanced.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          可视化技能之Matplotlib(下)|可视化系列02
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-29 17:18:34" itemprop="dateCreated datePublished" datetime="2020-03-29T17:18:34+08:00">2020-03-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-26 03:23:54" itemprop="dateModified" datetime="2020-09-26T03:23:54+08:00">2020-09-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">可视化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 5.4k 字 | ≈</span>
+           <span title="post.min2read">
+				22 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>Matplotlib tries to make easy things easy and hard things possible.</p>
+</blockquote>
+<p>在本系列的<a href="http://lynsdata.cn/2020/04/20/viz-matplotlib-in-action">上篇文章</a>里，我们从Matplotlib的基础可视化框架开始，逐步画出折线图、柱状图等基础图表，通过对坐标轴标签、标题文本等的精细调节画出信息更明确丰富的可视图，也实践了双轴图及子图，最后看了下极坐标系下绘图的效果。本篇继续探索Matplotlib的强悍可视化能力。</p>
+<h3 id="Matplotlib动态可视化"><a href="#Matplotlib动态可视化" class="headerlink" title="Matplotlib动态可视化"></a>Matplotlib动态可视化</h3><a id="more"></a>
+
+<p>计算机及通信技术的发展极大丰富了多媒体内容的发展，文不如图、图不如动图；BI近些年也逐渐发展，人们已不满足于看静态的图表。短视频的火热也给了动态图更多的发展空间。动态图和交互图表能更生动地表现数据变化及数据联系，传达更多的信息。</p>
+<h4 id="插入排序的动态展现"><a href="#插入排序的动态展现" class="headerlink" title="插入排序的动态展现"></a>插入排序的动态展现</h4><p>生动的动画有助于我们理解算法。通过Matplotlib其实我们也可以绘制动态的算法关键过程，下面拿插入排序作为例子看Matplotlib如何绘制动态图。</p>
+<p>玩扑克时的抓牌环节很契合插入排序的执行过程。其思路是：保持手中的已有的牌始终有序，当抓到一张新牌时，<a href="%E7%AE%97%E6%B3%95%E6%96%B0%E8%A7%A3">按照牌面的点数，将其插入合适的位置</a>。怎么去判断该插入的位置呢？我们通常的做法就是从左到右或从右到左扫描以找到当前牌的位置，初始化时我们可以新建一个数组作为始终有序的结果集，也可以直接用原来的数组空间进行交换操作，整体时间复杂度是O(n^2)。将这一过程翻译为Python代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isort</span>(<span class="params">lst</span>):</span></span><br><span class="line">    n=<span class="built_in">len</span>(lst) <span class="comment">#直接用原数组进行排序</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,n):</span><br><span class="line">        x=lst[i] <span class="comment">#当前值</span></span><br><span class="line">        j=i-<span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> j&gt;=<span class="number">0</span> <span class="keyword">and</span> x&lt;lst[j]: <span class="comment">#从右往左找插入的位置</span></span><br><span class="line">            lst[j+<span class="number">1</span>]=lst[j] <span class="comment">#将比x大的牌往后移一位</span></span><br><span class="line">            j-=<span class="number">1</span></span><br><span class="line">        lst[j+<span class="number">1</span>]=x <span class="comment">#换牌</span></span><br><span class="line">    <span class="keyword">return</span> lst</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/03/29/viz-matplotlib-advanced/02-mat-101-%E6%AF%8F%E6%AC%A1%E6%8A%93%E7%89%8C%E6%97%B6%E5%88%A4%E6%96%AD%E6%96%B0%E7%89%8C%E7%9A%84%E5%90%88%E9%80%82%E4%BD%8D%E7%BD%AE.PNG" alt="每次抓牌时判断新牌的合适位置"></p>
+<p>为了直观展示插入排序的关键步骤，我们将每做一次插入的结果保存下来然后用Matplotlib画成一系列柱状图。通过<code>matplotlib.animation</code>绘制成动态图。</p>
+<p>首先改一下排序函数，增加一个变量保存每次到插入步骤时的数组，因为不是递归的排序代码，在for循环前用一个变量w保存关键结果，基于这些中间结果花一系列的图，再连成动态GIF图，代码如下，关键步骤都有注释。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isort</span>(<span class="params">lst</span>):</span> <span class="comment">#插入排序代码</span></span><br><span class="line">    n=<span class="built_in">len</span>(lst)</span><br><span class="line">    w=&#123;<span class="number">0</span>:&#123;<span class="string">&#x27;v&#x27;</span>:lst.copy(),<span class="string">&#x27;j&#x27;</span>:-<span class="number">1</span>&#125;&#125; <span class="comment">#保存j以确定到哪里插入</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,n):</span><br><span class="line">        x=lst[i] <span class="comment">#当前值</span></span><br><span class="line">        j=i-<span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> j&gt;=<span class="number">0</span> <span class="keyword">and</span> x&lt;lst[j]: <span class="comment">#x比j处值小时，继续向左</span></span><br><span class="line">            lst[j+<span class="number">1</span>]=lst[j] <span class="comment">#将比x大的牌往后移一位</span></span><br><span class="line">            j-=<span class="number">1</span></span><br><span class="line">        lst[j+<span class="number">1</span>]=x <span class="comment">#换牌</span></span><br><span class="line">        w[i]=&#123;<span class="string">&#x27;v&#x27;</span>:lst.copy(),<span class="string">&#x27;j&#x27;</span>:j&#125;</span><br><span class="line">        <span class="comment">#print(xs,i,j,x)</span></span><br><span class="line">    <span class="keyword">return</span> w <span class="comment">#不需要lst</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.animation <span class="keyword">as</span> anm <span class="comment">#引入接口</span></span><br><span class="line">fig,ax=plt.subplots()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">draw_bar</span>(<span class="params">i</span>):</span> <span class="comment">#每传入一个i画一个柱状图</span></span><br><span class="line">    w=wk[i]</span><br><span class="line">    nw=<span class="built_in">len</span>(w[<span class="string">&#x27;v&#x27;</span>])</span><br><span class="line">    ax.clear() <span class="comment">#清空之前画的元素</span></span><br><span class="line">    c1=[]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(nw): <span class="comment">#调节柱的颜色</span></span><br><span class="line">        <span class="keyword">if</span> j&lt;i:</span><br><span class="line">            c1.append(<span class="string">&#x27;#1EAFAE&#x27;</span>)</span><br><span class="line">        <span class="keyword">elif</span> i==nw-<span class="number">1</span>:</span><br><span class="line">            c1.append(<span class="string">&#x27;#1EAFAE&#x27;</span>)</span><br><span class="line">        <span class="keyword">elif</span> j==i:</span><br><span class="line">            c1.append(<span class="string">&#x27;#BA5C25&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            c1.append(<span class="string">&#x27;#69FFFF&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> i!=nw-<span class="number">1</span> <span class="keyword">and</span> w[<span class="string">&#x27;j&#x27;</span>]+<span class="number">1</span>!=i: <span class="comment">#所交换的位置</span></span><br><span class="line">        c1[w[<span class="string">&#x27;j&#x27;</span>]+<span class="number">1</span>]=<span class="string">&#x27;#FFA069&#x27;</span></span><br><span class="line">    rs=ax.bar(<span class="built_in">range</span>(nw),w[<span class="string">&#x27;v&#x27;</span>],color=c1)</span><br><span class="line">    ax.set_ylim(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">    ax.set_title(<span class="string">&#x27;Insert Sorted Animation&#x27;</span>)</span><br><span class="line">    c=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> rs: <span class="comment">#给每个柱加文本标签</span></span><br><span class="line">        ax.annotate(<span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(w[<span class="string">&#x27;v&#x27;</span>][c]),xy=(r.get_x()+r.get_width()/<span class="number">2</span>,r.get_height()+<span class="number">0.1</span>))</span><br><span class="line">        c+=<span class="number">1</span> </span><br><span class="line"><span class="comment">#绘制动图</span></span><br><span class="line">amt=anm.FuncAnimation(fig,draw_bar,frames=<span class="built_in">range</span>(<span class="number">6</span>),interval=<span class="number">600</span>)</span><br><span class="line">amt.save(<span class="string">&#x27;insert-sorted-animation-1.gif&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>拿一个未排序数组进行测试，效果如下：</p>
+<p>【排序过程GIF图 2】</p>
+<p>排序过程动图。(青色表示已排序元素，淡蓝色表示未排序，枣红色柱表示当前需排序元素，插入到橙色柱位置)</p>
+<p>Matplotlib绘制动态图表的思路是将一系列图按一定时间间隔顺序播放，利用眼睛的视觉暂留形成动态感，每张静态图就是一帧。上面的代码看上去有些长，但大部分语句用来调颜色和标签文本，画图部分仍然是熟悉的<code>fig,ax=plt.subplots()</code>建画布、<code>ax.bar()</code>画柱状图、<code>ax.set_title()</code>设置标题、<code>ax.annotate()</code>在每个柱的合适位置加文本标签。Matplotlib将动图相关的接口封装在<code>matplotlib.animation</code>里，<code>FuncAnimation(fig,func,frames)</code>通过重复调用func里的画图函数在fig上形成动图。FuncAnimation的参数如下：</p>
+<ul>
+<li><code>fig</code>：用来生成动画的画布；</li>
+<li><code>func</code>：通过调用matplotlib绘图方法来出图作为动图的每一帧；</li>
+<li><code>frames</code>：一个迭代对象，会将其中每一个元素作为绘制一帧的参数传入func函数；</li>
+<li><code>interval</code>：每一帧的展示时间，默认200，单位是毫秒，也就是200毫秒跳到下一张图；</li>
+</ul>
+<p>要将动图保存到文件通过<code>.save(fname)</code>实现，另外也可以用<code>.to_html5_video()</code>把动画转为HTML5下video标签支持的数据或用<code>.to_jshtml</code>生成HTML表示的动画数据，例如在jupyter notebook环境中，可以用以下语句直接渲染出带播放控制台的动图。</p>
+<p>【带控制台的动图播放，3】</p>
+<h4 id="动态排序图实践"><a href="#动态排序图实践" class="headerlink" title="动态排序图实践"></a>动态排序图实践</h4><p>学动态图绘制不应该错过一直挺热门的动态排序图（Bar Chart Race）。通过一系列的条形图营造出你追我赶的热闹场面，看尽事件的变迁。特别适合的应用场景是各种排名的变化，如城市排名变化、某些主题搜索指数变化、××沉浮史等。把这类图拆解一下看到的是一系列条形图和条柱之间的交换动态效果。有了上面的插入排序做热身，同样可以通过绘制一系列条形图再调用<code>FuncAnimation(fig,func,frames)</code>得到动态排序图。网上可以找到各种年度季度排名的公开数据集，一些讲动态排序图的教程也给出了数据集。为了再降低数据获取门槛，我们直接随机生成简单的排名数据。</p>
+<p>【几种有代表性的排序数据表 null 太难整理的，费时】</p>
+<p>【其中的一种数据组织形式df 4】</p>
+<p>假设我们有如下的数据表df，表示7位用户A～G各自在3月到12月的消费金额。现在要画出从3月到12月用户消费金额的排名变化。color列用来给各自标识颜色，画条形图和画制作动图所用接口和参数前面都讲过（包括上篇文章），直接用<code>ax.barh(y,width,color)</code>和<code>FuncAnimation(fig,func,frames)</code>来绘制，条形图是从下往上画的，因此正序排序后正好是最高的柱在最上面，不需要额外调转，具体代码如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">fig,ax=plt.subplots()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">race_bar</span>(<span class="params">i</span>):</span></span><br><span class="line">    idx=<span class="built_in">str</span>(i)</span><br><span class="line">    wdf=df.sort_values(by=idx)</span><br><span class="line">    width=<span class="built_in">list</span>(wdf[idx])</span><br><span class="line">    yw=<span class="built_in">list</span>(wdf[<span class="string">&#x27;tag&#x27;</span>])</span><br><span class="line">    ax.clear()</span><br><span class="line">    rs=ax.barh(yw,width,color=wdf[<span class="string">&#x27;color&#x27;</span>])</span><br><span class="line">    ax.set_xlim(<span class="number">0</span>,wdf[idx].<span class="built_in">max</span>()+<span class="number">200</span>)</span><br><span class="line">    ax.set_title(<span class="string">&#x27;A to G Animation&#x27;</span>)</span><br><span class="line">    ax.text(wdf[idx].<span class="built_in">max</span>()+<span class="number">20</span>,<span class="number">1</span>,<span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(i),fontsize=<span class="number">30</span>) <span class="comment">#绘制当前条形图对应时间周期</span></span><br><span class="line">    ax.tick_params(top=<span class="literal">True</span>, bottom=<span class="literal">False</span>,</span><br><span class="line">                   labeltop=<span class="literal">True</span>, labelbottom=<span class="literal">False</span>)</span><br><span class="line">    c=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> rs:</span><br><span class="line">        ax.annotate(<span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(yw[c]),xy=(r.get_width()-<span class="number">40</span>,r.get_y()+r.get_height()/<span class="number">2</span>-<span class="number">0.16</span>))</span><br><span class="line">        ax.annotate(<span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(width[c]),xy=(r.get_width()+<span class="number">5</span>,r.get_y()+r.get_height()/<span class="number">2</span>-<span class="number">0.16</span>))</span><br><span class="line">        c+=<span class="number">1</span></span><br><span class="line">amt=anm.FuncAnimation(fig,race_bar,frames=<span class="built_in">range</span>(<span class="number">3</span>,<span class="number">13</span>),interval=<span class="number">600</span>)</span><br><span class="line"><span class="comment">#整体结构和插入排序一脉相承</span></span><br></pre></td></tr></table></figure>
+
+<p>绘制效果如图：</p>
+<p>【排序图 6】</p>
+<p><em>注</em>：为了更好地获得具有你追我赶、一同向前的效果，且防止数据变化太过跳脱，防止出现前一秒还是第一、突然掉到最后一名的剧烈变动情况，生成df时，不是全部使用随机函数生成随机数，此处使用的方法是第一次随机生成数据，下一帧的数据在当前数据基础上加[-50,100]的值，本处设定是当前数x[i]是偶数时，x[i+1]=x[i]+randint(20,200)，奇数时x[i+1]=x+randint(-30,100)。生成数据集的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">df=pd.DataFrame(&#123;<span class="string">&#x27;tag&#x27;</span>:<span class="built_in">list</span>(<span class="string">&#x27;ABCDEFG&#x27;</span>),<span class="string">&#x27;color&#x27;</span>:[<span class="string">&#x27;#1EAFAE&#x27;</span>, <span class="string">&#x27;#A3FFFF&#x27;</span>, <span class="string">&#x27;#69FFFF&#x27;</span>, <span class="string">&#x27;#BA5C25&#x27;</span>, <span class="string">&#x27;#FFA069&#x27;</span>, <span class="string">&#x27;#9E5B3A&#x27;</span>, <span class="string">&#x27;#D7CE88&#x27;</span>]&#125;)</span><br><span class="line">df[<span class="string">&#x27;3&#x27;</span>]=df[<span class="string">&#x27;tag&#x27;</span>].apply(<span class="keyword">lambda</span> x:random.randint(<span class="number">50</span>,<span class="number">600</span>)) <span class="comment">#初始列</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>,<span class="number">13</span>):</span><br><span class="line">    idx=<span class="built_in">str</span>(i-<span class="number">1</span>) <span class="comment">#偶数增幅，奇数在原来基础上[-30,50+5*i]变动</span></span><br><span class="line">    df[<span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(i)]=df[idx].apply(<span class="keyword">lambda</span> x:x+random.randint(<span class="number">20</span>,<span class="number">100</span>+i*<span class="number">6</span>) <span class="keyword">if</span> x%<span class="number">2</span>==<span class="number">0</span> <span class="keyword">else</span> x+random.randint(-<span class="number">30</span>,<span class="number">50</span>+i*<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+
+<h4 id="动态折线图"><a href="#动态折线图" class="headerlink" title="动态折线图"></a>动态折线图</h4><p>换一种图表类型也不难。最近动态折线图也很火。因为df也具有时间属性，这次只用A、B、C三行的数据绘制动态折线图，改一下数据处理并将<code>ax.bar()</code>换成<code>ax.plot</code>，成果如图。</p>
+<p>【图 7】</p>
+<p>绘制代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">fig,ax=plt.subplots()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">race_line</span>(<span class="params">i</span>):</span></span><br><span class="line">    k=[<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>] <span class="comment">#只取3个人的数据</span></span><br><span class="line">    x=<span class="built_in">range</span>(<span class="number">3</span>,i+<span class="number">1</span>)</span><br><span class="line">    ax.clear()</span><br><span class="line">    <span class="keyword">for</span> ki <span class="keyword">in</span> k:</span><br><span class="line">        wdf=df.loc[df[<span class="string">&#x27;tag&#x27;</span>]==ki]</span><br><span class="line">        <span class="comment">#筛选出画折线的x，y</span></span><br><span class="line">        y=[<span class="built_in">list</span>(wdf.loc[wdf[<span class="string">&#x27;tag&#x27;</span>]==ki][<span class="built_in">str</span>(j)])[<span class="number">0</span>] <span class="keyword">for</span> j <span class="keyword">in</span> x]</span><br><span class="line">        ax.plot(x,y,color=<span class="built_in">list</span>(wdf[<span class="string">&#x27;color&#x27;</span>])[<span class="number">0</span>])</span><br><span class="line">        ax.text(i+<span class="number">0.2</span>,y[-<span class="number">1</span>]+<span class="number">2</span>,<span class="string">&#x27;&#123;0&#125;:&#123;1&#125;&#x27;</span>.<span class="built_in">format</span>(ki,y[-<span class="number">1</span>]))</span><br><span class="line">        ax.set_xlim(<span class="number">3</span>,i+<span class="number">3</span>)</span><br><span class="line">    ax.set_title(<span class="string">&#x27;ABC Lines Animation&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    ax.tick_params(top=<span class="literal">True</span>, bottom=<span class="literal">False</span>,left=<span class="literal">False</span>,right=<span class="literal">True</span>,</span><br><span class="line">                   labelright=<span class="literal">True</span>,labelleft=<span class="literal">False</span>,</span><br><span class="line">                   labeltop=<span class="literal">True</span>, labelbottom=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">amt=anm.FuncAnimation(fig,race_line,frames=<span class="built_in">range</span>(<span class="number">6</span>,<span class="number">13</span>),interval=<span class="number">500</span>)</span><br><span class="line">amt.save(<span class="string">&#x27;lines-animation-1.gif&#x27;</span>) <span class="comment">#把动图保存为gif文件</span></span><br></pre></td></tr></table></figure>
+
+<p>绘制三维动态图也是同样的套路，建画布时加上<code>projection=&quot;3d&quot;</code>参数，绘图时参数从[x,y]变成[x,y,z]，其他按框架来做。</p>
+<h3 id="形状绘制深入"><a href="#形状绘制深入" class="headerlink" title="形状绘制深入"></a>形状绘制深入</h3><p>在上篇的<strong>图表元素调校</strong>部分简单提到了在画布上加椭圆、矩形的代码，这里再细化一下Matplotlib可以绘制的形状。整理如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#绘制基本形状的框架，以圆形为例</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.patches <span class="keyword">as</span> mpatches</span><br><span class="line"><span class="keyword">from</span> matplotlib.collections <span class="keyword">import</span> PatchCollection</span><br><span class="line">fig, ax = plt.subplots(subplot_kw=<span class="built_in">dict</span>(aspect=<span class="string">&quot;equal&quot;</span>)) <span class="comment">#设置横纵坐标单位长度一致，也可写 plt.axis(&#x27;equal&#x27;)</span></span><br><span class="line"></span><br><span class="line">patches = [] <span class="comment">#需渲染的形状集合</span></span><br><span class="line"></span><br><span class="line">circle = mpatches.Circle((<span class="number">50</span>,<span class="number">50</span>),<span class="number">20</span>) <span class="comment">#初始化一个圆心在(50,50)，半径为20的圆形</span></span><br><span class="line">patches.append(circle)</span><br><span class="line"></span><br><span class="line">pcc= PatchCollection(patches,color=<span class="string">&quot;#69FFFF&quot;</span>) <span class="comment">#因patches整合到了PatchCollection对象里,在Circle里写颜色参数好像没用，需要把color传到这里</span></span><br><span class="line">ax.add_collection(pcc)</span><br><span class="line">ax.set_ylim(<span class="number">0</span>,<span class="number">100</span>) <span class="comment">#设置x，y的展示范围</span></span><br><span class="line">ax.set_xlim(<span class="number">0</span>,<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p><code>.Circle(xy,radius,**kwargs)</code>: 绘制一个圆形，第一个参数是圆心坐标，可以传数组或元组，x、y不是单独传的；radius是圆的半径；后续的参数有图形标签(label)、线风格(linestyle)、圆边框宽度(linewidth)、图层顺序(zorder)等；</p>
+</li>
+<li><p><code>.Ellipse(xy,width,height,angle,**kwargs)</code>: 以xy为圆心绘制一个椭圆。Circle()的第二个参数是半径，椭圆需要长轴长度和短轴长度，也就是width和height，angle控制旋转角度，逆时针，按度计算，例如angle=90时，原来一个扁的椭圆就变成了长的椭圆，转了90度；其他参数和Circle()基本一致，下面也不再重复。</p>
+</li>
+<li><p><code>.Wedge(center, r, theta1, theta2, width, **kwargs)</code>: 楔形，像劈掉一部分的圆，是饼图的那一块块饼，可以猜测用<code>pie()</code>绘制饼图时调用了Wedge；center对应圆的xy，即圆心坐标；r是半径，只绘制从theta1到theta2之间的圆形，交换t1和t2可以得到饼的另一个部分，width默认是None，当设置了width会从r-width的部分开始画，得到环状图；</p>
+</li>
+<li><p><code>.Rectangle(xy,width,height,angle=,**kwargs)</code>: 和椭圆的参数写法惊人一致，不同之处在于矩形的xy是左下角坐标而不是中心的坐标；</p>
+</li>
+<li><p><code>.RegularPolygon(xy,numVertices,radius,orientation,**kwargs)</code>: 绘制正多边形xy是图形的中心点，numVertices是顶点个数，如numVertices=5是正五边形；radius：从图形中心xy到顶点的距离；orientation：旋转的度数，是弧度制；</p>
+</li>
+<li><p><code>.Arrow(x,y,dx,dy, width, **kwargs)</code>: 绘制一个箭头，x：箭头尾部的x坐标，y：箭头尾部的y坐标；dx：箭头指向位置距离x的长度，dy同理，width是箭头的宽度，默认值是1，当形状用一般设置得大一些。另外还有hatch参数可以设置箭头的底纹效果；</p>
+</li>
+<li><p><code>.PathPatch(path, **kwargs)</code>: 绘制一系列坐标构成的路径，是非常强大的接口，绘制各种不规则的形状、图标、贝塞尔曲线等一般都直接用Path的接口，和Canvas本身path对象的规则基本一致，东西比较多，不好展开；</p>
+</li>
+<li><p><code>.FancyBboxPatch(xy,width,boxstyle=&#39;round&#39;,**kwargs)</code>: 边框效果更个性化的图形，前面3个参数就是矩形的参数，boxstyle控制绘制各种效果，boxstyle支持的有circle(圆边)、round(边缘钝化的矩形)、square(方边)、sawtooth(锯齿边)等。下面的整理更形象。</p>
+</li>
+</ul>
+<p>【图，更好地解释代码对应画的图形  常用绘制形状及参数 8】</p>
+<p>基于上面的形状，这里复现一下绘制经典的数据科学维恩图。</p>
+<p>画维恩图只需要<code>Circle(xy,r)</code>就够了，因patches整合到了PatchCollection对象里，在Circle里写颜色参数似乎没用，就把color从PatchCollection传入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#绘制基本形状的框架，以圆形为例</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.patches <span class="keyword">as</span> mpatches</span><br><span class="line"><span class="keyword">from</span> matplotlib.collections <span class="keyword">import</span> PatchCollection</span><br><span class="line">fig, ax = plt.subplots(subplot_kw=<span class="built_in">dict</span>(aspect=<span class="string">&quot;equal&quot;</span>)) <span class="comment">#设置横纵坐标单位长度一致，也可写 plt.axis(&#x27;equal&#x27;)</span></span><br><span class="line"></span><br><span class="line">patches = [] <span class="comment">#需渲染的形状集合</span></span><br><span class="line"></span><br><span class="line">circle = mpatches.Circle((<span class="number">50</span>,<span class="number">50</span>),<span class="number">20</span>) <span class="comment">#初始化一个圆心在(50,50)，半径为20的圆形</span></span><br><span class="line">patches.append(circle)</span><br><span class="line"></span><br><span class="line">pcc= PatchCollection(patches,color=<span class="string">&quot;#69FFFF&quot;</span>) <span class="comment">#因patches整合到了PatchCollection对象里,在Circle里写颜色参数好像没用，需要把color传到这里</span></span><br><span class="line">ax.add_collection(pcc)</span><br><span class="line">ax.set_ylim(<span class="number">0</span>,<span class="number">100</span>) <span class="comment">#设置x，y的展示范围</span></span><br><span class="line">ax.set_xlim(<span class="number">0</span>,<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>【数据科学经典维恩图 9】</p>
+<p>另外一种画多个圆的方法是用<code>ax.add_artist(ada)</code>，示例代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpl_toolkits.axes_grid1.anchored_artists <span class="keyword">import</span> AnchoredDrawingArea</span><br><span class="line">p1 = mpatches.Circle((<span class="number">15</span>, <span class="number">85</span>), <span class="number">78</span>,fc=<span class="string">&#x27;#1EAFAE&#x27;</span>,alpha=<span class="number">0.62</span>) <span class="comment">#(x,y),r,fcolor,alpha</span></span><br><span class="line">ada = AnchoredDrawingArea(<span class="number">100</span>,<span class="number">100</span>,<span class="number">0</span>, <span class="number">0</span>,loc=<span class="number">10</span>, pad=<span class="number">0.</span>, frameon=<span class="literal">False</span>) <span class="comment">#width( in pixels), height, xdescent, ydescent, loc, pad=0.4,</span></span><br><span class="line">ada.drawing_area.add_artist(p1)</span><br><span class="line">ax.add_artist(ada)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在<code>matplotlib.image</code>的接口中有图像的读取接口，<code>ax.imshow(mpimg.imread(&#39;imagename.png&#39;))</code>可以读取图片并显示，因此Matplotlib即能画饼柱折点等图形，也能画更底层的线段、楔形、多边形，还能读取图片进行处理。常用需求有给图片加文本水印、给图形加图片（如画各国动态排序柱图时给对应柱画上国旗）、用形状裁剪图片等；</p>
+<h3 id="极坐标"><a href="#极坐标" class="headerlink" title="极坐标"></a>极坐标</h3><p><code>plt.subplot()</code>其中有一个参数是projection，表示所使用的坐标系统，之前画三维图的时候用到<code>projection=&#39;3d&#39;</code>，画心脏线函数的时候用到了<code>projection=&#39;polar&#39;</code>，再来细化一下极坐标下的绘图。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#极坐标系下的可视化和直角坐标没多少改变</span></span><br><span class="line">ax=plt.subplot(<span class="number">111</span>,projection=<span class="string">&#x27;polar&#x27;</span>)</span><br><span class="line">x=[<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>]</span><br><span class="line">ax.plot(x)</span><br></pre></td></tr></table></figure>
+
+<p><code>pyplot.subplot</code>支持的坐标系统有’rectilinear’、’polar’、’lambert’、’hammer’、 ‘mollweide’、’aitoff’<a target="_blank" rel="noopener" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot.html#matplotlib.pyplot.subplot">等 看有哪些坐标系统</a>，主要在3d绘图、极坐标绘图、地图投影等场景下使用。正如rectilinear直角坐标系下确定一个位置用[x,y]，在极坐标系下定位一个位置通过[theta,r]，theta表示正方向旋转的弧度，r表示距离原点的直线距离(也称r轴为极径)。</p>
+<p>【直角坐标与极坐标的对比】</p>
+<p>极坐标系可视化有一些基本的属性可以设置。</p>
+<ul>
+<li><code>ax.set_theta_direction(-1)</code>: 设置极坐标角度的正方向，默认值是1，表示逆时针方向，设置为-1时是顺时针方向；</li>
+<li><code>ax.set_theta_zero_location(loc,offset=0)</code>: 设置极坐标洗0°的位置，默认是loc是’E’，表示正东方向，loc有八种选择：(“N”, “NW”, “W”, “SW”, “S”, “SE”, “E”, “NE”)，offset表示在loc的基础上按照正方形偏移多少度数；</li>
+<li><code>ax.set_thetagrids(angles,labels,fmt)</code>:设置极坐标角度网格线上标签的显示，labels是要显示的标签，angles是标签所在对应的角度（注意不是弧度），angles值的范围应该取[0,360]， 默认显示0°、45°、90°、135°、180°、225°、270°、315°的网格线。类似于直角坐标系下的<code>ax.set_xticklabels(df[&#39;x&#39;])</code>；</li>
+<li><code>ax.set_rgrids(radii,labels)</code>: 设置极径网格线和标签显示，和上面<code>ax.set_thetagrids</code>效果对应；</li>
+<li><code>ax.set_rlabel_position(value)</code>: 设置极径标签显示位置，value为标签所要显示在的角度；</li>
+<li><code>ax.set_rlim(0,30)</code>: 设置极径显示范围，对应直角坐标下的<code>set_ylim(0,30)</code>；</li>
+<li><code>ax.set_rscale()</code>: 设置极径方向所用的比例尺，默认是’linear’表示是线性变化，可以设置为’log’得到对数比例尺；</li>
+</ul>
+<p>很多我们常见的图将其转到极坐标系下会有惊艳的效果，例如饼图可以认为是极坐标系下的柱状图，将柱的高度映射为楔形的弧度；玫瑰图可以是极坐标系下的堆积柱状图，柱的高度映射为r及弧度theta的占比；雷达图可以是极坐标系下的折线图。</p>
+<p>【几种图的变换】</p>
+<p>我们用极坐标绘制南丁格尔玫瑰图的时候，可以再次复习柱状图bar的参数，代码如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">y=[<span class="number">42</span>, <span class="number">142</span>, <span class="number">61</span>, <span class="number">119</span>, <span class="number">68</span>]</span><br><span class="line">z=[<span class="number">77</span>, <span class="number">46</span>, <span class="number">65</span>, <span class="number">81</span>, <span class="number">50</span>]</span><br><span class="line">ax=plt.subplot(<span class="number">111</span>, projection=<span class="string">&#x27;polar&#x27;</span>)</span><br><span class="line"><span class="comment">#对y和z进行一些运算以适应弧度制</span></span><br><span class="line">yw=[i*<span class="number">2</span>*<span class="number">3.1416</span>/<span class="built_in">sum</span>(y) <span class="keyword">for</span> i <span class="keyword">in</span> y]</span><br><span class="line">xw=[<span class="built_in">sum</span>(y[<span class="number">0</span>:i])*<span class="number">2</span>*<span class="number">3.1416</span>/<span class="built_in">sum</span>(y) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(y))]</span><br><span class="line">yzw=[i*<span class="number">2</span>*<span class="number">3.1416</span>/<span class="built_in">sum</span>(z) <span class="keyword">for</span> i <span class="keyword">in</span> z]</span><br><span class="line">zw=[<span class="built_in">sum</span>(z[<span class="number">0</span>:i])*<span class="number">2</span>*<span class="number">3.1416</span>/<span class="built_in">sum</span>(z) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(z))]</span><br><span class="line">ax.bar(xw,y,width=yw,align=<span class="string">&#x27;edge&#x27;</span>,linewidth=<span class="number">1</span>,edgecolor=<span class="string">&#x27;k&#x27;</span>) <span class="comment">#设置x对应柱的边缘开始画而不是中心了</span></span><br><span class="line">ax.bar(xw,y,width=yw,bottom=y,align=<span class="string">&#x27;edge&#x27;</span>,linewidth=<span class="number">1</span>,edgecolor=<span class="string">&#x27;k&#x27;</span>) <span class="comment">#设置柱的边缘颜色以区分各个饼</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>【南丁格尔玫瑰图绘制结果】</p>
+<p>转换的过程需要对数据进行换算，这算一个Matplotlib不够智能的设置，不能直接通过换坐标系统的语句实现数据的一个换算，例如将原先的x轴自动换算到[0,2pi]绘制美观的图表，针对这种换坐标系实现堆积的方法，基于属性映射的可视化语法，会将换算细节封装好，能直接使用出图。</p>
+<h3 id="Matplotlib简单交互"><a href="#Matplotlib简单交互" class="headerlink" title="Matplotlib简单交互"></a>Matplotlib简单交互</h3><p>Matplotlib画静态图非常专业，同时它也能通过事件监听实现基础的交互功能。Matplotlib通过<code>plt.connect(s, func)</code>实现对鼠标和键盘等事件的监听，s表示plt会关联的事件，如s=’button_press_event’表示按下鼠标时会出发func函数，在func里写入触发事件后的处理逻辑，<a href="*https://matplotlib.org/users/event_handling.html*">相应事件</a>还有：{‘key_press_event’:’按下按键’,’key_release_event’:’松开按键’,’resize_event’:’改变窗体大小’,’close_event’:’关闭窗体’}等。官网给了两个例子分别表示按下按钮时print相应的坐标以及按键时触发保存图片等交互。基于Matplotlib的接口要实现流畅复杂的交互代码会很复杂。</p>
+<p>自己简单实现了一下当鼠标点击到柱状图的柱子上时会高亮当前柱并显示当前柱对应的值。效果如下：</p>
+<p>【图】</p>
+<p>具体代码如下，jupyter notebook环境似乎不支持Matplotlib的交互操作，需依赖GUI环境，因此运行结果是通过脚本运行得到的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib.backend_bases <span class="keyword">import</span> MouseButton</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">xw=<span class="built_in">list</span>(<span class="string">&#x27;ABCDE&#x27;</span>)</span><br><span class="line">yw=[<span class="number">42</span>, <span class="number">142</span>, <span class="number">61</span>, <span class="number">119</span>, <span class="number">68</span>]</span><br><span class="line">fig, ax = plt.subplots()</span><br><span class="line"></span><br><span class="line">rs=ax.bar(xw,yw,color=<span class="string">&#x27;#1EAFAE&#x27;</span>) <span class="comment">#绘制初始的条形图</span></span><br><span class="line">ax.set_title(<span class="string">&#x27;plt.connect demo&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_click_bar</span>(<span class="params">event</span>):</span></span><br><span class="line">    <span class="keyword">if</span> event.button <span class="keyword">is</span> MouseButton.LEFT:</span><br><span class="line">        x, y = event.xdata, event.ydata</span><br><span class="line">        print(<span class="string">&#x27;w&#x27;</span>,x,y)</span><br><span class="line">        <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(rs)):</span><br><span class="line">            <span class="keyword">if</span> x&gt;rs[r].get_x() <span class="keyword">and</span> x&lt;rs[r].get_x()+rs[r].get_width() <span class="keyword">and</span> y&lt;rs[r].get_height():</span><br><span class="line">                print(<span class="string">&#x27;q&#x27;</span>,x,y)</span><br><span class="line">                ax.clear()</span><br><span class="line">                c=[<span class="string">&#x27;#BA5C25&#x27;</span> <span class="keyword">if</span> i==r <span class="keyword">else</span> <span class="string">&#x27;#1EAFAE&#x27;</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(rs))]</span><br><span class="line">                ax.bar(xw,yw,color=c)</span><br><span class="line">                ax.text(x,y,<span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(rs[r].get_height()))</span><br><span class="line">                ax.set_title(<span class="string">&#x27;plt.connect demo&#x27;</span>)</span><br><span class="line">        fig.canvas.draw_idle() <span class="comment">#刷新当前画布</span></span><br><span class="line"></span><br><span class="line">plt.connect(<span class="string">&#x27;button_press_event&#x27;</span>, on_click_bar) <span class="comment">#监听</span></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p>关于Matplotlib库，还可以深入的有：</p>
+<ul>
+<li>图形的布尔运算、Path的具体规则等；</li>
+<li>渐变的颜色调节；</li>
+<li>地图投影及basemap的使用；</li>
+<li>根据三维数据绘制等高线<code>ax.contour(X, Y, Z,levels)</code>；</li>
+</ul>
+<p>Matplotlib的各模块内容细化拆解会有非常多的内容，市面上有挺多专门讲mat可视化的厚书，如果只考虑快速使用和了解几大模块的话，Matplotlib的精要内容是可以15分钟学会的，个人认为在知道了基本可视化框架后，了解折线图。柱状图、饼图、直方图等的绘制方法和基本参数，再学会添加文本、调节坐标轴，会通过双坐标轴和子图画多张图，最后了解下动态图和事件监听做基础交互。其他内容和细节通过需求驱动深入学。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>刘新宇.算法新解[M].人民邮电出版社,2017:19.</li>
+</ul>
+<p>各种可绘制的形状整理：<a target="_blank" rel="noopener" href="https://matplotlib.org/gallery/shapes_and_collections/artist_reference.html#sphx-glr-gallery-shapes-and-collections-artist-reference-py">https://matplotlib.org/gallery/shapes_and_collections/artist_reference.html#sphx-glr-gallery-shapes-and-collections-artist-reference-py</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/viz/" rel="tag"><i class="fa fa-tag"></i> viz</a>
+              <a href="/tags/matplotlib/" rel="tag"><i class="fa fa-tag"></i> matplotlib</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/27/viz-matplotlib-in-action.html" rel="prev" title="可视化技能之Matplotlib(上)|可视化系列01">
+      <i class="fa fa-chevron-left"></i> 可视化技能之Matplotlib(上)|可视化系列01
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/29/viz-toyplot.html" rel="next" title="一个基于canvas的简洁的Python可视化库:toyplot">
+      一个基于canvas的简洁的Python可视化库:toyplot <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Matplotlib%E5%8A%A8%E6%80%81%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">Matplotlib动态可视化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E7%9A%84%E5%8A%A8%E6%80%81%E5%B1%95%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">插入排序的动态展现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%8E%92%E5%BA%8F%E5%9B%BE%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.2.</span> <span class="nav-text">动态排序图实践</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%8A%98%E7%BA%BF%E5%9B%BE"><span class="nav-number">1.3.</span> <span class="nav-text">动态折线图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%A2%E7%8A%B6%E7%BB%98%E5%88%B6%E6%B7%B1%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">形状绘制深入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%81%E5%9D%90%E6%A0%87"><span class="nav-number">3.</span> <span class="nav-text">极坐标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Matplotlib%E7%AE%80%E5%8D%95%E4%BA%A4%E4%BA%92"><span class="nav-number">4.</span> <span class="nav-text">Matplotlib简单交互</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近遇到一个有意思的题目，看上去不相关的两个事物有着同样的转移状态，并且设定规则后过程可以用程序模拟出来，遂记之。 问题提出 你有一个8升的酒坛，里面装满了酒，另外还有两个分别是5升和3升的空酒坛，3个酒坛都没有刻度，现在需要倒出正好4升的酒，需要怎么操作？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python形象地解决酒缸分酒问题">
+<meta property="og:url" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="最近遇到一个有意思的题目，看上去不相关的两个事物有着同样的转移状态，并且设定规则后过程可以用程序模拟出来，遂记之。 问题提出 你有一个8升的酒坛，里面装满了酒，另外还有两个分别是5升和3升的空酒坛，3个酒坛都没有刻度，现在需要倒出正好4升的酒，需要怎么操作？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-01-pic01.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/iowt9-ep92n-01.gif">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-03-001.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-04-001.png">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-05-0001.png">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/iowt9-ep92n-01.gif">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/iowt9-ep92n-02.gif">
+<meta property="og:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-08-001.PNG">
+<meta property="article:published_time" content="2019-09-09T04:48:23.000Z">
+<meta property="article:modified_time" content="2021-02-08T16:58:52.511Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="gui">
+<meta property="article:tag" content="turtle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-01-pic01.PNG">
+
+<link rel="canonical" href="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>用Python形象地解决酒缸分酒问题 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2019/09/09/wine-jar-solution-using-py-gui.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用Python形象地解决酒缸分酒问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-09 12:48:23" itemprop="dateCreated datePublished" datetime="2019-09-09T12:48:23+08:00">2019-09-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-09 00:58:52" itemprop="dateModified" datetime="2021-02-09T00:58:52+08:00">2021-02-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%A7%A3%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">解题</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 1.9k 字 | ≈</span>
+           <span title="post.min2read">
+				8 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近遇到一个有意思的题目，看上去不相关的两个事物有着同样的转移状态，并且设定规则后过程可以用程序模拟出来，遂记之。</p>
+<h3 id="问题提出"><a href="#问题提出" class="headerlink" title="问题提出"></a>问题提出</h3><blockquote>
+<p>你有一个8升的酒坛，里面装满了酒，另外还有两个分别是5升和3升的空酒坛，3个酒坛都没有刻度，现在需要倒出正好4升的酒，需要怎么操作？</p>
+</blockquote>
+<a id="more"></a>
+
+<p>从题目来看，我们需要把3个缸的酒倒来倒去，直到某个酒缸里面是4升酒。这个问题的解法很有趣，我们假设能装5升酒的坛子叫A，3升的坛子是B，8升的坛子是C，<strong>开始的时候</strong>我们可以先在A坛子里装满酒也可以先在B坛子装满酒（只装一部分我们是没办法知道是多少升的，没有用）。<br>假设先给A装满酒，那么A,B坛子的状态就是(5,0)，表示这时候是A有5升酒，B有0升，这时候可以的做法是把A中的酒倒到B里，变成(2,3)，也可以从C倒3升到B，变成(5,3)，但这种情况下一步只能把A或B中的酒倒回C，回到开始状态了；第三种情况是把A中的酒倒进C里，变成(0,0)，更加没意义了。</p>
+<p>一个3种倒酒情况的图</p>
+<h3 id="台球解法"><a href="#台球解法" class="headerlink" title="台球解法"></a>台球解法</h3><p>于是有效做法是从(5,0)状态变成(2,3)状态，我们可以想象一个菱形的台球桌，从一个地方发球，球经过和桌子边缘的碰撞有一个弹射的路径。来看一下一个从(5,0)出发的球，在一个5 x 3的台球桌上，沿三角形边线方向撞击台球，其路径会是(2,3)   (2,0) (0,2)   (5,2)  (4,3)<br>如下图</p>
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-01-pic01.PNG" alt="台球弹射路径"></p>
+<p>我们之前把(5,0)理解为A坛有5升酒，B坛有0升，那么从(5,0)到(2,3)到(2,0)就可以理解为这两个酒坛里面液体的量的变化，也就是酒坛里的状态转移路径。</p>
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/iowt9-ep92n-01.gif" alt="动图效果"></p>
+<p>具体就是从A倒酒进B里，直到B满了（变成(2,3)），再把B里的酒倒到C里，变成(2,0)，把B中剩余的2升倒到C里，变成(0,2),这时候把B倒满，变成(5,2)，B可以装3升，目前是2升，所以从A倒酒进B里，B原来是2升，倒满就是从A倒出了1升，所以A是4升，也就是(4,3)，达到要求，</p>
+<p>实际中解这类题我们可以画x*y的菱形手动画路径，但我们可以用程序模拟这一过程，下面用Python实现一下。</p>
+<h3 id="python-模拟"><a href="#python-模拟" class="headerlink" title="python 模拟"></a>python 模拟</h3><p>可以通过计算方向和用反射定律去模拟球的轨迹，也可以取巧只通过路径去模拟轨迹。<br>首先这个台球桌是菱形的，出发点在(5,0)或(0,3) （都能得到结果），我们从路径上看，(5,0)只有一个路径可以走，而(2,3)有两条路可以走，分别到达(2,0)或者(5,0)，在(0,0)以及(5,3)这两个点是没有路径的，</p>
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-03-001.PNG" alt="3种路径的示意图"></p>
+<p>我们再分析路径的规律，x横坐标的最大值，y是纵坐标最大值，设n球在横坐标的位置，m为在纵坐标上的位置，对于点设n球在横坐标的位置，m为在纵坐标上的位置，对于点(n,0)，n不等于0和不等于x时，都有两条路，且从一条路过来必然下一步要走另一条路，这两条路的规律是(n,y)以及(0,n)，当n大于y时，到不了(0,n)，只能到(n-y,y)；根据这些规律模拟出边界上各个顶点对应的路，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">t=<span class="number">8</span></span><br><span class="line">e=<span class="number">4</span></span><br><span class="line">x,y=<span class="number">5</span>,<span class="number">3</span></span><br><span class="line"><span class="keyword">if</span> y&gt;x:</span><br><span class="line">    x,y=y,x <span class="comment">#保证x&gt;y</span></span><br><span class="line"><span class="comment">#从路径来看，一个点要么没有路径，要么有1条路径，要么2条，没有其他情况；</span></span><br><span class="line"><span class="comment">#0条对应：(0,0) &amp; (x,y)</span></span><br><span class="line"><span class="comment">#1条：(x,0) &amp; (0,y)</span></span><br><span class="line"><span class="comment">#2条：(n,m) 0&lt;n&lt;x   0&lt;m&lt;y</span></span><br><span class="line">r=&#123;&#125;</span><br><span class="line">r[(<span class="number">0</span>,<span class="number">0</span>)]=[]</span><br><span class="line">r[(x,y)]=[]</span><br><span class="line">r[(x,<span class="number">0</span>)]=[(x-y,y)]</span><br><span class="line">r[(<span class="number">0</span>,y)]=[(y,<span class="number">0</span>)]</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,x):</span><br><span class="line">    <span class="keyword">if</span> n&lt;y:</span><br><span class="line">        r[(n,<span class="number">0</span>)]=[(<span class="number">0</span>,n),(n,y)]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r[(n,<span class="number">0</span>)]=[(n-y,y),(n,y)]</span><br><span class="line">    k=n+y</span><br><span class="line">    <span class="keyword">if</span> k&gt;x:</span><br><span class="line">        r[(n,y)]=[(n,<span class="number">0</span>),(x,n+y-x)]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r[(n,y)]=[(n,<span class="number">0</span>),(n+y,<span class="number">0</span>)]</span><br><span class="line"><span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,y):</span><br><span class="line">    <span class="comment">#m必然要小于x if m&lt;x:  不需要</span></span><br><span class="line">    r[(<span class="number">0</span>,m)]=[(m,<span class="number">0</span>),(x,m)]</span><br><span class="line">    r[(x,m)]=[(<span class="number">0</span>,m),(x+m-y,y)]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们就可以从一个点(5,0)出发，看具体的效果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">w=[x,<span class="number">0</span>]  <span class="comment">#上一个点</span></span><br><span class="line">s=[x,<span class="number">0</span>]</span><br><span class="line">plst=[s] <span class="comment">#开始</span></span><br><span class="line"><span class="keyword">while</span> s[<span class="number">0</span>]!=e <span class="keyword">and</span> s[<span class="number">1</span>]!=e:</span><br><span class="line">    ss=(s[<span class="number">0</span>],s[<span class="number">1</span>])</span><br><span class="line">    sw=r[ss]</span><br><span class="line">    slen=<span class="built_in">len</span>(sw)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> slen==<span class="number">1</span>:</span><br><span class="line">        w=s.copy()</span><br><span class="line">        s[<span class="number">0</span>]=sw[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line">        s[<span class="number">1</span>]=sw[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">elif</span> slen==<span class="number">2</span>:</span><br><span class="line">        <span class="keyword">if</span> sw[<span class="number">0</span>][<span class="number">0</span>]==w[<span class="number">0</span>] <span class="keyword">and</span> sw[<span class="number">0</span>][<span class="number">1</span>]==w[<span class="number">1</span>]:</span><br><span class="line">            w=s.copy()</span><br><span class="line">            s[<span class="number">0</span>]=sw[<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">            s[<span class="number">1</span>]=sw[<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">elif</span> sw[<span class="number">1</span>][<span class="number">0</span>]==w[<span class="number">0</span>] <span class="keyword">and</span> sw[<span class="number">1</span>][<span class="number">1</span>]==w[<span class="number">1</span>]:</span><br><span class="line">            w=s.copy()</span><br><span class="line">            s[<span class="number">0</span>]=sw[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line">            s[<span class="number">1</span>]=sw[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(s,sw,slen)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(s,sw,slen)</span><br><span class="line">    plst.append(s)</span><br><span class="line"></span><br><span class="line">print(plst)</span><br></pre></td></tr></table></figure>
+
+<p>当x=5，y=3时，以上代码输出<code>[[5,0], [2,3], [2,0], [0,2], [5,2], [4,3]]</code>，代表A，B两个酒缸之内各有多少酒。</p>
+<h3 id="利用turtle可视化"><a href="#利用turtle可视化" class="headerlink" title="利用turtle可视化"></a>利用turtle可视化</h3><p>路径我们可以通过上面的代码算出来，从而得到这题的结果，但不够形象，我们通过Python的turtle库把这一过程画出来，turtle是Python内置的一个画图库，通过goto、left、right等命令控制一个小海龟（turtle）在画布（canvas）上爬行，从而得到各种图案，可以拿来绘制分形图案、小猪佩奇等。这次的模拟路径可视化也可以用pygame库。</p>
+<p>正常的画布是一个直角坐标系，我们这里需要一个纵轴和横轴之间是60度的斜坐标系，因此通过以下函数转换：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">drawToXY</span>(<span class="params">x,y,turtle=turtle,sin=sin,pc=<span class="number">50</span></span>):</span> <span class="comment">#sin=sin(60°)=sqrt(3)/2; pc转换因子</span></span><br><span class="line">	turtle.goto(x*pc+<span class="number">0.5</span>*y*pc,pc*sin*y) <span class="comment">#直角坐标转斜坐标</span></span><br></pre></td></tr></table></figure>
+
+<p>通过<code>drawToXY()</code>我们可以很方便地绘制出台球桌的外框：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">drawDiamond</span>(<span class="params">x,y,turtle=turtle,pc=pc,sin=sin</span>):</span>  <span class="comment">#画边界</span></span><br><span class="line">	turtle.pensize(<span class="number">3</span>) <span class="comment">#占3个像素的笔宽</span></span><br><span class="line">	drawToXY(x,<span class="number">0</span>,turtle,sin)</span><br><span class="line">	drawToXY(x,y,turtle,sin)</span><br><span class="line">	drawToXY(<span class="number">0</span>,y,turtle,sin)</span><br><span class="line">	drawToXY(<span class="number">0</span>,<span class="number">0</span>,turtle,sin)  <span class="comment">#外框</span></span><br><span class="line">	turtle.pensize(<span class="number">1</span>) <span class="comment">#默认笔宽</span></span><br></pre></td></tr></table></figure>
+
+<p>绘制一个5 x 3的外框效果如下：</p>
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-04-001.png" alt="Screenshot from 2019-09-07 09-36-28"></p>
+<p>绘制外框之后再加上内部点的连接，就像把一个(X,Y)的方格变形为菱形，并加上边界坐标，在turtle上写文本通过语句<code>turtle.write(txt, font=( &quot;微软雅黑&quot;, size, &quot;normal&quot;))</code>实现。</p>
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-05-0001.png" alt="添加可达路径和文本"></p>
+<p>之后便可以绘制从(5,0)出发的球的路径了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">drawPlst</span>(<span class="params">plst,turtle=turtle,t2=t2</span>):</span></span><br><span class="line">	dt=<span class="number">25</span></span><br><span class="line">	dy=<span class="number">200</span></span><br><span class="line">	k=<span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> p <span class="keyword">in</span> plst:</span><br><span class="line">		drawText(-<span class="number">180</span>,dy-k*dt,<span class="built_in">str</span>(p),t2,size=<span class="number">14</span>) <span class="comment">#在另一侧写下经过的边界点</span></span><br><span class="line">		drawToXY(p[<span class="number">0</span>],p[<span class="number">1</span>],t1)</span><br><span class="line">		k+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">drawText</span>(<span class="params">x,y,txt,turtle=turtle,size=<span class="number">14</span></span>):</span></span><br><span class="line">	turtle.penup()</span><br><span class="line">	turtle.goto(x,y)</span><br><span class="line">	turtle.pendown()</span><br><span class="line">	turtle.write(txt, font=(<span class="string">&quot;微软雅黑&quot;</span>, size, <span class="string">&quot;normal&quot;</span>))</span><br><span class="line">plst=plst=[(<span class="number">5</span>,<span class="number">0</span>),(<span class="number">2</span>,<span class="number">3</span>),(<span class="number">2</span>,<span class="number">0</span>),(<span class="number">0</span>,<span class="number">2</span>),(<span class="number">5</span>,<span class="number">2</span>),(<span class="number">4</span>,<span class="number">3</span>)]</span><br><span class="line">t1.color(<span class="string">&quot;red&quot;</span>)</span><br><span class="line"><span class="comment">#t1.speed(2) #绘制速度，[0,10] 数值越大速度越快</span></span><br><span class="line">drawPlst(plst,t1,t2)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/iowt9-ep92n-01.gif" alt="从(5,0)出发的球的路径"></p>
+<p>从(0,3)出发的效果：</p>
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/iowt9-ep92n-02.gif" alt="从(0,3)出发的效果"></p>
+<p>一个类似的题</p>
+<blockquote>
+<p>我们在河边分别有一个7升的水桶和5升的水桶，都没有刻度，如何用最少的次数装6升的水出来</p>
+</blockquote>
+<p>分析一下我们知道，最少次数的方式就是我们台球路径的做法，之前我们对酒缸C的处理和一条容量无限的河本质是一样的。</p>
+<p>所以这题的解法用程序模拟效果如下图：</p>
+<p><img src="/2019/09/09/wine-jar-solution-using-py-gui/wine-jar-su-08-001.PNG" alt="7x5升倒出6升"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/gui/" rel="tag"><i class="fa fa-tag"></i> gui</a>
+              <a href="/tags/turtle/" rel="tag"><i class="fa fa-tag"></i> turtle</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/25/douban_booklist_spider.html" rel="prev" title="根据书名列表爬取豆瓣读书页面">
+      <i class="fa fa-chevron-left"></i> 根据书名列表爬取豆瓣读书页面
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/26/time-format-in-pandas.html" rel="next" title="用pandas处理时间格式数据">
+      用pandas处理时间格式数据 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%90%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">问题提出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B0%E7%90%83%E8%A7%A3%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">台球解法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%A8%A1%E6%8B%9F"><span class="nav-number">3.</span> <span class="nav-text">python 模拟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8turtle%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">利用turtle可视化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/lynsdata_favicon_64.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/lynsdata_favicon_48.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lynsdata.cn","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#1eafae","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":15},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近遇到一个问题：  如何合并多个jupyter notebook的笔记为一个笔记文件？  经常用jupyter notebook写Python代码，看到这个需求不是想去找轮子而是想自己做解析和合并。通过深入文件格式去加深对jupyter notebook的了解。用jb 写代码有很多优势：交互式的编程体验、文档图表整合、扩展性强而且非常容易复现结果。从2017年开始，已有大量的北美顶尖计算机课程，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jupyter notebook文件格式解析与应用">
+<meta property="og:url" content="http://lynsdata.cn/2020/09/22/ipynb-format-process.html">
+<meta property="og:site_name" content="Lynsdata">
+<meta property="og:description" content="最近遇到一个问题：  如何合并多个jupyter notebook的笔记为一个笔记文件？  经常用jupyter notebook写Python代码，看到这个需求不是想去找轮子而是想自己做解析和合并。通过深入文件格式去加深对jupyter notebook的了解。用jb 写代码有很多优势：交互式的编程体验、文档图表整合、扩展性强而且非常容易复现结果。从2017年开始，已有大量的北美顶尖计算机课程，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/ipynb-format-process/00-ipynb%E6%96%87%E4%BB%B6%E6%89%93%E5%BC%80%E6%95%88%E6%9E%9C-0.png">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/ipynb-format-process/01-%E4%BB%A3%E7%A0%81%E5%9D%97-%E5%86%99%E4%BB%A3%E7%A0%81%E7%9A%84%E5%8C%BA%E5%9F%9F-002.PNG">
+<meta property="og:image" content="http://lynsdata.cn/2020/09/22/ipynb-format-process/02-%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE-01.PNG">
+<meta property="article:published_time" content="2020-09-21T18:02:50.000Z">
+<meta property="article:modified_time" content="2021-02-07T16:43:54.672Z">
+<meta property="article:author" content="Lyndon">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lynsdata.cn/2020/09/22/ipynb-format-process/00-ipynb%E6%96%87%E4%BB%B6%E6%89%93%E5%BC%80%E6%95%88%E6%9E%9C-0.png">
+
+<link rel="canonical" href="http://lynsdata.cn/2020/09/22/ipynb-format-process.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>jupyter notebook文件格式解析与应用 | Lynsdata</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lynsdata</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">lyndon's blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-viz">
+
+    <a href="/viz/" rel="section"><i class="fa fa-th fa-fw"></i>viz</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lynsdata.cn/2020/09/22/ipynb-format-process.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/lynsdata_avatar_49.png">
+      <meta itemprop="name" content="Lyndon">
+      <meta itemprop="description" content="再勇敢一些">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lynsdata">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          jupyter notebook文件格式解析与应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-22 02:02:50" itemprop="dateCreated datePublished" datetime="2020-09-22T02:02:50+08:00">2020-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-08 00:43:54" itemprop="dateModified" datetime="2021-02-08T00:43:54+08:00">2021-02-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">格式解析</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+			<span class="post-meta-divider">|</span>
+				<span title="post.wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> 2.2k 字 | ≈</span>
+           <span title="post.min2read">
+				8 分钟
+			</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近遇到一个问题：</p>
+<blockquote>
+<p>如何合并多个jupyter notebook的笔记为一个笔记文件？</p>
+</blockquote>
+<p>经常用jupyter notebook写Python代码，看到这个需求不是想去找轮子而是想自己做解析和合并。通过深入文件格式去加深对jupyter notebook的了解。用jb 写代码有很多优势：交互式的编程体验、文档图表整合、扩展性强而且非常容易复现结果。从2017年开始，已有大量的北美顶尖计算机课程，开始完全使用Jupyter Notebook作为工具。如李飞飞的CS231N《计算机视觉与神经网络》课程，在16年时作业还是命令行Python的形式，但是17年的作业就全部在Jupyter Notebook上完成了。因此除了改主题安插件之外，探索更多的Jupyter Notebook用法和原理是有趣有用的。</p>
+<a id="more"></a>
+
+
+<p>用文本编辑器打开一个notebook文件，惊奇地发现不是乱码，说明不是直接存二进制格式而是文本格式，那就不用按数据块去解析了。如下图，熟悉的大括号和键值对让人想到json，仔细看果然是json，那读取就容易了，关键就是各个键的意义和数据组织。</p>
+<p><img src="/2020/09/22/ipynb-format-process/00-ipynb%E6%96%87%E4%BB%B6%E6%89%93%E5%BC%80%E6%95%88%E6%9E%9C-0.png" alt="ipynb文件打开效果"></p>
+<h3 id="基础结构"><a href="#基础结构" class="headerlink" title="基础结构"></a>基础结构</h3><p>Jupyter Notebook的文件是通过json格式存储和组织其中的数据的。JSON (JavaScript Object Notation)独立于编程语言，基础的结构就是<code>&#123;键1:值1,键2:值3&#125; </code>这样的字典形式，值可以是数字、字符串、数组和字典。<br>Jupyter Notebook的顶层结构是一个键值对：<br><code>&#123;&quot;metadata&quot;:&#123;&#125;,&quot;nbformat&quot;:4, &quot;nbformat_minor&quot;:0, &quot;cells&quot;:[]  &#125;  </code></p>
+<p>我们写代码的一个个格子对应的就在cells里，我们交互产生的数据都记录在cells键对应的列表里，如下图</p>
+<p><img src="/2020/09/22/ipynb-format-process/01-%E4%BB%A3%E7%A0%81%E5%9D%97-%E5%86%99%E4%BB%A3%E7%A0%81%E7%9A%84%E5%8C%BA%E5%9F%9F-002.PNG" alt="代码块区域示例"></p>
+<p>其他的键 像metadata是一些描述性的元数据，因此我们重点关注cells的列表。</p>
+<h3 id="内容部分"><a href="#内容部分" class="headerlink" title="内容部分"></a>内容部分</h3><p>我们在里面写代码的一个个小块就是一个个cell，它整体也是一个字典，包含cell_type(内容类型)、source(我们输入的内容)、metadata(描述性的元数据)；这三个键就构成了一个cell。如下面的思维导图，也可以结合上面 代码块区域示例 的图来理解。</p>
+<p><img src="/2020/09/22/ipynb-format-process/02-%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE-01.PNG" alt="基础结构思维导图"></p>
+<p>其中execution_count 、output和attachments是不一定每个cell都存在的键，因此做解析是要有判断语句。</p>
+<ul>
+<li>cell_type有3种选择，code/markdown/raw，下面对这三种类型分别解析。</li>
+</ul>
+<p>代码块通过cell的cell_type标识<code>&quot;cell_type&quot;=&quot;code&quot;</code></p>
+<p><strong>代码块</strong>里装的就是我们写的一行行代码，代码装在source键对应的列表里，source键对应的类型是列表list，列表里是字符串，一行代码是一个字符串。execution_count表示执行次数，对应我们前端能看到的In里的次数。<br>metadata记各种元数据，包括一些插件产生的数据，例如我安装了一个看执行时间的插件ExecuteTime，每次运行可以看执行耗时和最后一次执行的时间，这个数据也是会记录在ipynb文件里，对应的就装在metadata里，如果在一个没安装这个插件的环境里运行就不会读metadata的对应内容，可以说metadata给jupyter提供了很好的扩展性。<br>代码输出的内容在output对应的列表里。output的列表里装的不直接是数值或字符串，而是字典，output_type有多种可能，包括正常的代码输出的stream、execute_result，还有报错输出的error。</p>
+<p><strong>Markdown块</strong>是写报告和文档常用的cell，在前端会渲染出很好的效果，因为语义和格式就通过markdown本身约定的格式体现，对应记录的数据比代码块简单。不涉及输出所以不需要有output键，核心就是source和metadata。</p>
+<p><strong>无格式块</strong>的官方说法是叫 Raw NBConvert，对应cell_type的值是raw，因为是纯文本效果，在页面上不做特殊渲染，和markdown有的内容基本一致，核心就在source的字符串列表里。</p>
+<p>以上内容整理为思维导图如下：</p>
+<h3 id="需求实现"><a href="#需求实现" class="headerlink" title="需求实现"></a>需求实现</h3><p>基于以上我们对jupyter notebook文件结构的了解，就可以开工写合并多个ipynb文件为一个的代码了。<br>假设我们需要合并一个文件夹下的所有ipynb文件为一个，根据文件名的顺序组织。<br>我们首先读取得到需要合并的文件名的列表，然后通过json库读取ipynb文件的内容，因为我们写的代码、文字、代码输出结果这些都在cells里，而且顺序是cells列表里元素的顺序，所以我们合并cells里的内容就实现了这一需求。代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line">wpt=<span class="string">&#x27;d:/readingForDS/&#x27;</span><span class="comment">#文件所在路径</span></span><br><span class="line"><span class="keyword">for</span> root, dirs, files <span class="keyword">in</span> os.walk(wpt):</span><br><span class="line">    flst=files</span><br><span class="line">flst=[wpt+f <span class="keyword">for</span> f <span class="keyword">in</span> flst <span class="keyword">if</span> f.endswith(<span class="string">&#x27;.ipynb&#x27;</span>)]</span><br><span class="line">jmain=json.load(<span class="built_in">open</span>(flst[<span class="number">0</span>],<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> flst[<span class="number">1</span>:]:</span><br><span class="line">    jn=json.load(<span class="built_in">open</span>(f,<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    jmain[<span class="string">&#x27;cells&#x27;</span>].extend(jn[<span class="string">&#x27;cells&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;ipynb-combine.ipynb&#x27;</span>,<span class="string">&#x27;w&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> wf:</span><br><span class="line">    json.dump(jmain,wf)<span class="comment">#写入文件</span></span><br></pre></td></tr></table></figure>
+
+<p>因为nbformat等键是通用的，所以代码中直接用了第一个ipynb文件的nbformat值。一个合并的效果如下图（所用ipynb文件在<a target="_blank" rel="noopener" href="https://github.com/QLWeilcf/LcfsPythonWork/tree/master/readingForDS">https://github.com/QLWeilcf/LcfsPythonWork/tree/master/readingForDS</a> 里可找到）。</p>
+<p>关于合并多个ipynb文件这个需求有一个挺好的轮子是<a target="_blank" rel="noopener" href="https://github.com/jbn/nbmerge">https://github.com/jbn/nbmerge</a> 。</p>
+<p>同样的思路我们可以根据一些条件对一个大的ipynb文件拆分为多个文件，例如按章拆分一个读书笔记（每个章节的特征是用了markdown语法，如 <code>## 第3章 用Python读写Excel文件</code>）。</p>
+<h3 id="应用举例"><a href="#应用举例" class="headerlink" title="应用举例"></a>应用举例</h3><p>了解了jupyter notebook的文件组织结构之后，除了合并ipynb文件还可以做哪些事情呢？其实我们可以造很多轮子。例如自己实现：</p>
+<ul>
+<li>导出ipynb文件为py脚本文件：</li>
+<li>导出ipynb文件为markdown文件；</li>
+<li>导出为HTML文件；</li>
+</ul>
+<p>导出ipynb文件为py脚本文件的代码示例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#ipynb 2 py</span></span><br><span class="line">jn_py=[]</span><br><span class="line">jn_py.extend([<span class="string">&#x27;#!/usr/bin/env python&#x27;</span>,<span class="string">&#x27;# coding: utf-8&#x27;</span>])</span><br><span class="line">ja=json.load(<span class="built_in">open</span>(<span class="string">&#x27;ipynb2pdf.ipynb&#x27;</span>,<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> ja[<span class="string">&#x27;cells&#x27;</span>]:</span><br><span class="line">    <span class="keyword">if</span> c[<span class="string">&#x27;cell_type&#x27;</span>]==<span class="string">&#x27;markdown&#x27;</span>:</span><br><span class="line">        jn_py.append(<span class="string">&#x27;\n&#123;0&#125;\n&#x27;</span>.<span class="built_in">format</span>(<span class="string">&#x27;# &#x27;</span>.join(c[<span class="string">&#x27;source&#x27;</span>])))</span><br><span class="line">    <span class="keyword">elif</span> c[<span class="string">&#x27;cell_type&#x27;</span>]==<span class="string">&#x27;code&#x27;</span>:</span><br><span class="line">        <span class="keyword">if</span> c[<span class="string">&#x27;execution_count&#x27;</span>]==<span class="literal">None</span>:</span><br><span class="line">            jn_py.append(<span class="string">&#x27;# In[ ]:&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            jn_py.append(<span class="string">&#x27;# In[&#123;0&#125;]:&#x27;</span>.<span class="built_in">format</span>(c[<span class="string">&#x27;execution_count&#x27;</span>]))</span><br><span class="line">        jn_py.append(<span class="string">&#x27;&#x27;</span>.join(c[<span class="string">&#x27;source&#x27;</span>])+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    <span class="keyword">elif</span> c[<span class="string">&#x27;cell_type&#x27;</span>]==<span class="string">&#x27;raw&#x27;</span>:</span><br><span class="line">        jn_py.append(<span class="string">&#x27;\n&#123;0&#125;\n&#x27;</span>.<span class="built_in">format</span>(<span class="string">&#x27;#&#x27;</span>.join(c[<span class="string">&#x27;source&#x27;</span>])))</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;ipynb2pdf-c2py.py&#x27;</span>,<span class="string">&#x27;w&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> wf:</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> jn_py:</span><br><span class="line">        wf.write(k+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">		</span><br><span class="line"><span class="comment"># ipynb 2 md</span></span><br><span class="line">md_str=<span class="string">&#x27;&#x27;</span> <span class="comment">#两种模式：直接装到一个字符串里或装到列表里，一行是一个字符串</span></span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> ja[<span class="string">&#x27;cells&#x27;</span>]:</span><br><span class="line">    <span class="keyword">if</span> c[<span class="string">&#x27;cell_type&#x27;</span>]==<span class="string">&#x27;markdown&#x27;</span>:</span><br><span class="line">        md_str=md_str+<span class="string">&#x27;\n&#x27;</span>+<span class="string">&#x27;&#x27;</span>.join(c[<span class="string">&#x27;source&#x27;</span>])+<span class="string">&#x27;\n\n&#x27;</span></span><br><span class="line">    <span class="keyword">elif</span> c[<span class="string">&#x27;cell_type&#x27;</span>]==<span class="string">&#x27;code&#x27;</span>:</span><br><span class="line">        md_str=md_str+<span class="string">&#x27;\n```python \n&#x27;</span>+<span class="string">&#x27;&#x27;</span>.join(c[<span class="string">&#x27;source&#x27;</span>])+<span class="string">&#x27;\n```\n\n&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(c[<span class="string">&#x27;outputs&#x27;</span>])&gt;<span class="number">0</span>: <span class="comment"># !=[]</span></span><br><span class="line">            <span class="keyword">for</span> o <span class="keyword">in</span> c[<span class="string">&#x27;outputs&#x27;</span>]:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27;text/html&#x27;</span> <span class="keyword">in</span> o[<span class="string">&#x27;data&#x27;</span>]: <span class="comment">#keys</span></span><br><span class="line">                    md_str=md_str+<span class="string">&#x27;\n&#x27;</span>+<span class="string">&#x27;&#x27;</span>.join(o[<span class="string">&#x27;data&#x27;</span>][<span class="string">&#x27;text/html&#x27;</span>])+<span class="string">&#x27;\n&#x27;</span></span><br><span class="line">                <span class="keyword">elif</span> <span class="string">&#x27;text/plain&#x27;</span> <span class="keyword">in</span> o[<span class="string">&#x27;data&#x27;</span>]:</span><br><span class="line">                    md_str=md_str+<span class="string">&#x27;\n&#x27;</span>+<span class="string">&#x27;&#x27;</span>.join(o[<span class="string">&#x27;data&#x27;</span>][<span class="string">&#x27;text/plain&#x27;</span>])+<span class="string">&#x27;\n&#x27;</span></span><br><span class="line">    <span class="keyword">elif</span> c[<span class="string">&#x27;cell_type&#x27;</span>]==<span class="string">&#x27;raw&#x27;</span>:</span><br><span class="line">        md_str=md_str+<span class="string">&#x27;\n&#x27;</span>+<span class="string">&#x27;&#x27;</span>.join(c[<span class="string">&#x27;source&#x27;</span>])+<span class="string">&#x27;\n&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;ipynb2pdf-c2md.md&#x27;</span>,<span class="string">&#x27;w&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> wf:</span><br><span class="line">    wf.write(md_str)</span><br></pre></td></tr></table></figure>
+
+
+<p>【效果对比图】</p>
+<p>因为有时候我们在Github上看ipynb格式的资料时，可能会加载不出来渲染的效果，这时候懂得了上面的jupyter notebook的文件组织结构后，我们可以从原始数据大致确定看的ipynb里有那些代码，输出的结果。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结这篇文章的内容：</p>
+<ul>
+<li>Jupyter Notebook有良好的文档图表整合能力和扩展性，已有大量的北美CS课程使用Jupyter Notebook作为编程环境；</li>
+<li>.ipynb文件是以json格式组织数据的；我们编写的代码、文本和输出存在cell列表里；</li>
+<li>代码的顺序就是cell列表中元素顺序；</li>
+<li>基于以上特点我们可以写代码合并和拆分notebook文件，还可实现ipynb文件转换为py、html格式文件。</li>
+</ul>
+<p>以上内容自己整理了一个xmind脑图，获取思维导图文件和文中示例代码ipynb文件可在公众号后台回复 <strong>jupyter</strong> 获取。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/22/jupyter-notebook-to-pdf-ns.html" rel="prev" title="jupyter notebook导出pdf并支持中文">
+      <i class="fa fa-chevron-left"></i> jupyter notebook导出pdf并支持中文
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/22/sql-sqlite-ns.html" rel="next" title="sqlite使用笔记">
+      sqlite使用笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">基础结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E9%83%A8%E5%88%86"><span class="nav-number">2.</span> <span class="nav-text">内容部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">需求实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%B8%BE%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">应用举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <a href="/">
+    <img class="site-author-image" itemprop="image" alt="Lyndon"
+      src="/images/lynsdata_avatar_49.png">
+	</a>
+  <p class="site-author-name" itemprop="name">Lyndon</p>
+  <div class="site-description" itemprop="description">再勇敢一些</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/QLWeilcf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;QLWeilcf" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ea4b6b1d2c22" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ea4b6b1d2c22" rel="noopener" target="_blank">简书</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lynsdata.cn/about/" title="公众号 → https:&#x2F;&#x2F;lynsdata.cn&#x2F;about&#x2F;">公众号</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lyndon</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>
